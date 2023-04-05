@@ -1,0 +1,11 @@
+﻿
+
+.eventcontainer:after {
+    opacity: 0;
+    border-color: black;
+    border-width: 20px;
+}
+
+.eventcontainer:hover:after{
+    opacity: 1;
+}
