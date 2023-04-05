@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using TeamKville.Server.Data.DataModels;
 
 namespace TeamKville.Server.Data
 {
@@ -8,5 +9,8 @@ namespace TeamKville.Server.Data
         {
 
         }
+
+        public DbSet<Product> Products { get; set; }
+
     }
 }

@@ -1,11 +1,30 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using TeamKville.Server.Data.Repositories.Interfaces;
+using TeamKville.Shared.Dto;
 
 namespace TeamKville.Server.Controllers
 {
+    //[Route["api/[controller]")]
     [Route("api/product")]
     [ApiController]
     public class ProductController : ControllerBase
     {
+        private readonly IProductRepository _productRepository;
+
+        public ProductController(IProductRepository productRepository)
+        {
+            _productRepository = productRepository;
+        }
+
+        //Hämta alla produkter
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public ActionResult<IEnumerable<ProductDto>> GetProducts()
+        {
+            var data = _productRepository.GetAll();
+
+            return Ok(data);
+        }
+
     }
 }
