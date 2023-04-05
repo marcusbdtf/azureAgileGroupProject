@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using TeamKville.Server.Data.Repositories.Interfaces;
+using TeamKville.Shared.Dto;
 
 namespace TeamKville.Server.Controllers
 {
