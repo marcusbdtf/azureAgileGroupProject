@@ -27,4 +27,8 @@
     <Folder Include="Data\Repositories\Interfaces\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Shared\TeamKville.Shared.csproj" />
+  </ItemGroup>
+
 </Project>
