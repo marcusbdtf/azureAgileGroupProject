@@ -1,38 +1,3 @@
 ﻿@page "/"
 
-<h3 class="p-2 text-center">Kommande Event</h3>
-<div class="container w-50 h-75 text-center align-content-center justify-content-center">
-	<div class="position-relative" style="max-width: 100vh; max-height: 90vh;">
-		<!--TBD!! Ändra baserat på hur vi navigerar till event-->
-		<a href="/event/@id">
-		<img src="@img" class="img-fluid">
-			<div class="carousel-caption text-start position-absolute bottom-0" style="color: white; background-color: rgba(0,0,0,0.8); right: 0; left: 0;">
-				<div class="px-4">
-					<h4>@name</h4>
-					<p>@description</p>
-					<h5>Datum: @date</h5>
-				</div>
-			</div>
-		</a>
-	</div>
-</div>
-
-@code{
-
-	//Event properties
-	int id;
-	string img;
-	string description;
-	string name;
-	DateTime date;
-
-	protected override async Task OnInitializedAsync()
-	{
-		//Hämta från API/Databas när det är klart
-		img = "https://www.thepitchkc.com/content/uploads/2022/04/o/u/kcgameon-lan-party.jpeg";
-		name = "Nördgibb";
-		description = "Wow kolla vilket coolt lan event!";
-		date = DateTime.Now;
-		id = 1;
-	}
-}
+<h1>Hello, world!</h1>
