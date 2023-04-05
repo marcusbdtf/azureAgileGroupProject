@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamKville.Server", "TeamKville\Server\TeamKville.Server.csproj", "{6EC3D902-51BA-4988-B2F8-5CC4874CD86A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamKville.Server", "TeamKville\Server\TeamKville.Server.csproj", "{6EC3D902-51BA-4988-B2F8-5CC4874CD86A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamKville.Client", "TeamKville\Client\TeamKville.Client.csproj", "{B333FC76-D2D7-407D-8DC3-712B696C03B5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamKville.Client", "TeamKville\Client\TeamKville.Client.csproj", "{B333FC76-D2D7-407D-8DC3-712B696C03B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TeamKville.Shared", "TeamKville\Shared\TeamKville.Shared.csproj", "{D5A80069-0E1F-4F5B-9273-2A107D2B75B5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TeamKville.Shared", "TeamKville\Shared\TeamKville.Shared.csproj", "{D5A80069-0E1F-4F5B-9273-2A107D2B75B5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
