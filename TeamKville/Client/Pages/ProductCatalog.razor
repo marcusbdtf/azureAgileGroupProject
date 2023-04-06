@@ -1,6 +1,54 @@
-﻿@page "/Catalog"
-<h3>ProductCatalog</h3>
+﻿@page "/produkter"
 
-@code {
+@using TeamKville.Shared.Dto;
+
+<div class="container d-flex align-content-center">
+      <div class="row row-cols-2 row-cols-lg-3 g-1 g-lg-3">
+            @foreach(var product in products)
+            {
+                <div class="col">
+                    <div class="card m-2 w-75 h-100">
+                        <img src="@GetImage("product", product.ProductId)" class="card-img-top" style="max-height:300px; max-width: 300px;">
+                        <div class="card-body">
+                            <h5 class="card-title">@product.Name</h5>
+                            <p class="card-text">Price: @product.Price</p>
+                            <a href="/product/@product.ProductId" class="btn btn-primary">Köp</a>
+                        </div>
+                    </div>﻿
+                </div>
+            }
+      </div>
+</div>
+
+
+ @code {
+
+    List<ProductDto> products = new List<ProductDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+
+
+        products = new List<ProductDto>
+        {
+            new ProductDto{ProductId = 1, Name = "Spel 1", Price = 599, Rating = 3},
+            new ProductDto{ProductId = 2,Name = "Spel 2", Price = 599, Rating = 1},
+            new ProductDto{ProductId = 3,Name = "Spel 3", Price = 599, Rating = 2},
+            new ProductDto{Name = "Spel 4", Price = 599, Rating = 5},
+            new ProductDto{Name = "Spel 5", Price = 599, Rating = 4},
+            new ProductDto{Name = "Spel 6", Price = 599, Rating = 3},
+            new ProductDto{Name = "Spel 7", Price = 599, Rating = 5},
+            new ProductDto{Name = "Spel 8", Price = 599, Rating = 4},
+            new ProductDto{Name = "Spel 9", Price = 599, Rating = 3}
+        };
+    }
+
+    string GetImage(string type, int id)
+	{
+		//Ändra till environment variable
+		return ($"https://teamkvillestorage.blob.core.windows.net/{type}/{id}.png");
+	}
+
+    
 
 }
