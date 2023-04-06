@@ -7,10 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <SupportedPlatform Include="browser" />
+    <Compile Remove="Models\**" />
+    <EmbeddedResource Remove="Models\**" />
+    <None Remove="Models\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
+    <SupportedPlatform Include="browser" />
   </ItemGroup>
 </Project>

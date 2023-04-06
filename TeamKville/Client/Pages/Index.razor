@@ -1,11 +1,14 @@
 ﻿@page "/"
 
-<h3 class="p-2 text-center">Kommande Event</h3>
+@using TeamKville.Shared.Dto;
+@using Azure.Storage.Blobs;
+
+<h3 class="pt-5 pb-2 text-center">Kommande Event</h3>
 <div class="container w-50 h-75 text-center align-content-center justify-content-center">
 	<div class="position-relative" style="max-width: 100vh; max-height: 90vh;">
 		<!--TBD!! Ändra baserat på hur vi navigerar till event-->
 		<a href="/event/@id">
-		<img src="@img" class="img-fluid">
+			<img src=@GetImage("event", id) class="img-fluid">
 			<div class="carousel-caption text-start position-absolute bottom-0" style="color: white; background-color: rgba(0,0,0,0.8); right: 0; left: 0;">
 				<div class="px-4">
 					<h4>@name</h4>
@@ -17,6 +20,25 @@
 	</div>
 </div>
 
+
+<h3 class="pt-5 pb-2 text-center">Rekommenderade Produkter</h3>
+<div class="container text-center" style="margin: 0 auto 2em; max-width: 80vh; height: 40vh;">
+    <SfCarousel>
+        @foreach (ProductDto product in recommendedProducts)
+        {
+			<CarouselItem style="background-color: lightgrey;">
+                <div>
+					<img class="img-responsive" style="max-height: 40vh; max-width: 80vh;" src=@GetImage("product", product.ProductId)/>
+                    <div style="padding:1rem; background-color:grey;">
+                        <h5>@product.Name</h5>
+                        <p>@product.Price kr</p>
+                    </div>
+                </div>
+            </CarouselItem>
+        }
+    </SfCarousel>
+</div>
+
 @code{
 
 	//Event properties
@@ -26,13 +48,55 @@
 	string name;
 	DateTime date;
 
+	//Product
+	List<ProductDto> recommendedProducts = new List<ProductDto>();
+
+	//Blob storage för bilder
+
+	string GetImage(string type, int id)
+	{
+		//Ändra till environment variable
+		return ($"https://teamkvillestorage.blob.core.windows.net/{type}/{id}.png");
+	}
+
 	protected override async Task OnInitializedAsync()
 	{
+		GetEvent();
+		GetRecommendedProducts();	
+	}
+
+	void GetEvent()
+	{
 		//Hämta från API/Databas när det är klart
-		img = "https://www.thepitchkc.com/content/uploads/2022/04/o/u/kcgameon-lan-party.jpeg";
+		
 		name = "Nördgibb";
 		description = "Wow kolla vilket coolt lan event!";
 		date = DateTime.Now;
 		id = 1;
 	}
+
+	void GetRecommendedProducts()
+	{
+		//Hämta från API/Databas när det är klart
+		ProductDto product1 = new ProductDto();
+		ProductDto product2 = new ProductDto();
+		ProductDto product3 = new ProductDto();
+
+		product1.ProductId = 1;
+		product1.Name = "Spider-Man: Miles Morales";
+		product1.Price = 599;
+
+		product2.ProductId = 2;
+		product2.Name = "Godfall";
+		product2.Price = 599;
+
+		product3.ProductId = 3;
+		product3.Name = "Uncharted Legacy of Thieves";
+		product3.Price = 599;
+
+		recommendedProducts.Add(product1);
+		recommendedProducts.Add(product2);
+		recommendedProducts.Add(product3);
+	}
+
 }
