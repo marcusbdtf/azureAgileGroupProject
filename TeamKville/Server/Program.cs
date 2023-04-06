@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TeamKville.Server.Data;
+using TeamKville.Server.Data.DataModels;
 using TeamKville.Server.Data.Repositories;
 using TeamKville.Server.Data.Repositories.Interfaces;
 
@@ -16,7 +17,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddRazorPages();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IOrderRepository<Order>, OrderRepository>();
 
@@ -26,14 +27,22 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
+	app.UseWebAssemblyDebugging();
+	app.UseSwagger();
     app.UseSwaggerUI();
 }
 
+app.UseAuthorization();
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+app.UseBlazorFrameworkFiles();
+app.UseStaticFiles();
 
+app.UseRouting();
+
+
+app.MapRazorPages();
 app.MapControllers();
+app.MapFallbackToFile("index.html");
 
 app.Run();
