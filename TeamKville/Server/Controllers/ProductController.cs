@@ -22,9 +22,9 @@ namespace TeamKville.Server.Controllers
         //Hämta alla produkter
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<IEnumerable<ProductDto>> GetProducts()
+        public async Task<ActionResult<IEnumerable<ProductDto>>> GetProducts()
         {
-            var data = _productRepository.GetAll();
+            var data = await _productRepository.GetAll();
 
             return Ok(data);
         }
@@ -32,9 +32,9 @@ namespace TeamKville.Server.Controllers
         //Skapar produkt
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult CreateProduct(CreateProductModel newProduct)
+        public async Task<ActionResult> CreateProduct(CreateProductModel newProduct)
         {
-            _productRepository.CreateProduct(newProduct);
+            await _productRepository.CreateProduct(newProduct);
             return Ok();
         }
 

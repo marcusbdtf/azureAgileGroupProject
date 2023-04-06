@@ -7,10 +7,10 @@ namespace TeamKville.Server.Data.Repositories.Interfaces
 {
     public interface IProductRepository
     {
-        List<ProductDto> GetAll();
-        void CreateProduct(CreateProductModel createProductInput);
-        void DeleteProduct(int id);
-        void UpdateProduct(UpdateProductModel updateProductInput);
-        Product GetById(int productId);
+        Task<List<ProductDto>> GetAll();
+        Task<string> CreateProduct(CreateProductModel createProductInput);
+        Task<string> DeleteProduct(int id);
+        Task<string> UpdateProduct(UpdateProductModel updateProductInput);
+        Task<ProductDto> GetById(int productId);
     }
 }

@@ -16,34 +16,34 @@ namespace TeamKville.Server.Data.Repositories
             _dbContext = dbContext;
         }
 
-        public List<ProductDto> GetAll()
+        public async Task<List<ProductDto>> GetAll()
         {
             //mappa om products till createProductInput
-            var products = _dbContext.Products
+            var products = await _dbContext.Products
                 //.Include(x => x.Category)
                 //.Include(x => x.Comments)
                 .Select(x => new ProductDto
                 {
-                    ProductId = x.Id,
+                    Id = x.Id,
                     Name = x.Name,
                     Description = x.Description,
                     Price = x.Price,
                     IsActive = x.IsActive,
                     Age = x.Age,
                     Rating = x.Rating
-                }).ToList();
+                }).ToListAsync();
 
             return products;
         }
         
 
-        public Product GetById(int productId)
+        public async Task<ProductDto> GetById(int productId)
         {
-            var product = _dbContext.Products
+            var product = await _dbContext.Products
                 //.Include(x => x.Category)
-                .FirstOrDefault(x => x.Id == productId);
+                .FirstOrDefaultAsync(x => x.Id == productId);
 
-            var productInput = new Product
+            var productDto = new ProductDto
             {
                 Id = product.Id,
                 Name = product.Name,
@@ -54,11 +54,11 @@ namespace TeamKville.Server.Data.Repositories
                 Rating = product.Rating
             };
 
-            return product;
+            return productDto;
         }
 
         //Skapar produkt
-        public void CreateProduct(CreateProductModel createProductInput)
+        public Task<string> CreateProduct(CreateProductModel createProductInput)
         {
             var newProduct = new Product
             {
@@ -71,19 +71,29 @@ namespace TeamKville.Server.Data.Repositories
             };
 
             _dbContext.Products.Add(newProduct);
-            _dbContext.SaveChanges();
+            _dbContext.SaveChangesAsync();
+
+            return Task.FromResult("product created");
         }
 
         //Raderar produkt
-        public void DeleteProduct(int id)
+        public Task<string> DeleteProduct(int id)
         {
             var product = _dbContext.Products.FirstOrDefault(x => x.Id == id);
-            _dbContext.Products.Remove(product);
-            _dbContext.SaveChanges();
+
+            if (product != null)
+            {
+                _dbContext.Products.Remove(product);
+                _dbContext.SaveChanges();
+
+                return Task.FromResult("product deleted");
+            }
+
+            return Task.FromResult("product could not be deleted");
         }
 
         //Updaterar produkt
-        public void UpdateProduct(UpdateProductModel updateProductInput)
+        public Task<string> UpdateProduct(UpdateProductModel updateProductInput)
         {
             var productToUpdate = _dbContext.Products.FirstOrDefault(x => x.Id == updateProductInput.Id);
 
@@ -94,9 +104,12 @@ namespace TeamKville.Server.Data.Repositories
                 productToUpdate.Price = updateProductInput.Price;
                 productToUpdate.IsActive = updateProductInput.IsActive;
                 productToUpdate.Age = updateProductInput.Age;
+
+                _dbContext.SaveChanges();
+                return Task.FromResult("product updated");
             }
 
-            _dbContext.SaveChanges();
+            return Task.FromResult("product could not be updated");
         }
     }
 }

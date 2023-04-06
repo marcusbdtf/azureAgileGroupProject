@@ -8,7 +8,7 @@ namespace TeamKville.Shared.Dto
 {
     public class ProductDto
     {
-        public int ProductId { get; set; }
+        public int Id { get; set; }
 
         public string Name { get; set; }
 
