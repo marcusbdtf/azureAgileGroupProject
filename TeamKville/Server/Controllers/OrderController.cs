@@ -44,7 +44,7 @@ namespace TeamKville.Server.Controllers
 			return new OrderDto()
 			{
 				OrderId = orderToConvert.OrderId,
-				OrderProducts = orderToConvert.OrderProducts,
+				//OrderProducts = orderToConvert.OrderProducts,
 				UserId = orderToConvert.UserId,
 				OrderDate = orderToConvert.OrderDate,
 				Status = orderToConvert.Status
@@ -56,7 +56,7 @@ namespace TeamKville.Server.Controllers
 			return new Order()
 			{
 				OrderId = orderDtoToConvert.OrderId,
-				OrderProducts = orderDtoToConvert.OrderProducts,
+				//OrderProducts = orderDtoToConvert.OrderProducts,
 				UserId = orderDtoToConvert.UserId,
 				OrderDate = orderDtoToConvert.OrderDate,
 				Status = orderDtoToConvert.Status

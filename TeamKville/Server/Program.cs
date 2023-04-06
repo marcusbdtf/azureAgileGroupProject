@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TeamKville.Server.Data;
+using TeamKville.Server.Data.DataModels;
 using TeamKville.Server.Data.Repositories;
 using TeamKville.Server.Data.Repositories.Interfaces;
 

@@ -10,8 +10,9 @@ namespace TeamKville.Server.Data
 
         }
 
-        public DBSet<Order> Orders { get; set; }
+        public DbSet<Order> Orders { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<Category> Categories { get; set; }
 
     }
 }
