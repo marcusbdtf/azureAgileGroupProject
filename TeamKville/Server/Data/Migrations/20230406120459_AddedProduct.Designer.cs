@@ -11,7 +11,7 @@ using TeamKville.Server.Data;
 namespace TeamKville.Server.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230405133011_AddedProduct")]
+    [Migration("20230406120459_AddedProduct")]
     partial class AddedProduct
     {
         /// <inheritdoc />
@@ -26,11 +26,11 @@ namespace TeamKville.Server.Data.Migrations
 
             modelBuilder.Entity("TeamKville.Server.Data.DataModels.Product", b =>
                 {
-                    b.Property<int>("ProductId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProductId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Age")
                         .HasColumnType("int");
@@ -52,7 +52,7 @@ namespace TeamKville.Server.Data.Migrations
                     b.Property<int>("Rating")
                         .HasColumnType("int");
 
-                    b.HasKey("ProductId");
+                    b.HasKey("Id");
 
                     b.ToTable("Products");
                 });

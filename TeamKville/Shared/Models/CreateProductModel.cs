@@ -4,12 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TeamKville.Shared.Dto
+namespace TeamKville.Shared.Models
 {
-    public class ProductDto
+    public class CreateProductModel
     {
-        public int ProductId { get; set; }
-
         public string Name { get; set; }
 
         public string Description { get; set; }
@@ -23,8 +21,7 @@ namespace TeamKville.Shared.Dto
         public int Age { get; set; }
 
         public int Rating { get; set; }
+
         //public List<Comment> Comments { get; set; }
-
-
     }
 }

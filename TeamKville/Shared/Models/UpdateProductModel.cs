@@ -4,27 +4,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TeamKville.Shared.Dto
+namespace TeamKville.Shared.Models
 {
-    public class ProductDto
+    public class UpdateProductModel
     {
-        public int ProductId { get; set; }
-
+        public int Id { get; set; }
         public string Name { get; set; }
 
         public string Description { get; set; }
 
         public decimal Price { get; set; }
 
-        //public Category List<Category> { get; set; }
-
         public bool IsActive { get; set; }
 
         public int Age { get; set; }
-
-        public int Rating { get; set; }
-        //public List<Comment> Comments { get; set; }
-
 
     }
 }

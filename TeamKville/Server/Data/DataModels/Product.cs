@@ -2,7 +2,7 @@
 {
     public class Product
     {
-        public int ProductId { get; set; }
+        public int Id { get; set; }
 
         public string Name { get; set; }
 
@@ -19,8 +19,6 @@
         public int Rating { get; set; }
 
         //public List<Comment> Comments { get; set; }
-
-
 
     }
 }
