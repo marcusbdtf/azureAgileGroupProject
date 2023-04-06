@@ -24,6 +24,7 @@ public class OrderRepository : IOrderRepository<Order>
 		return "Saved to database";
 	}
 	
+	/*
 	public async Task<IEnumerable<Order>> GetByEmail(string email)
 	{
 		//Metod för att hitta användaren baserat på email. Och sen ta 
@@ -36,7 +37,7 @@ public class OrderRepository : IOrderRepository<Order>
 		//}
 
 		return null;
-	}
+	}*/
 
 	public async Task<string> PatchOrder(Order item)
 	{

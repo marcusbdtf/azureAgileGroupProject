@@ -22,13 +22,13 @@ namespace TeamKville.Server.Controllers
 			return Ok(await _orderRepository.AddItemAsync(ConvertTOrder(newOrder)));
 		}
 		
-		[HttpGet] 
+		/*[HttpGet] 
 		public async Task<IActionResult> GetByEmail(string email) //TODO: ska det returneras orderobjekt eller DTO?
 		{
 			var orderToReturn = await _orderRepository.GetByEmail(email);
 			
 			return Ok(orderToReturn.Select(ConvertToOrderDto));
-		}
+		}*/
 
 		[HttpPatch]
 		public async Task<IActionResult> PatchOrder(OrderDto orderToPatch)

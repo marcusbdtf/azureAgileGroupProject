@@ -1,38 +1,41 @@
 {
-  "iisSettings": {
-    "iisExpress": {
-      "applicationUrl": "http://localhost:53902",
-      "sslPort": 44365
-    }
-  },
   "profiles": {
     "http": {
       "commandName": "Project",
-      "dotnetRunMessages": true,
       "launchBrowser": true,
-      "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
-      "applicationUrl": "http://localhost:5294",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "dotnetRunMessages": true,
+      "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
+      "applicationUrl": "http://localhost:5294"
     },
     "https": {
       "commandName": "Project",
-      "dotnetRunMessages": true,
       "launchBrowser": true,
-      "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
-      "applicationUrl": "https://localhost:7109;http://localhost:5294",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "blobConnectionString": "DefaultEndpointsProtocol=https;AccountName=teamkvillestorage;AccountKey=1pN/KGxPtg3MjmQ/kslmQVuuczGvuOVbHCumUlMkyevlgTkNKNYRVntSTj3PeC2brCmxWZRIENcb+ASt557mkg==;BlobEndpoint=https://teamkvillestorage.blob.core.windows.net/;TableEndpoint=https://teamkvillestorage.table.core.windows.net/;QueueEndpoint=https://teamkvillestorage.queue.core.windows.net/;FileEndpoint=https://teamkvillestorage.file.core.windows.net/"
+      },
+      "dotnetRunMessages": true,
+      "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
+      "applicationUrl": "https://localhost:7109;http://localhost:5294"
     },
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "inspectUri": "{wsProtocol}://{url.hostname}:{url.port}/_framework/debug/ws-proxy?browser={browserInspectUri}"
+    }
+  },
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:53902",
+      "sslPort": 44365
     }
   }
 }
