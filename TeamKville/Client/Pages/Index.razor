@@ -1,46 +1,56 @@
 ﻿@page "/"
 @using TeamKville.Shared;
 @using TeamKville.Shared.Dto;
-@using Azure.Storage.Blobs;
 
-
-<h3 class="pt-5 pb-2 text-center">Kommande Event</h3>
-<div class="container w-50 h-75 text-center align-content-center justify-content-center">
-	<div class="position-relative" style="max-width: 100vh; max-height: 90vh;">
-		<!--TBD!! Ändra baserat på hur vi navigerar till event-->
-		<a href="/event/@id">
-			<img src=@SharedClass.GetImage("event", id) class="img-fluid">
-			<div class="carousel-caption text-start position-absolute bottom-0" style="color: white; background-color: rgba(0,0,0,0.8); right: 0; left: 0;">
-				<div class="px-4">
-					<h4>@name</h4>
-					<p>@description</p>
-					<h5>Datum: @date</h5>
+<div class="container shadow" style="background-color: white;">
+	<h3 class="p-3 text-center">Kommande Event</h3>
+	<div class="container p-3 shadow w-50 h-75 text-center align-content-center justify-content-center">
+		<div class="position-relative" style="max-width: 100vh; max-height: 90vh;">
+			<!--TBD!! Ändra baserat på hur vi navigerar till event-->
+			<a href="/event/@id">
+				<img src=@SharedClass.GetImage("event", id) class="img-fluid">
+				<div class="carousel-caption text-start position-absolute bottom-0" style="color: white; background-color: rgba(0,0,0,0.8); right: 0; left: 0;">
+					<div class="px-4">
+						<h4>@name</h4>
+						<p>@description</p>
+						<h5>Datum: @date</h5>
+					</div>
 				</div>
-			</div>
-		</a>
+			</a>
+		</div>
+	</div>
+
+
+	<h3 class="p-3 text-center">Rekommenderade Produkter</h3>
+	<div class="container p-3 text-center control-container shadow" style="max-width: 80vh; height: 50vh; background-color: white; margin: 0 auto;">
+		<SfCarousel>
+			<ChildContent>
+			@foreach (ProductDto product in recommendedProducts)
+			{
+				<CarouselItem>
+					<div class="carousel-caption" style="color: black;">
+						<img class="card-img-top pt-2 pb-2" style="height: 250px; object-fit: contain;" src=@SharedClass.GetImage("product", product.ProductId)/>
+						<div class="border-top" style="padding:1rem;">
+							<h5>@product.Name</h5>
+							<p>@product.Price kr</p>
+							<!--TBD!! Ändra baserat på hur vi navigerar till produkter-->
+							<a href="/product/@product.ProductId" class="btn btn-primary">Läs mer</a>
+						</div>
+					</div>
+				</CarouselItem>
+			}
+			</ChildContent>
+		</SfCarousel>
+	</div>
+
+
+	<div class="container text-center p-5">
+		<h1>Never quit, always Finish IT!</h1>
 	</div>
 </div>
 
 
-<h3 class="pt-5 pb-2 text-center">Rekommenderade Produkter</h3>
-<div class="container text-center" style="margin: 0 auto 2em; max-width: 80vh; height: 40vh;">
-    <SfCarousel>
-        @foreach (ProductDto product in recommendedProducts)
-        {
-			<CarouselItem style="background-color: lightgrey;">
-                <div>
-					<img class="img-responsive" style="max-height: 40vh; max-width: 80vh;" src=@SharedClass.GetImage("product", product.ProductId)/>
-                    <div style="padding:1rem; background-color:grey;">
-                        <h5>@product.Name</h5>
-                        <p>@product.Price kr</p>
-						<!--TBD!! Ändra baserat på hur vi navigerar till produkter-->
-						<a href="/product/@product.ProductId" class="btn btn-primary">Läs mer</a>
-                    </div>
-                </div>
-            </CarouselItem>
-        }
-    </SfCarousel>
-</div>
+
 
 @code{
 
@@ -51,18 +61,22 @@
 	DateTime date;
 
 	//Product
+	List<ProductDto> allProducts = new List<ProductDto>();
 	List<ProductDto> recommendedProducts = new List<ProductDto>();
+
+	//Orderhistory
+	string topGenre;
 
 	protected override async Task OnInitializedAsync()
 	{
 		GetEvent();
-		GetRecommendedProducts();	
+		GetRecommendedProducts();
 	}
 
 	void GetEvent()
 	{
 		//Hämta från API/Databas när det är klart
-		
+
 		name = "Nördgibb";
 		description = "Wow kolla vilket coolt lan event!";
 		date = DateTime.Now;
@@ -72,25 +86,17 @@
 	void GetRecommendedProducts()
 	{
 		//Hämta från API/Databas när det är klart
-		ProductDto product1 = new ProductDto();
-		ProductDto product2 = new ProductDto();
-		ProductDto product3 = new ProductDto();
+		var rand = new Random();
+		for (int i = 0; i < 25; i++)
+		{
+			allProducts.Add(new ProductDto { ProductId = i, Name = "Spel" + i, Category = "game", Genre = "action", Age = 18, Price = 599, Rating = rand.Next(1, 5) });
+		}
 
-		product1.ProductId = 1;
-		product1.Name = "Spider-Man: Miles Morales";
-		product1.Price = 599;
+		//Lägg till funktion som räknar ut toppgenre när API är klart
+		topGenre = "action";
 
-		product2.ProductId = 2;
-		product2.Name = "Godfall";
-		product2.Price = 599;
+		recommendedProducts = allProducts.Where(product => product.Genre == topGenre).OrderBy(x => rand.Next()).Take(5).ToList();
 
-		product3.ProductId = 3;
-		product3.Name = "Uncharted Legacy of Thieves";
-		product3.Price = 599;
-
-		recommendedProducts.Add(product1);
-		recommendedProducts.Add(product2);
-		recommendedProducts.Add(product3);
 	}
 
 }

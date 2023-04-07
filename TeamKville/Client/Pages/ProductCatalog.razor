@@ -5,8 +5,8 @@
 @using Syncfusion.Blazor;
 @using Syncfusion.Blazor.Inputs;
 @inject IJSRuntime JsRuntime;
-
-<h1 class="text-center p-2">Produkter</h1>
+<div class="container shadow">
+<h1 class="text-center p-2 pt-4">Produkter</h1>
 
 <!--FILTERKNAPP/SÖKFÄLT-->
 <div class="container d-flex pb-4 pt-4 px-4">
@@ -204,6 +204,7 @@ else
     }
 
 </div>
+</div>
 
 @code {
     //Produktkatalogens variabler
@@ -241,7 +242,7 @@ else
 
         for(int i = 25; i < 50;  i++)
         {
-            allProducts.Add(new ProductDto { ProductId = 4, Name = "Kontroller" + i, Category = "peripherals", Price = 799, Rating = rand.Next(1, 5) });
+            allProducts.Add(new ProductDto { ProductId = i, Name = "Kontroller" + i, Category = "peripherals", Price = 799, Rating = rand.Next(1, 5) });
         }
 
         products = allProducts;
