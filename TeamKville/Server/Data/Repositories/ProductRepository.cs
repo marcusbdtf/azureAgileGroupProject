@@ -25,6 +25,7 @@ namespace TeamKville.Server.Data.Repositories
                     Name = x.Name,
                     Description = x.Description,
                     Price = x.Price,
+                    Genre = x.Genre,
                     IsActive = x.IsActive,
                     Age = x.Age,
                     Rating = x.Rating

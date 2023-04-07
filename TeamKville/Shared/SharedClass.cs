@@ -1,1 +1,11 @@
-/* Shared classes can be referenced by both the Client and Server */
+namespace TeamKville.Shared
+{
+    public class SharedClass
+    {
+        public static string GetImage(string type, int id)
+        {
+            //Ändra till environment variable
+            return ($"https://teamkvillestorage.blob.core.windows.net/{type}/0.png");
+        }
+    }
+}
