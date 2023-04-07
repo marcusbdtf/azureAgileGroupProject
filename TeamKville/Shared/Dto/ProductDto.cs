@@ -19,9 +19,8 @@ namespace TeamKville.Shared.Dto
 
         //public Catergory category { get; set; }
 
-        //TEMPORÄR KLASS SÅ JAG KAN EXPERIMENTERA
+        //TEMPORÄRA PROPERTIES SÅ JAG KAN EXPERIMENTERA
         public string Genre { get; set; }
-
         public string Category { get; set; }
         public bool IsActive { get; set; }
 
