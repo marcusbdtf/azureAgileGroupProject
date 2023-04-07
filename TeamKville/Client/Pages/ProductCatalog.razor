@@ -1,46 +1,100 @@
 ﻿@page "/produkter"
 
 @using TeamKville.Shared.Dto;
+@inject IJSRuntime JsRuntime;
 
 <div class="container d-flex align-content-center">
-      <div class="row row-cols-2 row-cols-lg-3 g-1 g-lg-3">
-            @foreach(var product in products)
+      <div class="row row-cols-1 row-cols-lg-3 g-0 mx-auto">
+            @foreach (var product in currentProducts)
             {
-                <div class="col">
-                    <div class="card m-2 w-75 h-100">
-                        <img src="@GetImage("product", product.ProductId)" class="card-img-top" style="max-height:300px; max-width: 300px;">
-                        <div class="card-body">
-                            <h5 class="card-title">@product.Name</h5>
-                            <p class="card-text">Price: @product.Price</p>
-                            <a href="/product/@product.ProductId" class="btn btn-primary">Köp</a>
-                        </div>
-                    </div>﻿
-                </div>
-            }
+                <div class="col m-auto" style="max-width: 300px;">
+                <div class="card m-2" style="height: 400px;">
+                    <div class="container h-50">
+                        <img src="@GetImage("product", product.ProductId)" class="card-img-top mx-auto" style="max-width: 100%; height: 100%; object-fit: contain;">
+                    </div>
+                            <div class="card-body border-top">
+                                <h5 class="card-title">@product.Name</h5>
+                                <p class="card-text">Price: @product.Price</p>
+                                <p>Betyg: @product.Rating</p>
+                                <!--OBS! Ändra baserat på hur vi navigerar till produkten.-->
+                                <a href="/product/@product.ProductId" class="btn btn-primary">Köp</a>
+                            </div>
+                        </div>﻿
+                    </div>
+                }
       </div>
 </div>
+<hr />
+<div class="container d-flex align-content-center justify-content-center align-bottom text-center p-3">
+    @if(index != 1)
+    {
+        <button class="m-2" @onclick="() => PageNavigation(-1)">Prev</button>
+    } 
 
+    <p>@index / @Math.Ceiling(maxPages) </p>
 
- @code {
+    @if(index != maxPages)
+    {
+        <button class="m-2" @onclick="() => PageNavigation(1)">Next</button>
+    }
+</div>
+
+@code {
 
     List<ProductDto> products = new List<ProductDto>();
+    List<ProductDto> currentProducts = new List<ProductDto>();
+    int maxProductsPerPage = 8;
+    int index = 1;
+    decimal maxPages;
+
 
     protected override async Task OnInitializedAsync()
     {
+        products.Clear();
 
-
-        products = new List<ProductDto>
+        //Gör en fake produktlista för testing
+        var rand = new Random();
+        for(int i = 0; i < 25;  i++)
         {
-            new ProductDto{ProductId = 1, Name = "Spel 1", Price = 599, Rating = 3},
-            new ProductDto{ProductId = 2,Name = "Spel 2", Price = 599, Rating = 1},
-            new ProductDto{ProductId = 3,Name = "Spel 3", Price = 599, Rating = 2},
-            new ProductDto{Name = "Spel 4", Price = 599, Rating = 5},
-            new ProductDto{Name = "Spel 5", Price = 599, Rating = 4},
-            new ProductDto{Name = "Spel 6", Price = 599, Rating = 3},
-            new ProductDto{Name = "Spel 7", Price = 599, Rating = 5},
-            new ProductDto{Name = "Spel 8", Price = 599, Rating = 4},
-            new ProductDto{Name = "Spel 9", Price = 599, Rating = 3}
-        };
+            products.Add(new ProductDto { ProductId = 0, Name = "Spel" + i, Price = 599, Rating = rand.Next(1, 5) });
+        }
+
+        for(int i = 25; i < 50;  i++)
+        {
+            products.Add(new ProductDto { ProductId = 4, Name = "Kontroller" + i, Price = 599, Rating = rand.Next(1, 5) });
+        }
+
+
+        maxPages = (products.Count() / maxProductsPerPage) + 1;
+        DisplayProducts();
+
+    }
+
+    void DisplayProducts()
+    {
+        currentProducts.Clear();
+        int productIndex = index * maxProductsPerPage;
+        int prevProductIndex = (index - 1) * maxProductsPerPage;
+        try
+        {
+            for (int i = prevProductIndex; i < productIndex; i++)
+            {
+                currentProducts.Add(products[i]);
+            }
+
+        }
+        catch
+        {
+
+        }
+    }
+
+
+    async void PageNavigation(int page)
+    {
+        index = index + page;
+        DisplayProducts();
+        //await JsRuntime.InvokeVoidAsync("OnScrollEvent");   
     }
 
     string GetImage(string type, int id)
