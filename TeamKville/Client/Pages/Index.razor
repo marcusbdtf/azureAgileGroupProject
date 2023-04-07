@@ -92,11 +92,6 @@
 			allProducts.Add(new ProductDto { ProductId = i, Name = "Spel" + i, Category = "game", Genre = "action", Age = 18, Price = 599, Rating = rand.Next(1, 5) });
 		}
 
-		for (int i = 25; i < 50; i++)
-		{
-			allProducts.Add(new ProductDto { ProductId = 4, Name = "Kontroller" + i, Category = "peripherals", Price = 799, Rating = rand.Next(1, 5) });
-		}
-
 		//Lägg till funktion som räknar ut toppgenre när API är klart
 		topGenre = "action";
 
