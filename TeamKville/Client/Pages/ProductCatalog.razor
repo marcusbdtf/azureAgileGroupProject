@@ -5,6 +5,37 @@
 
 <h1 class="text-center p-2">Produkter</h1>
 
+<div class="container d-flex pb-4 pt-4 px-4">
+    <button class="btn btn-primary fa fa-filter" @onclick="OpenFilterTab"> Filtrera</button>
+    <input class="mx-2 rounded-1" type="text" placeholder="Sök..." @bind="nameFilter"/>
+    <button class="fa fa-search border-0" style="background-color: transparent;"></button>
+</div>
+
+<div id="filter-tab">
+  <h2 class="text-center p-3 shadow-sm">Filter</h2>
+</div>
+
+<style>
+
+    #filter-tab {
+      position: fixed;
+      top: 0;
+      left: -300px;
+      width: 300px;
+      height: 100%;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      transition: left 0.3s ease-in-out;
+    }
+
+    #filter-tab.open {
+      left: 0;
+    }
+
+</style>
+
+
+
 <div class="container d-flex align-content-center">
   <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 justify-content-center align-items-center mx-auto">
     @for (int i = 0; i < 9; i++)
@@ -96,6 +127,8 @@
 
     bool isFirstProduct = true;
 
+    string? nameFilter;
+
     protected override async Task OnInitializedAsync()
     {
         products.Clear();
@@ -137,13 +170,20 @@
         }
     }
 
+    async void OpenFilterTab()
+    {
+        await JsRuntime.InvokeVoidAsync("openContainer");
+    }
+    async void CloseFilterTab()
+    {
+        await JsRuntime.InvokeVoidAsync("closeContainer");
+    }
+
 
     async void PageNavigation(int page)
     {
         index = index + page;
-        DisplayProducts();
-        //Diskutera med gruppen om vi ska ha detta
-        //await JsRuntime.InvokeVoidAsync("OnScrollEvent");   
+        DisplayProducts();   
     }
 
     string GetImage(string type, int id)
