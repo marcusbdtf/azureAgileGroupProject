@@ -1,5 +1,5 @@
 ﻿@page "/"
-
+@using TeamKville.Shared;
 @using TeamKville.Shared.Dto;
 @using Azure.Storage.Blobs;
 
@@ -9,7 +9,7 @@
 	<div class="position-relative" style="max-width: 100vh; max-height: 90vh;">
 		<!--TBD!! Ändra baserat på hur vi navigerar till event-->
 		<a href="/event/@id">
-			<img src=@GetImage("event", id) class="img-fluid">
+			<img src=@SharedClass.GetImage("event", id) class="img-fluid">
 			<div class="carousel-caption text-start position-absolute bottom-0" style="color: white; background-color: rgba(0,0,0,0.8); right: 0; left: 0;">
 				<div class="px-4">
 					<h4>@name</h4>
@@ -29,7 +29,7 @@
         {
 			<CarouselItem style="background-color: lightgrey;">
                 <div>
-					<img class="img-responsive" style="max-height: 40vh; max-width: 80vh;" src=@GetImage("product", product.ProductId)/>
+					<img class="img-responsive" style="max-height: 40vh; max-width: 80vh;" src=@SharedClass.GetImage("product", product.ProductId)/>
                     <div style="padding:1rem; background-color:grey;">
                         <h5>@product.Name</h5>
                         <p>@product.Price kr</p>
@@ -53,14 +53,6 @@
 
 	//Product
 	List<ProductDto> recommendedProducts = new List<ProductDto>();
-
-	//Blob storage för bilder
-
-	string GetImage(string type, int id)
-	{
-		//Ändra till environment variable
-		return ($"https://teamkvillestorage.blob.core.windows.net/{type}/{id}.png");
-	}
 
 	protected override async Task OnInitializedAsync()
 	{

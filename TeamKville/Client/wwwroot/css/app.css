@@ -4,11 +4,17 @@
     color: white;
 }
 
-    .btn-primary:hover {
-        background-color: #594183;
-        border-color: #594183;
-        color: white;
-    }
+.btn-primary:hover {
+    background-color: #594183;
+    border-color: #594183;
+    color: white;
+}
+
+.btn-primary:active {
+    background-color: #594183;
+    border-color: #594183;
+    color: white;
+}
 
 h1:focus {
     outline: none;

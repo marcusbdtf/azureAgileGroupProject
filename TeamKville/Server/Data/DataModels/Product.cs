@@ -12,6 +12,7 @@
 
         //public Category List<Category> { get; set; }
 
+        public string Genre { get; set; }
         public bool IsActive { get; set; }
 
         public int Age { get; set; }
