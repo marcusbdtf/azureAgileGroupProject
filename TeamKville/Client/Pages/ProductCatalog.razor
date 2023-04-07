@@ -3,50 +3,98 @@
 @using TeamKville.Shared.Dto;
 @inject IJSRuntime JsRuntime;
 
+<h1 class="text-center p-2">Produkter</h1>
+
 <div class="container d-flex align-content-center">
-      <div class="row row-cols-1 row-cols-lg-3 g-0 mx-auto">
-            @foreach (var product in currentProducts)
-            {
-                <div class="col m-auto" style="max-width: 300px;">
-                <div class="card m-2" style="height: 400px;">
-                    <div class="container h-50">
-                        <img src="@GetImage("product", product.ProductId)" class="card-img-top mx-auto" style="max-width: 100%; height: 100%; object-fit: contain;">
-                    </div>
-                            <div class="card-body border-top">
-                                <h5 class="card-title">@product.Name</h5>
-                                <p class="card-text">Price: @product.Price</p>
-                                <p>Betyg: @product.Rating</p>
-                                <!--OBS! Ändra baserat på hur vi navigerar till produkten.-->
-                                <a href="/product/@product.ProductId" class="btn btn-primary">Köp</a>
-                            </div>
-                        </div>﻿
-                    </div>
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 justify-content-center align-items-center mx-auto">
+    @for (int i = 0; i < 9; i++)
+    {
+      <div class="col mb-1">
+        @if (i < currentProducts.Count)
+        {
+          var product = currentProducts[i];
+          <!--Ändra baserat på hur vi ska navigera till produkten-->
+          <a href="/product/@product.ProductId" style="text-decoration: none; color: black;">
+          <div class="card m-0 shadow-sm">
+            <img src="@GetImage("product", product.ProductId)" class="card-img-top pt-2 pb-2" style="height: 200px; object-fit: contain;">
+            <div class="card-body border-top">
+              <h5 class="card-title">@product.Name</h5>
+              <div class="stars">
+                @for (int r = 1; r <= 5; r++)
+                {
+                    if (r <= product.Rating)
+                    {
+                        <i class="fa fa-star" style="color: #ffa500;"></i>
+                    }
+                    else
+                    {
+                        <i class="fa fa-star" style="color: #6c757d;"></i>
+                    }
                 }
+              </div>
+              <p class="card-text">Pris: @product.Price kr</p>
+              <!--Lägg in funktion för att lägga till i varukorgen!-->
+              <a class="btn btn-primary">Köp</a>
+            </div>
+          </div>
+         </a>
+        }
       </div>
+    }
+  </div>
 </div>
-<hr />
-<div class="container d-flex align-content-center justify-content-center align-bottom text-center p-3">
+
+<div class="container d-flex justify-content-center text-center">
+
+    <button class="fa fa-chevron-left border-0 prev-btn" style="background-color: transparent;"@onclick="() => PageNavigation(-1)"></button>
+    <p class="p-1 mt-3">@index / @Math.Ceiling(maxPages) </p>
+    <button class="fa fa-chevron-right border-0 next-btn" style="background-color: transparent;" @onclick="() => PageNavigation(1)"></button>
+
     @if(index != 1)
     {
-        <button class="m-2" @onclick="() => PageNavigation(-1)">Prev</button>
-    } 
-
-    <p>@index / @Math.Ceiling(maxPages) </p>
+        <style>
+        .prev-btn {
+           visibility: visible;
+        }
+        </style>
+    }
+    else
+    {
+        <style>
+        .prev-btn{
+            visibility: hidden;
+        }
+        </style>
+    }
 
     @if(index != maxPages)
     {
-        <button class="m-2" @onclick="() => PageNavigation(1)">Next</button>
+        <style>
+        .next-btn {
+           visibility: visible;
+        }
+        </style>
     }
+    else
+    {
+        <style>
+            .next-btn {
+                visibility: hidden;
+            }
+        </style>
+    }
+
 </div>
 
 @code {
 
     List<ProductDto> products = new List<ProductDto>();
     List<ProductDto> currentProducts = new List<ProductDto>();
-    int maxProductsPerPage = 8;
+    int maxProductsPerPage = 9;
     int index = 1;
     decimal maxPages;
 
+    bool isFirstProduct = true;
 
     protected override async Task OnInitializedAsync()
     {
@@ -56,7 +104,7 @@
         var rand = new Random();
         for(int i = 0; i < 25;  i++)
         {
-            products.Add(new ProductDto { ProductId = 0, Name = "Spel" + i, Price = 599, Rating = rand.Next(1, 5) });
+            products.Add(new ProductDto { ProductId = i, Name = "Spel" + i, Price = 599, Rating = rand.Next(1, 5) });
         }
 
         for(int i = 25; i < 50;  i++)
@@ -94,6 +142,7 @@
     {
         index = index + page;
         DisplayProducts();
+        //Diskutera med gruppen om vi ska ha detta
         //await JsRuntime.InvokeVoidAsync("OnScrollEvent");   
     }
 
