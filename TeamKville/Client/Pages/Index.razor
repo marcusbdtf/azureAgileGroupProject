@@ -4,23 +4,21 @@
 
 <div class="container shadow" style="background-color: white;">
 	<h3 class="p-3 text-center">Kommande Event</h3>
-	<div class="container p-3 shadow w-50 h-75 text-center align-content-center justify-content-center">
-		<div class="position-relative" style="max-width: 100vh; max-height: 90vh;">
+	<div class="container text-center">
+		<div class="card mx-auto d-block w-50 h-50 shadow-sm">
 			<!--TBD!! Ändra baserat på hur vi navigerar till event-->
-			<a href="/event/@id">
-				<img src=@SharedClass.GetImage("event", id) class="img-fluid">
-				<div class="carousel-caption text-start position-absolute bottom-0" style="color: white; background-color: rgba(0,0,0,0.8); right: 0; left: 0;">
-					<div class="px-4">
+			<img src=@SharedClass.GetImage("event", id) class="card-img-top"style="object-fit: contain;">
+			<div class="card-body">
+				<div class="cardcard-title">					
 						<h4>@name</h4>
 						<p>@description</p>
 						<h5>Datum: @date</h5>
-					</div>
 				</div>
-			</a>
+				<a href="/event/@id" class="btn btn-primary">Läs mer</a>
+			</div>	
 		</div>
 	</div>
-
-
+	
 	<h3 class="p-3 text-center">Rekommenderade Produkter</h3>
 	<div class="container p-3 text-center control-container shadow" style="max-width: 80vh; height: 50vh; background-color: white; margin: 0 auto;">
 		<SfCarousel>
@@ -80,7 +78,7 @@
 		name = "Nördgibb";
 		description = "Wow kolla vilket coolt lan event!";
 		date = DateTime.Now;
-		id = 1;
+		id = 2;
 	}
 
 	void GetRecommendedProducts()
