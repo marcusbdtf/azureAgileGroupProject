@@ -45,10 +45,15 @@
   <div class="container text-start p-2">
       <label for="category">Kategori: </label>
       <select class="align-self-center w-100" name="category" id="category" @bind="categoryFilter">
-           <!--Automatisera senare när API är klart-->
-          <option value="game">Spel</option>
-          <option value="peripherals">Speltillbehör</option>
-          <option value="miscallaneous">Övrigt</option>
+          @foreach(var category in categories)
+            {
+                if(category != null)
+                {
+                    <option value="@category">@SharedClass.CapitalizeFirstLetter(category)</option>
+                }
+                    
+            }
+          
       </select>
   </div>
 
@@ -57,11 +62,18 @@
     <div class="container text-start p-2" id="genre">
         <label for="genre">Genre: </label>
         <select class="align-self-center w-100" name="genre" id="genre" @bind="genreFilter">
-            <!--Automatisera senare när API är klart-->
+
             <option value=""></option>
-            <option value="action">Action</option>
-            <option value="adventure">Äventyr</option>
-            <option value="rpg">Rollspel</option>
+
+            @foreach(var genre in genres)
+            {
+                if(genre != null)
+                {
+                    <option value="@genre">@SharedClass.CapitalizeFirstLetter(genre)</option>
+                }
+                    
+            }
+                      
         </select>
     </div>
 
@@ -225,6 +237,8 @@ else
     bool priceFilterEnabled = false;
 
     int maxPrice;
+    List<string> genres = new List<string>();
+    List<string> categories = new List<string>();
     int[] ageSliderValue = { 3, 18 };
     int[] priceSliderValue = { 0, 0};
 
@@ -234,19 +248,25 @@ else
     {
         //Fake produktlista för testing
         var rand = new Random();
+
+        string[] tempGenres = {"action", "adventure", "rpg","racing"};
+        int[] tempAges = { 3, 7, 12, 16, 18 };
+
         for(int i = 0; i < 25;  i++)
         {
-            allProducts.Add(new ProductDto { ProductId = i, Name = "Spel" + i, Category = "game", Genre = "action", Age = 18, Price = 599, Rating = rand.Next(1, 5) });
+            allProducts.Add(new ProductDto { ProductId = i, Name = "Spel" + i, Category = "game", Genre = tempGenres[rand.Next(0,3)], Age = tempAges[rand.Next(0,5)], Price = 599, Rating = rand.Next(1, 5) });
         }
 
         for(int i = 25; i < 50;  i++)
         {
-            allProducts.Add(new ProductDto { ProductId = 4, Name = "Kontroller" + i, Category = "peripherals", Price = 799, Rating = rand.Next(1, 5) });
+            allProducts.Add(new ProductDto { ProductId = i, Name = "Kontroller" + i, Category = "peripherals", Price = 799, Rating = rand.Next(1, 5) });
         }
 
         products = allProducts;
 
-        CalculateHighestPrice();    
+        CalculateHighestPrice();
+        GetCategories();
+        GetGenres(); 
         DisplayProducts();
 
     }
@@ -323,6 +343,27 @@ else
         maxPrice = Convert.ToInt32(highestPricedProduct.Price);
         priceSliderValue[1] = maxPrice;
     }
+
+
+    void GetCategories()
+    {
+        var pCategories = allProducts.GroupBy(p => p.Category).Select(p => p.First()).ToList();
+        foreach(var p in pCategories)
+        {
+            categories.Add(p.Category);
+        }
+    }
+
+    void GetGenres()
+    {
+        var pGenres = allProducts.GroupBy(p => p.Genre).Select(p => p.First()).ToList();
+        foreach(var p in pGenres)
+        {
+            genres.Add(p.Genre);
+        }
+    }
+
+    
 
 
     void Filter()

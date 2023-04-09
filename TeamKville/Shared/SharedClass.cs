@@ -7,5 +7,10 @@ namespace TeamKville.Shared
             //Ändra till environment variable
             return ($"https://teamkvillestorage.blob.core.windows.net/{type}/{id}.png");
         }
+
+        public static string CapitalizeFirstLetter(string input)
+        {
+            return char.ToUpper(input[0]) + input.Substring(1);
+        }
     }
 }
