@@ -5,6 +5,8 @@
 @using Syncfusion.Blazor;
 @using Syncfusion.Blazor.Inputs;
 @inject IJSRuntime JsRuntime;
+
+
 <div class="container shadow">
 <h1 class="text-center p-2 pt-4">Produkter</h1>
 
@@ -14,94 +16,86 @@
     <input class="mx-2 rounded-1" type="text" placeholder="Sök..." @oninput="UpdateSearchBox" @onkeydown="SearchOnKeyDown"/>
     <button class="fa fa-search border-0" style="background-color: transparent;" @onclick="Search"></button>
 </div>
-<style>
-
-    #filter-tab {
-        z-index: 1;
-        position: fixed;
-        top: 0;
-        left: -300px;
-        width: 300px;
-        height: 100%;
-        background-color: #fff;
-        box-shadow: 0 0 10px rgba(0,0,0,0.3);
-        transition: left 0.3s ease-in-out;
-    }
-
-    #filter-tab.open {
-        left: 0;
-    }
-
-</style>
-
 
 
 <!--FILTRERINGSMENYN-->
 <div id="filter-tab">
-    <div class="container shadow-sm text-end">
-      <button class="fa fa-close border-0" style="background-color: transparent;" @onclick="FilterTab"></button>
-      <h2 class="text-center pb-4">Filter</h2>
-  </div>
+    <div class="container text-end">
+    <button class="fa fa-close border-0" style="background-color: transparent;" @onclick="FilterTab"></button>
+    <h2 class="text-center pb-4">Filter</h2>
+</div>
 
-  <div class="accordion" id="filterAccordion">
-      <div class="accordion-item">
-      <div class="container text-start p-2">
-          <h2 class="accordion-header" id="categoryHeading">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#categoryCollapse" @onclick="ToggleCategoryFilter" aria-expanded="false" aria-controls="categoryCollapse">
-                Kategori
-              </button>
-          </h2>
-          <div id="categoryCollapse" class="accordion-collapse collapse" aria-labelledby="categoryHeading">
-          <div class="accordion-body">
-          <select class="align-self-center w-100" name="category" id="category" @bind="categoryFilter">
-              @foreach(var category in categories)
-                {
-                    if(category != null)
-                    {
-                        <option value="@category">@SharedClass.CapitalizeFirstLetter(category)</option>
-                    }
-                    
-                }
-          
-          </select>
+   <!--KATEGORIFILTER-->
+    <div class="container px-0 py-0 pb-5">
+       <div class="accordion" id="filterAccordion">
+          <div class="accordion-item">
+          <div class="container text-start p-2">
+              <h2 class="accordion-header" id="categoryHeading">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#categoryCollapse" @onclick="ToggleCategoryFilter" aria-expanded="false" aria-controls="categoryCollapse">
+                    Kategori
+                  </button>
+              </h2>
+              <div id="categoryCollapse" class="accordion-collapse collapse" aria-labelledby="categoryHeading">
+                  <div class="accordion-body">
+                      <div class="align-self-center w-100">
+             
+                          @foreach(var category in availableCatagories)
+                          {
+                              if(category != null)
+                              {
+                                  <div class="form-check">
+                                      <input class="form-check-input" type="radio" value="@category" name="category" id="flexRadioDefault" @onchange="() => SelectedCategory(category)"/>
+                                      <label class="form-check-label" for="flexRadioDefault">
+                                          @SharedClass.CapitalizeFirstLetter(category) (@allProducts.Where(p => p.Category == category).ToList().Count())
+                                      </label>
+                                  </div>                    
+                              }                 
+                          }        
+                      </div>
+                  </div>
+              </div>
           </div>
           </div>
-      </div>
-      </div>
     
-      @if(categoryFilter == "game")
-      {
+          @if(selectedCategory == "game")
+          {
+            <!--GENREFILTER-->
             <div class="accordion-item">
             <div class="container text-start p-2" id="genre">
                 <h2 class="accordion-header" id="genreHeading"> 
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#genreCollapse" @onclick="ToggleGenreFilter"aria-expanded="false" aria-controls="genreCollapse">
-                       Genre
+                        Genre
                     </button>
                 </h2>
                 <div id="genreCollapse" class="accordion-collapse collapse" aria-labelledby="genreHeading">
                     <div class="accordion-body">
-                    <select class="align-self-center w-100" name="genre" id="genre" @bind="genreFilter">
+                        <div class="align-self-center w-100">
 
-                        @foreach(var genre in genres)
-                        {
-                            if(genre != null)
+                            @foreach(var genre in availableGenres)
                             {
-                                <option value="@genre">@SharedClass.CapitalizeFirstLetter(genre)</option>
-                            }
+                                if(genre != null)
+                                {
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="@genre" id="flexCheckDefault" @onclick="@(e => AddSelectedGenres(genre))" />
+                                        <label class="form-check-label" for="flexCheckDefault">
+                                            @SharedClass.CapitalizeFirstLetter(genre)  (@allProducts.Where(p => p.Genre == genre).ToList().Count())
+                                        </label>
+                                    </div>
+                                }
                     
-                        }
+                            }
                       
-                    </select>
+                        </div>
                     </div>
                 </div>
             </div>
-
+            <!--ÅLDERFILTER-->
             </div>
             <div class="accordion-item">
                 <div class="container text-start position-relative p-2" id="age">
                     <h2 class="accordion-header" id="ageHeading">
                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ageCollapse" @onclick="ToggleAgeFilter" aria-expanded="false" aria-controls="ageCollapse">
-                           Ålder
+                            Ålder
                         </button>
                     </h2>
                     <div id="ageCollapse" class="accordion-collapse collapse" aria-labelledby="ageHeading">
@@ -121,32 +115,31 @@
             </div>
 
    
-      }
-
-        <div class="accordion-item">
-            <div class="container text-start position-relative p-2">
-            <h2 class="accordion-header" id="priceHeading">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#priceCollapse" @onclick="TogglePriceFilter" aria-expanded="false" aria-controls="priceCollapse">
-                    Pris
-                </button>
-            </h2>
-            <div id="priceCollapse" class="accordion-collapse collapse" aria-labelledby="priceHeading">
-                <div class="accordion-body">    
-                    <div class="container align-items-center">
-                        <SfSlider Min="0" Max="maxPrice" @bind-Value="priceSliderValue" Type="SliderType.Range">
-                            <SliderTooltip IsVisible="true"></SliderTooltip>
-                            <SliderLimits Enabled="true" MinStart="0" MinEnd="0" MaxEnd="maxPrice" MaxStart="0"></SliderLimits>
-                        </SfSlider>
-                        <p class="text-center">@priceSliderValue[0] - @priceSliderValue[1] kr</p>
-                    </div>
+          }
+           <!--PRISFILTER-->
+            <div class="accordion-item">
+                <div class="container text-start position-relative p-2">
+                <h2 class="accordion-header" id="priceHeading">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#priceCollapse" @onclick="TogglePriceFilter" aria-expanded="false" aria-controls="priceCollapse">
+                        Pris
+                    </button>
+                </h2>
+                    <div id="priceCollapse" class="accordion-collapse collapse" aria-labelledby="priceHeading">
+                        <div class="accordion-body">    
+                            <div class="container align-items-center">
+                                <SfSlider Min="0" Max="maxPrice" @bind-Value="priceSliderValue" Type="SliderType.Range">
+                                    <SliderTooltip IsVisible="true"></SliderTooltip>
+                                    <SliderLimits Enabled="true" MinStart="0" MinEnd="0" MaxEnd="maxPrice" MaxStart="0"></SliderLimits>
+                                </SfSlider>
+                                <p class="text-center">@priceSliderValue[0] - @priceSliderValue[1] kr</p>
+                            </div>
+                        </div>
+                    </div>           
                 </div>
             </div>
-            
-       
-            </div>
-        </div>
-  </div>
-
+       </div>
+    </div>
+  <!--FILTERKNAPP-->
     <div class="container d-flex justify-content-center">
         <button class="btn btn-primary m-1" @onclick="Filter">Filtrera</button>
         <button class="btn btn-secondary m-1" @onclick="ResetFilter">Rensa filter</button>
@@ -191,7 +184,7 @@ else
                     }
                 }
               </div>
-              <p class="card-text">Pris: @product.Price kr Ålder: @product.Age</p>
+              <p class="card-text">Pris: @product.Price kr</p>
            
               <!--Lägg in funktion för att lägga till i varukorgen!-->
               <button class="btn btn-primary">Köp</button>
@@ -263,8 +256,8 @@ else
     //Filtreringens variabler
     bool isFilterOpen = false;
     string? nameFilter = null;
-    string? categoryFilter; //Ändra sen beroende på hur category fungerar
-    string? genreFilter;
+    string? selectedCategory;
+    List<string> selectedGenres = new List<string>();
 
     bool categoryFilterEnabled = false;
     bool genreFilterEnabled = false;
@@ -272,8 +265,8 @@ else
     bool priceFilterEnabled = false;
 
     int maxPrice;
-    List<string> genres = new List<string>();
-    List<string> categories = new List<string>();
+    List<string> availableGenres = new List<string>();
+    List<string> availableCatagories = new List<string>();
     int[] ageSliderValue = { 3, 18 };
     int[] priceSliderValue = { 0, 0};
 
@@ -385,10 +378,8 @@ else
         var pCategories = allProducts.OrderBy(p => p.Category).GroupBy(p => p.Category).Select(p => p.First()).ToList();
         foreach(var p in pCategories)
         {
-            categories.Add(p.Category);
+            availableCatagories.Add(p.Category);
         }
-
-        categoryFilter = categories.First();
     }
 
     void GetGenres()
@@ -396,10 +387,8 @@ else
         var pGenres = allProducts.OrderBy(p => p.Genre).GroupBy(p => p.Genre).Select(p => p.First()).ToList();
         foreach(var p in pGenres)
         {
-            genres.Add(p.Genre);
+            availableGenres.Add(p.Genre);
         }
-
-        genreFilter = genres.First();
     }
 
     void ToggleCategoryFilter()
@@ -422,13 +411,30 @@ else
         priceFilterEnabled = !priceFilterEnabled;
     }
 
+    private void SelectedCategory(string category)
+    {
+        selectedCategory = category;
+    }
+
+    private void AddSelectedGenres(string genre)
+    {
+        if (selectedGenres.Contains(genre))
+        {
+            selectedGenres.Remove(genre);
+        }
+        else
+        {
+            selectedGenres.Add(genre);
+        }
+    }
+
     void Filter()
     {
         ResetFilter();
 
-        if(categoryFilterEnabled)
+        if(categoryFilterEnabled && selectedCategory != null)
         {
-            products = allProducts.Where(product => product.Category == categoryFilter).ToList();
+            products = allProducts.Where(product => product.Category == selectedCategory).ToList();
         }
        
         if(ageFilterEnabled)
@@ -443,7 +449,7 @@ else
 
         if(genreFilterEnabled)
         {
-            products = products.Where(product => product.Genre == genreFilter).ToList();
+            products = allProducts.Where(product => selectedGenres.Contains(product.Genre)).ToList();
         }
 
         DisplayProducts();
@@ -457,5 +463,29 @@ else
 
 
 }
+
+<style>
+
+    #filter-tab {
+        z-index: 1;
+        position: fixed;
+        top: 0;
+        left: -300px;
+        width: 300px;
+        height: 100%;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        transition: left 0.3s ease-in-out;
+    }
+
+        #filter-tab.open {
+            left: 0;
+        }
+
+    .accordion-item, .accordion-button {
+        border-radius: 0 !important;
+    }
+
+</style>
 
 
