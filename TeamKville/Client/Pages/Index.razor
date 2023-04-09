@@ -27,12 +27,12 @@
 			{
 				<CarouselItem>
 					<div class="carousel-caption" style="color: black;">
-						<img class="card-img-top pt-2 pb-2" style="height: 250px; object-fit: contain;" src=@SharedClass.GetImage("product", product.ProductId)/>
+						<img class="card-img-top pt-2 pb-2" style="height: 250px; object-fit: contain;" src=@SharedClass.GetImage("product", product.Id)/>
 						<div class="border-top" style="padding:1rem;">
 							<h5>@product.Name</h5>
 							<p>@product.Price kr</p>
 							<!--TBD!! Ändra baserat på hur vi navigerar till produkter-->
-							<a href="/product/@product.ProductId" class="btn btn-primary">Läs mer</a>
+							<a href="/product/@product.Id" class="btn btn-primary">Läs mer</a>
 						</div>
 					</div>
 				</CarouselItem>
@@ -87,7 +87,7 @@
 		var rand = new Random();
 		for (int i = 0; i < 25; i++)
 		{
-			allProducts.Add(new ProductDto { ProductId = i, Name = "Spel" + i, Category = "game", Genre = "action", Age = 18, Price = 599, Rating = rand.Next(1, 5) });
+			allProducts.Add(new ProductDto { Id = i, Name = "Spel" + i, Category = "game", Genre = "action", Age = 18, Price = 599, Rating = rand.Next(1, 5) });
 		}
 
 		//Lägg till funktion som räknar ut toppgenre när API är klart

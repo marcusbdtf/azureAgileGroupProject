@@ -166,8 +166,8 @@ else
           <!--Ändra baserat på hur vi ska navigera till produkten-->
           
           <div class="card m-0 shadow-sm">
-           <a href="/product/@product.ProductId" style="text-decoration: none; color: black;">
-            <img src="@SharedClass.GetImage("product", product.ProductId)" class="card-img-top pt-2 pb-2" style="height: 200px; object-fit: contain;">
+           <a href="/product/@product.Id" style="text-decoration: none; color: black;">
+            <img src="@SharedClass.GetImage("product", product.Id)" class="card-img-top pt-2 pb-2" style="height: 200px; object-fit: contain;">
             </a>
             <div class="card-body border-top">
               <h5 class="card-title">@product.Name</h5>
@@ -282,12 +282,12 @@ else
 
         for(int i = 0; i < 25;  i++)
         {
-            allProducts.Add(new ProductDto { ProductId = i, Name = "Spel" + i, Category = "game", Genre = tempGenres[rand.Next(0,3)], Age = tempAges[rand.Next(0,5)], Price = 599, Rating = rand.Next(1, 5) });
+            allProducts.Add(new ProductDto { Id = i, Name = "Spel" + i, Category = "game", Genre = tempGenres[rand.Next(0,3)], Age = tempAges[rand.Next(0,5)], Price = 599, Rating = rand.Next(1, 5) });
         }
 
         for(int i = 25; i < 50;  i++)
         {
-            allProducts.Add(new ProductDto { ProductId = i, Name = "Kontroller" + i, Category = "peripherals", Price = 799, Rating = rand.Next(1, 5) });
+            allProducts.Add(new ProductDto { Id = i, Name = "Kontroller" + i, Category = "peripherals", Price = 799, Rating = rand.Next(1, 5) });
         }
 
         products = allProducts;
