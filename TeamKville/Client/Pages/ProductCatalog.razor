@@ -5,6 +5,8 @@
 @using Syncfusion.Blazor;
 @using Syncfusion.Blazor.Inputs;
 @inject IJSRuntime JsRuntime;
+
+
 <div class="container shadow">
 <h1 class="text-center p-2 pt-4">Produkter</h1>
 
@@ -14,99 +16,134 @@
     <input class="mx-2 rounded-1" type="text" placeholder="Sök..." @oninput="UpdateSearchBox" @onkeydown="SearchOnKeyDown"/>
     <button class="fa fa-search border-0" style="background-color: transparent;" @onclick="Search"></button>
 </div>
-<style>
-
-    #filter-tab {
-        z-index: 1;
-        position: fixed;
-        top: 0;
-        left: -300px;
-        width: 300px;
-        height: 100%;
-        background-color: #fff;
-        box-shadow: 0 0 10px rgba(0,0,0,0.3);
-        transition: left 0.3s ease-in-out;
-    }
-
-    #filter-tab.open {
-        left: 0;
-    }
-
-</style>
-
 
 
 <!--FILTRERINGSMENYN-->
 <div id="filter-tab">
-    <div class="container shadow-sm text-end">
-      <button class="fa fa-close border-0" style="background-color: transparent;" @onclick="FilterTab"></button>
-      <h2 class="text-center pb-4">Filter</h2>
-  </div>
-  <div class="container text-start p-2">
-      <label for="category">Kategori: </label>
-      <select class="align-self-center w-100" name="category" id="category" @bind="categoryFilter">
-           <!--Automatisera senare när API är klart-->
-          <option value="game">Spel</option>
-          <option value="peripherals">Speltillbehör</option>
-          <option value="miscallaneous">Övrigt</option>
-      </select>
-  </div>
+    <div class="container text-end">
+    <button class="fa fa-close border-0" style="background-color: transparent;" @onclick="FilterTab"></button>
+    <h2 class="text-center pb-4">Filter</h2>
+</div>
 
-  @if(categoryFilter == "game")
-  {
-    <div class="container text-start p-2" id="genre">
-        <label for="genre">Genre: </label>
-        <select class="align-self-center w-100" name="genre" id="genre" @bind="genreFilter">
-            <!--Automatisera senare när API är klart-->
-            <option value=""></option>
-            <option value="action">Action</option>
-            <option value="adventure">Äventyr</option>
-            <option value="rpg">Rollspel</option>
-        </select>
-    </div>
+   <!--KATEGORIFILTER-->
+    <div class="container px-0 py-0 pb-5">
+       <div class="accordion" id="filterAccordion">
+          <div class="accordion-item">
+          <div class="container text-start p-2">
+              <h2 class="accordion-header" id="categoryHeading">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#categoryCollapse" @onclick="ToggleCategoryFilter" aria-expanded="false" aria-controls="categoryCollapse">
+                    Kategori
+                  </button>
+              </h2>
+              <div id="categoryCollapse" class="accordion-collapse collapse" aria-labelledby="categoryHeading">
+                  <div class="accordion-body">
+                      <div class="align-self-center w-100">
+             
+                          @foreach(var category in availableCatagories)
+                          {
+                              if(category != null)
+                              {
+                                  <div class="form-check">
+                                      <input class="form-check-input" type="radio" value="@category" name="category" id="flexRadioDefault" @onchange="() => SelectedCategory(category)"/>
+                                      <label class="form-check-label" for="flexRadioDefault">
+                                          @SharedClass.CapitalizeFirstLetter(category) (@allProducts.Where(p => p.Category == category).ToList().Count())
+                                      </label>
+                                  </div>                    
+                              }                 
+                          }        
+                      </div>
+                  </div>
+              </div>
+          </div>
+          </div>
+    
+          @if(selectedCategory == "game")
+          {
+            <!--GENREFILTER-->
+            <div class="accordion-item">
+            <div class="container text-start p-2" id="genre">
+                <h2 class="accordion-header" id="genreHeading"> 
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#genreCollapse" @onclick="ToggleGenreFilter"aria-expanded="false" aria-controls="genreCollapse">
+                        Genre
+                    </button>
+                </h2>
+                <div id="genreCollapse" class="accordion-collapse collapse" aria-labelledby="genreHeading">
+                    <div class="accordion-body">
+                        <div class="align-self-center w-100">
 
-    <div class="container text-start position-relative p-2" id="age">
-        <div class="form-check form-switch">
-            <input class="form-check-input"type="checkbox" @bind-value="ageFilterEnabled"/>
-            <label for="age">Ålder: </label>
-        </div>
-        @if(ageFilterEnabled)
-        {
-            <div class="container w-100 my-1 text-center">
-            <SfSlider Min="3" Max="18" @bind-Value="ageSliderValue" Type="SliderType.Range">
-                <SliderTooltip IsVisible="true"></SliderTooltip>
-                <SliderLimits Enabled="true" MinStart="3" MinEnd="12" MaxEnd="18" MaxStart="12"></SliderLimits>
-            </SfSlider>
-                <p class="text-center">Från @ageSliderValue[0] - @ageSliderValue[1] år.</p>
+                            @foreach(var genre in availableGenres)
+                            {
+                                if(genre != null)
+                                {
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="@genre" id="flexCheckDefault" @onclick="@(e => AddSelectedGenres(genre))" />
+                                        <label class="form-check-label" for="flexCheckDefault">
+                                            @SharedClass.CapitalizeFirstLetter(genre)  (@allProducts.Where(p => p.Genre == genre).ToList().Count())
+                                        </label>
+                                    </div>
+                                }
+                    
+                            }
+                      
+                        </div>
+                    </div>
+                </div>
             </div>
-        }        
-    </div>
+            <!--ÅLDERFILTER-->
+            </div>
+            <div class="accordion-item">
+                <div class="container text-start position-relative p-2" id="age">
+                    <h2 class="accordion-header" id="ageHeading">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#ageCollapse" @onclick="ToggleAgeFilter" aria-expanded="false" aria-controls="ageCollapse">
+                            Ålder
+                        </button>
+                    </h2>
+                    <div id="ageCollapse" class="accordion-collapse collapse" aria-labelledby="ageHeading">
+                    <div class="accordion-body">
+
+                        <div class="container w-100 my-1 text-center">
+                        <SfSlider Min="3" Max="18" @bind-Value="ageSliderValue" Type="SliderType.Range">
+                            <SliderTooltip IsVisible="true"></SliderTooltip>
+                            <SliderLimits Enabled="true" MinStart="3" MinEnd="18" MaxEnd="18" MaxStart="3"></SliderLimits>
+                        </SfSlider>
+                            <p class="text-center">Från @ageSliderValue[0] - @ageSliderValue[1] år.</p>
+                        </div>
+                          
+                    </div>
+                </div>
+                </div>
+            </div>
 
    
-  }
-
- <div class="container text-start position-relative p-2">
-     <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" @bind-value="priceFilterEnabled" />
-             <label for="price">Prisklass: </label>
-     </div>
-    
-   @if(priceFilterEnabled)
-   {
-            <div class="container align-items-center">
-                <SfSlider Min="0" Max="maxPrice" @bind-Value="priceSliderValue" Type="SliderType.Range">
-                    <SliderTooltip IsVisible="true"></SliderTooltip>
-                    <SliderLimits Enabled="true" MinStart="0" MinEnd="(maxPrice / 2)" MaxEnd="maxPrice" MaxStart="(maxPrice / 2)"></SliderLimits>
-                </SfSlider>
-                <p class="text-center">@priceSliderValue[0] - @priceSliderValue[1] kr</p>
+          }
+           <!--PRISFILTER-->
+            <div class="accordion-item">
+                <div class="container text-start position-relative p-2">
+                <h2 class="accordion-header" id="priceHeading">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#priceCollapse" @onclick="TogglePriceFilter" aria-expanded="false" aria-controls="priceCollapse">
+                        Pris
+                    </button>
+                </h2>
+                    <div id="priceCollapse" class="accordion-collapse collapse" aria-labelledby="priceHeading">
+                        <div class="accordion-body">    
+                            <div class="container align-items-center">
+                                <SfSlider Min="0" Max="maxPrice" @bind-Value="priceSliderValue" Type="SliderType.Range">
+                                    <SliderTooltip IsVisible="true"></SliderTooltip>
+                                    <SliderLimits Enabled="true" MinStart="0" MinEnd="0" MaxEnd="maxPrice" MaxStart="0"></SliderLimits>
+                                </SfSlider>
+                                <p class="text-center">@priceSliderValue[0] - @priceSliderValue[1] kr</p>
+                            </div>
+                        </div>
+                    </div>           
+                </div>
             </div>
-            
-   }
- </div>
-  <div class="container d-flex justify-content-center">
-      <button class="btn btn-primary m-1" @onclick="Filter">Filtrera</button>
-       <button class="btn btn-secondary m-1" @onclick="ResetFilter">Rensa filter</button>
-  </div>
+       </div>
+    </div>
+  <!--FILTERKNAPP-->
+    <div class="container d-flex justify-content-center">
+        <button class="btn btn-primary m-1" @onclick="Filter">Filtrera</button>
+        <button class="btn btn-secondary m-1" @onclick="ResetFilter">Rensa filter</button>
+    </div>
 
 </div>
 
@@ -219,13 +256,17 @@ else
     //Filtreringens variabler
     bool isFilterOpen = false;
     string? nameFilter = null;
-    string? categoryFilter = "game"; //Ändra sen beroende på hur category fungerar
-    string? genreFilter = "";
+    string? selectedCategory;
+    List<string> selectedGenres = new List<string>();
 
+    bool categoryFilterEnabled = false;
+    bool genreFilterEnabled = false;
     bool ageFilterEnabled = false;
     bool priceFilterEnabled = false;
 
     int maxPrice;
+    List<string> availableGenres = new List<string>();
+    List<string> availableCatagories = new List<string>();
     int[] ageSliderValue = { 3, 18 };
     int[] priceSliderValue = { 0, 0};
 
@@ -235,9 +276,13 @@ else
     {
         //Fake produktlista för testing
         var rand = new Random();
+
+        string[] tempGenres = {"action", "adventure", "rpg","racing"};
+        int[] tempAges = { 3, 7, 12, 16, 18 };
+
         for(int i = 0; i < 25;  i++)
         {
-            allProducts.Add(new ProductDto { ProductId = i, Name = "Spel" + i, Category = "game", Genre = "action", Age = 18, Price = 599, Rating = rand.Next(1, 5) });
+            allProducts.Add(new ProductDto { ProductId = i, Name = "Spel" + i, Category = "game", Genre = tempGenres[rand.Next(0,3)], Age = tempAges[rand.Next(0,5)], Price = 599, Rating = rand.Next(1, 5) });
         }
 
         for(int i = 25; i < 50;  i++)
@@ -247,7 +292,9 @@ else
 
         products = allProducts;
 
-        CalculateHighestPrice();    
+        CalculateHighestPrice();
+        GetCategories();
+        GetGenres(); 
         DisplayProducts();
 
     }
@@ -326,10 +373,70 @@ else
     }
 
 
+    void GetCategories()
+    {
+        var pCategories = allProducts.OrderBy(p => p.Category).GroupBy(p => p.Category).Select(p => p.First()).ToList();
+        foreach(var p in pCategories)
+        {
+            availableCatagories.Add(p.Category);
+        }
+    }
+
+    void GetGenres()
+    {
+        var pGenres = allProducts.OrderBy(p => p.Genre).GroupBy(p => p.Genre).Select(p => p.First()).ToList();
+        foreach(var p in pGenres)
+        {
+            availableGenres.Add(p.Genre);
+        }
+    }
+
+    void ToggleCategoryFilter()
+    {
+        categoryFilterEnabled = !categoryFilterEnabled;
+    }
+
+    void ToggleGenreFilter()
+    {
+        genreFilterEnabled = !genreFilterEnabled;
+    }
+
+    void ToggleAgeFilter()
+    {
+        ageFilterEnabled = !ageFilterEnabled;
+    }
+
+    void TogglePriceFilter()
+    {
+        priceFilterEnabled = !priceFilterEnabled;
+    }
+
+    private void SelectedCategory(string category)
+    {
+        selectedCategory = category;
+    }
+
+    private void AddSelectedGenres(string genre)
+    {
+        if (selectedGenres.Contains(genre))
+        {
+            selectedGenres.Remove(genre);
+        }
+        else
+        {
+            selectedGenres.Add(genre);
+        }
+    }
+
     void Filter()
     {
-        products = allProducts.Where(product => product.Category == categoryFilter).ToList();
+        ResetFilter();
 
+        if(categoryFilterEnabled && selectedCategory != null)
+        {
+            products = allProducts.Where(product => product.Category == selectedCategory).ToList();
+        }
+       
         if(ageFilterEnabled)
         {
             products = products.Where(product => product.Age >= ageSliderValue[0]).Where(product => product.Age <= ageSliderValue[1]).ToList();
@@ -340,9 +447,9 @@ else
             products = products.Where(product => product.Price >= priceSliderValue[0]).Where(product => product.Price <= priceSliderValue[1]).ToList();
         }
 
-        if(genreFilter != "")
+        if(genreFilterEnabled)
         {
-            products = products.Where(product => product.Genre == genreFilter).ToList();
+            products = allProducts.Where(product => selectedGenres.Contains(product.Genre)).ToList();
         }
 
         DisplayProducts();
@@ -356,5 +463,29 @@ else
 
 
 }
+
+<style>
+
+    #filter-tab {
+        z-index: 1;
+        position: fixed;
+        top: 0;
+        left: -300px;
+        width: 300px;
+        height: 100%;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        transition: left 0.3s ease-in-out;
+    }
+
+        #filter-tab.open {
+            left: 0;
+        }
+
+    .accordion-item, .accordion-button {
+        border-radius: 0 !important;
+    }
+
+</style>
 
 
