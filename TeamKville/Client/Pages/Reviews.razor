@@ -1,0 +1,42 @@
+﻿@using TeamKville.Shared;
+
+
+<div class="card m-1 d-flex">
+	<div class="card-body">
+		<div class="card-title m-0">
+			<h5>Namn</h5>									
+			<div class="stars ms-auto">				
+				@for (int r = 1; r <= 5; r++)
+				{
+					if (r <= 5)
+					{
+						<i class="fa fa-star" style="color: #ffa500;"></i>
+					}
+					else
+					{
+						<i class="fa fa-star" style="color: #6c757d;"></i>
+					}
+				}
+			</div>
+			<div class="card-text">
+				@SharedClass.loremIpsum;
+			</div>
+		</div>	
+		<em>2023-01-01</em>
+	</div>							
+</div>
+
+
+
+
+
+@code {
+
+	[CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; } = default!;
+
+	[Parameter] 
+	public int? ReviewId { get; set; }
+
+	private async Task Close() => await BlazoredModal.CloseAsync();
+
+}
