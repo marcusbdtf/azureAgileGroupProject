@@ -16,18 +16,13 @@ namespace TeamKville.Shared.Dto
         public string Description { get; set; }
 
         public decimal Price { get; set; }
-
-        //public Catergory category { get; set; }
-
-        //TEMPORÄRA PROPERTIES SÅ JAG KAN EXPERIMENTERA
         public string Genre { get; set; }
         public string Category { get; set; }
         public bool IsActive { get; set; }
 
         public int Age { get; set; }
-
         public int Rating { get; set; }
-        //public List<Comment> Comments { get; set; }
+
 
 
     }

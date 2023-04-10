@@ -19,7 +19,6 @@
 
         public int Rating { get; set; }
 
-        //public List<Comment> Comments { get; set; }
 
     }
 }

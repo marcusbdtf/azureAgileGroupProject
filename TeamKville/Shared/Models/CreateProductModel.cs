@@ -21,7 +21,5 @@ namespace TeamKville.Shared.Models
         public int Age { get; set; }
 
         public int Rating { get; set; }
-
-        //public List<Comment> Comments { get; set; }
     }
 }
