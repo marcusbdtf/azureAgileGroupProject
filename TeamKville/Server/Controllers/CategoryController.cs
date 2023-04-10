@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TeamKville.Server.Data.DataModels;
 using TeamKville.Server.Data.Repositories.Interfaces;
+using TeamKville.Shared.Dto;
 
 namespace TeamKville.Server.Controllers
 	{
 
-		[Route("[controller]")]
+		[Route("Category")]
 			[ApiController]
 			public class CategoryController : ControllerBase
 			{
@@ -20,9 +21,9 @@ namespace TeamKville.Server.Controllers
 				[ProducesResponseType(StatusCodes.Status200OK)]
 				[ProducesResponseType(StatusCodes.Status404NotFound)]
 
-				public async Task<ActionResult<IEnumerable<Category>>> GetCategories()
+				public async Task<ActionResult<IEnumerable<CategoryDto>>> GetCategories()
 				{
-					var categories = _categoryRepository.GetCategories();
+					var categories = await _categoryRepository.GetCategories();
 					return Ok(categories);
 				}
 

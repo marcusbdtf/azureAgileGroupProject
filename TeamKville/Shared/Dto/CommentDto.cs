@@ -1,6 +1,12 @@
-﻿namespace TeamKville.Server.Data.DataModels
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace TeamKville.Shared.Dto
 {
-    public class Comment
+    public class CommentDto
     {
         public int CommentId { get; set; }
         public string Name { get; set; }
@@ -8,10 +14,5 @@
         public int Rating { get; set; }
 
         public DateTime Date { get; set; }
-
-        public int ProductId { get; set; }
-        public Product Product { get; set; }
-
-
     }
 }
