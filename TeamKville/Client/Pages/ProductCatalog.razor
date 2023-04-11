@@ -8,7 +8,7 @@
 @inject IJSRuntime JsRuntime;
 @inject HttpClient HttpClient;
 
-@if(allProducts == null)
+@if(SharedClass.allProducts == null)
 {
     <p>Laddar...</p>
 }
@@ -53,7 +53,7 @@ else
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" value="@category" name="category" id="flexRadioDefault" @onchange="() => SelectedCategory(category.CategoryId)"/>
                                             <label class="form-check-label" for="flexRadioDefault">
-                                                @SharedClass.CapitalizeFirstLetter(category.Name) (@allProducts.Where(p => p.Category.Name == category.Name).ToList().Count())
+                                                @SharedClass.CapitalizeFirstLetter(category.Name) (@SharedClass.allProducts.Where(p => p.Category.Name == category.Name).ToList().Count())
                                             </label>
                                         </div>       
                                                 
@@ -95,7 +95,7 @@ else
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="checkbox" value="@genre" id="flexCheckDefault" @onclick="@(e => AddSelectedGenres(genre.GenreId))" />
                                                     <label class="form-check-label" for="flexCheckDefault">
-                                                        @SharedClass.CapitalizeFirstLetter(genre.Name)  (@allProducts.Where(p => p.Genre.Name == genre.Name).ToList().Count())
+                                                        @SharedClass.CapitalizeFirstLetter(genre.Name)  (@SharedClass.allProducts.Where(p => p.Genre.Name == genre.Name).ToList().Count())
                                                     </label>
                                                 </div>
                                             }
@@ -273,7 +273,6 @@ else
 
 @code {
     //Produktkatalogens variabler
-    List<ProductDto> allProducts = new List<ProductDto>();
     List<ProductDto> products = new List<ProductDto>();
     List<ProductDto> currentProducts = new List<ProductDto>();
     int maxProductsPerPage = 9;
@@ -302,9 +301,8 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        allProducts = await HttpClient.GetFromJsonAsync<List<ProductDto>>(HttpClient.BaseAddress + "api/product");        
-
-        products = allProducts;
+            
+        products = SharedClass.allProducts;
 
         CalculateHighestPrice();
         GetCategories();
@@ -375,13 +373,13 @@ else
     void Search()
     {
         index = 1;
-        products = allProducts.Where(product => product.Name.ToLower().Contains(nameFilter.ToLower())).ToList();
+        products = SharedClass.allProducts.Where(product => product.Name.ToLower().Contains(nameFilter.ToLower())).ToList();
         DisplayProducts();
     }
 
     void CalculateHighestPrice()
     {
-        ProductDto highestPricedProduct = allProducts.OrderByDescending(p => p.Price).First();
+        ProductDto highestPricedProduct = SharedClass.allProducts.OrderByDescending(p => p.Price).First();
         maxPrice = Convert.ToInt32(highestPricedProduct.Price);
         priceSliderValue[1] = maxPrice;
     }
@@ -389,7 +387,7 @@ else
 
     void GetCategories()
     {
-        var pCategories = allProducts.OrderBy(p => p.Category.Name).GroupBy(p => p.Category.Name).Select(p => p.First()).ToList();
+        var pCategories = SharedClass.allProducts.OrderBy(p => p.Category.Name).GroupBy(p => p.Category.Name).Select(p => p.First()).ToList();
 
         foreach (var p in pCategories)
         {
@@ -399,7 +397,7 @@ else
 
     void GetGenres()
     {
-        var pGenres = allProducts.OrderBy(p => p.Genre.Name).GroupBy(p => p.Genre.Name).Select(p => p.First()).ToList();
+        var pGenres = SharedClass.allProducts.OrderBy(p => p.Genre.Name).GroupBy(p => p.Genre.Name).Select(p => p.First()).ToList();
         foreach (var p in pGenres)
         {
             availableGenres.Add(p.Genre);
@@ -451,7 +449,7 @@ else
 
         if (categoryFilterEnabled && selectedCategory != null)
         {
-            products = allProducts.Where(product => product.Category.CategoryId == selectedCategory.CategoryId).ToList();
+            products = SharedClass.allProducts.Where(product => product.Category.CategoryId == selectedCategory.CategoryId).ToList();
         }
 
         if (ageFilterEnabled && selectedCategory?.CategoryId == 1)
@@ -466,7 +464,7 @@ else
 
         if (genreFilterEnabled && selectedCategory?.CategoryId == 1)
         {
-            products = allProducts.Where(product => selectedGenres.Contains(product.Genre.GenreId)).ToList();
+            products = SharedClass.allProducts.Where(product => selectedGenres.Contains(product.Genre.GenreId)).ToList();
         }
 
         DisplayProducts();
@@ -474,7 +472,7 @@ else
 
     void ResetFilter()
     {
-        products = allProducts;
+        products = SharedClass.allProducts;
         DisplayProducts();
     }
 
