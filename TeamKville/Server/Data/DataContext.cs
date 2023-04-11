@@ -15,6 +15,7 @@ namespace TeamKville.Server.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Genre> Genres { get; set; }
+        public DbSet<Event> Events { get; set; }
 
 
 
