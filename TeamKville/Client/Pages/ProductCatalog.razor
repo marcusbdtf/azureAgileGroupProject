@@ -46,7 +46,7 @@
                                     <div class="form-check">
                                         <input class="form-check-input" type="radio" value="@category" name="category" id="flexRadioDefault" @onchange="() => SelectedCategory(category)"/>
                                         <label class="form-check-label" for="flexRadioDefault">
-                                            @SharedClass.CapitalizeFirstLetter(category) (@allProducts.Where(p => p.Category == category).ToList().Count())
+                                            @SharedClass.CapitalizeFirstLetter(category) (@allProducts.Where(p => p.Category.Name == category).ToList().Count())
                                         </label>
                                     </div>                    
                                 }
@@ -78,7 +78,7 @@
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="@genre" id="flexCheckDefault" @onclick="@(e => AddSelectedGenres(genre))" />
                                         <label class="form-check-label" for="flexCheckDefault">
-                                            @SharedClass.CapitalizeFirstLetter(genre)  (@allProducts.Where(p => p.Genre == genre).ToList().Count())
+                                            @SharedClass.CapitalizeFirstLetter(genre)  (@allProducts.Where(p => p.Genre.Name == genre).ToList().Count())
                                         </label>
                                     </div>
                                 }
@@ -174,7 +174,8 @@
                                 <div class="stars">
                                     @for (int r = 1; r <= 5; r++)
                                     {
-                                        if (r <= product.Rating)
+                                        //ändra till totala comments star rating avg
+                                        if (r <= 5)
                                         {
                                         <i class="fa fa-star" style="color: #ffa500;"></i>
                                         }
@@ -276,7 +277,8 @@
     {
         //Fake produktlista för testing
 
-        allProducts = SharedClass.allProducts;
+        allProducts.Add(new ProductDto());
+
         products = allProducts;
 
         CalculateHighestPrice();
@@ -362,19 +364,20 @@
 
     void GetCategories()
     {
-        var pCategories = allProducts.OrderBy(p => p.Category).GroupBy(p => p.Category).Select(p => p.First()).ToList();
+        var pCategories = allProducts.OrderBy(p => p.Category.Name).GroupBy(p => p.Category.Name).Select(p => p.First()).ToList();;
+
         foreach (var p in pCategories)
         {
-            availableCatagories.Add(p.Category);
+            availableCatagories.Add(p.Category.Name);
         }
     }
 
     void GetGenres()
     {
-        var pGenres = allProducts.OrderBy(p => p.Genre).GroupBy(p => p.Genre).Select(p => p.First()).ToList();
+        var pGenres = allProducts.OrderBy(p => p.Genre.Name).GroupBy(p => p.Genre.Name).Select(p => p.First()).ToList();
         foreach (var p in pGenres)
         {
-            availableGenres.Add(p.Genre);
+            availableGenres.Add(p.Genre.Name);
         }
     }
 
@@ -421,7 +424,7 @@
 
         if (categoryFilterEnabled && selectedCategory != null)
         {
-            products = allProducts.Where(product => product.Category == selectedCategory).ToList();
+            products = allProducts.Where(product => product.Category.Name == selectedCategory).ToList();
         }
 
         if (ageFilterEnabled)
@@ -436,7 +439,7 @@
 
         if (genreFilterEnabled)
         {
-            products = allProducts.Where(product => selectedGenres.Contains(product.Genre)).ToList();
+            products = allProducts.Where(product => selectedGenres.Contains(product.Genre.Name)).ToList();
         }
 
         DisplayProducts();

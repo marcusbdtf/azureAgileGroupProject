@@ -87,13 +87,13 @@
 		var rand = new Random();
 		for (int i = 0; i < 25; i++)
 		{
-			allProducts.Add(new ProductDto { Id = i, Name = "Spel" + i, Category = "game", Genre = "action", Age = 18, Price = 599, Rating = rand.Next(1, 5) });
+			allProducts.Add(new ProductDto());
 		}
 
 		//Lägg till funktion som räknar ut toppgenre när API är klart
 		topGenre = "action";
 
-		recommendedProducts = allProducts.Where(product => product.Genre == topGenre).OrderBy(x => rand.Next()).Take(5).ToList();
+		recommendedProducts = allProducts.Where(product => product.Genre.Name == topGenre).OrderBy(x => rand.Next()).Take(5).ToList();
 
 	}
 

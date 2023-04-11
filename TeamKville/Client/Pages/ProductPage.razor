@@ -16,7 +16,7 @@
 				<div class="card-text h-50 mt-5">					
 
 					<p class="p-0 m-0"><b>Kategori:</b> @currentProduct.Category</p>
-						@if(currentProduct.Category == "game")
+						@if(currentProduct.Category.Name == "game")
 						{
 						<p class="p-0 m-0"><b>Genre:</b> @currentProduct.Genre</p>
 						<p class="p-0 m-0"><b>Åldersgräns:</b> @currentProduct.Age</p>
@@ -28,7 +28,8 @@
 				<div class="stars d-flex align-items-center justify-content-center pb-2">
 						@for (int r = 1; r <= 5; r++)
 						{
-							if (r <= currentProduct.Rating)
+							//Ändra till en average av alla recensioner sen
+							if (r <= 5)
 							{
 								<i class="fa fa-star" style="color: #ffa500;"></i>
 							}
@@ -113,7 +114,7 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		currentProduct = SharedClass.allProducts.Where(p => p.Id == (int)Id).First();
+		currentProduct = new ProductDto();
 	}
 
 	protected override async Task OnParametersSetAsync()
