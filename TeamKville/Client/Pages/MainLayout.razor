@@ -2,8 +2,11 @@
 
 <Navbar/>
 
-<main>
-    @Body
-</main>
-
-
+<div class="d-flex flex-column" style="min-height: 100vh;">
+    <main role="main" class="container flex-grow-1" 
+          style="padding-bottom: 2rem; padding-top: 1.5rem">
+        @Body
+    </main>
+        
+    <Footer />
+</div>
