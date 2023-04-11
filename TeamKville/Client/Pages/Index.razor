@@ -6,7 +6,6 @@
 	<h3 class="p-3 text-center">Kommande Event</h3>
 	<div class="container text-center">
 		<div class="card mx-auto d-block w-50 h-50 shadow-sm">
-			<!--TBD!! Ändra baserat på hur vi navigerar till event-->
 			<img src=@SharedClass.GetImage("event", id) class="card-img-top"style="object-fit: contain;">
 			<div class="card-body">
 				<div class="cardcard-title">					
@@ -31,7 +30,6 @@
 						<div class="border-top" style="padding:1rem;">
 							<h5>@product.Name</h5>
 							<p>@product.Price kr</p>
-							<!--TBD!! Ändra baserat på hur vi navigerar till produkter-->
 							<a href="/product/@product.Id" class="btn btn-primary">Läs mer</a>
 						</div>
 					</div>
@@ -63,10 +61,11 @@
 	List<ProductDto> recommendedProducts = new List<ProductDto>();
 
 	//Orderhistory
-	string topGenre;
+	int topGenre;
 
 	protected override async Task OnInitializedAsync()
 	{
+		allProducts = await HttpClient.GetFromJsonAsync<List<ProductDto>>(HttpClient.BaseAddress + "api/product");
 		GetEvent();
 		GetRecommendedProducts();
 	}
@@ -83,17 +82,12 @@
 
 	void GetRecommendedProducts()
 	{
-		//Hämta från API/Databas när det är klart
 		var rand = new Random();
-		for (int i = 0; i < 25; i++)
-		{
-			allProducts.Add(new ProductDto());
-		}
 
 		//Lägg till funktion som räknar ut toppgenre när API är klart
-		topGenre = "action";
+		topGenre = 1;
 
-		recommendedProducts = allProducts.Where(product => product.Genre.Name == topGenre).OrderBy(x => rand.Next()).Take(5).ToList();
+		recommendedProducts = allProducts.Where(product => product.Genre.GenreId == topGenre).OrderBy(x => rand.Next()).Take(5).ToList();
 
 	}
 
