@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<DataContext>(option =>
 {
-    option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    option.UseSqlServer("Server=tcp:teamkville.database.windows.net,1433;Initial Catalog=teamkville-db;Persist Security Info=False;User ID=teamkville;Password=morotärgott123!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
 });
 
 builder.Services.AddControllers();
