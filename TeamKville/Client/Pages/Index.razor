@@ -18,11 +18,11 @@
 		</div>
 	</div>
 	
-	<h3 class="p-3 text-center">Rekommenderade Produkter</h3>
+	<h3 class="p-3 text-center">Nya produkter</h3>
 	<div class="container p-3 text-center control-container shadow" style="max-width: 80vh; height: 50vh; background-color: white; margin: 0 auto;">
 		<SfCarousel>
 			<ChildContent>
-			@foreach (ProductDto product in recommendedProducts)
+			@foreach (ProductDto product in SharedClass.allProducts.OrderByDescending(x => x.Id).Take(5))
 			{
 				<CarouselItem>
 					<div class="carousel-caption" style="color: black;">
@@ -36,6 +36,20 @@
 				</CarouselItem>
 			}
 			</ChildContent>
+				 <PreviousButtonTemplate>
+				<SfButton CssClass="e-flat e-outline nav-btn" title="Previous">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40">
+						<path d="m13.5 7.01 13 13m-13 13 13-13"></path>
+					</svg>
+				</SfButton>
+			</PreviousButtonTemplate>
+			<NextButtonTemplate>
+				<SfButton CssClass="e-flat e-outline nav-btn" title="Next">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40">
+						<path d="m13.5 7.01 13 13m-13 13 13-13"></path>
+					</svg>
+				</SfButton>
+			</NextButtonTemplate>
 		</SfCarousel>
 	</div>
 
@@ -57,7 +71,6 @@
 	DateTime date;
 
 	//Product
-	List<ProductDto> allProducts = new List<ProductDto>();
 	List<ProductDto> recommendedProducts = new List<ProductDto>();
 
 	//Orderhistory
@@ -65,9 +78,7 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		allProducts = await HttpClient.GetFromJsonAsync<List<ProductDto>>(HttpClient.BaseAddress + "api/product");
 		GetEvent();
-		GetRecommendedProducts();
 	}
 
 	void GetEvent()
@@ -79,16 +90,20 @@
 		date = DateTime.Now;
 		id = 2;
 	}
-
-	void GetRecommendedProducts()
-	{
-		var rand = new Random();
-
-		//Lägg till funktion som räknar ut toppgenre när API är klart
-		topGenre = 1;
-
-		recommendedProducts = allProducts.Where(product => product.Genre.GenreId == topGenre).OrderBy(x => rand.Next()).Take(5).ToList();
-
-	}
-
 }
+
+<style>
+	.e-carousel .e-carousel-navigators .e-btn svg {
+        fill: none;
+        stroke: grey;
+        stroke-linecap: square;
+        stroke-width: 8px;
+        height: 2rem;
+        vertical-align: middle;
+        width: 2rem;
+    }
+
+	.e-carousel .e-carousel-navigators .e-previous .e-btn svg {
+		transform: rotate(180deg);
+	}
+</style>
