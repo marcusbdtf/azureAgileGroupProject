@@ -1,0 +1,49 @@
+﻿<footer class="@backgroundColor">
+    <div class="container py-3">
+        <div class="row">
+            <!-- Decides position of ul -->
+            <div class="col text-md-center">
+                <h5 class="@textColor text-decoration-none">Kontakta Oss</h5>
+                <ul class="list-unstyled">
+                    <li>Mail: info@gamestore.se</li>
+                    <li>Telefon: 031-333-444</li>
+                    <li>Adress: Någonstans i Kville</li>
+                </ul>
+            </div>
+            <!-- Decides position of ul -->
+            <div class="col text-md-center">
+                <h5 class="@textColor">Betalmedel</h5>
+                <ul class="list-unstyled">
+                    <img src="https://teamkvillestorage.blob.core.windows.net/additionals/logo-stripe.png" style="width: 75%" />
+                </ul>
+            </div>
+            <!-- Decides position of ul -->
+            <div class="col text-md-center">
+                <h5 class="@textColor">Länkar</h5>
+                <ul class="list-unstyled">
+                    <li><a href="/produkter" class="@textColor">Produkter</a></li>
+                    <li><a href="/Events" class="@textColor">Lan/Event</a></li>
+                    <li><a href="/omoss" class="@textColor">Om oss</a></li>
+                    <li><a href="/kontakt" class="@textColor">Kontakta Oss</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 d-flex justify-content-center">
+                <button id="scrollTopBtn" class="btn btn-light" onclick="scrollToTop()">Tillbaka till toppen</button>
+            </div>
+        </div>
+    </div>
+</footer>
+
+@code {
+    // color settings
+    string backgroundColor = "bg-light";
+    string textColor = "#212529";
+    [Inject] IJSRuntime JSRuntime { get; set; }
+
+    private async Task ScrollToTop()
+    {
+        await JSRuntime.InvokeVoidAsync("scrollToTop");
+    }
+}

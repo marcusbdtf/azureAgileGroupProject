@@ -37,7 +37,26 @@
         <a href="" class="reload">Reload</a>
         <a class="dismiss">🗙</a>
     </div>
-    <script src="_framework/blazor.webassembly.js"></script>
+<script src="_framework/blazor.webassembly.js"></script>
+<script>
+    // When button is clicked scroll to top
+    function scrollToTop() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    }
+
+    // Hide button when the page is already at the top
+    window.addEventListener('scroll', () => {
+        const scrollTopBtn = document.getElementById('scrollTopBtn');
+        if (window.pageYOffset > 100) {
+            scrollTopBtn.style.display = 'block';
+        } else {
+            scrollTopBtn.style.display = 'none';
+        }
+    });
+</script>
 </body>
 
 </html>
