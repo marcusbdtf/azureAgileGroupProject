@@ -1,5 +1,7 @@
-﻿using TeamKville.Server.Data.DataModels;
+﻿using Microsoft.EntityFrameworkCore;
+using TeamKville.Server.Data.DataModels;
 using TeamKville.Server.Data.Repositories.Interfaces;
+using TeamKville.Shared.Dto;
 
 namespace TeamKville.Server.Data.Repositories
 	{
@@ -12,9 +14,13 @@ namespace TeamKville.Server.Data.Repositories
 				_context = context;
 			}
 
-			public IEnumerable<Category> GetCategories()
+			public async Task<IEnumerable<CategoryDto>> GetCategories()
 			{
-				return _context.Categories.ToList();
+				return await _context.Categories.Select(x => new CategoryDto
+				{
+					CategoryId = x.CategoryId,
+					Name = x.Name
+				}).ToListAsync();
 			}
 		}
 	}

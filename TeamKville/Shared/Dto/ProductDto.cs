@@ -9,21 +9,19 @@ namespace TeamKville.Shared.Dto
 {
     public class ProductDto
     {
-        public int Id { get; set; }
+	    public int Id { get; set; }
+	    public string Name { get; set; }
+	    public string Description { get; set; }
+	    public decimal Price { get; set; }
+	    public bool IsActive { get; set; }
+	    public int Age { get; set; }
 
-        public string Name { get; set; }
+	    public CategoryDto Category { get; set; }
 
-        public string Description { get; set; }
+		public GenreDto Genre { get; set; }
 
-        public decimal Price { get; set; }
-        public string Genre { get; set; }
-        public string Category { get; set; }
-        public bool IsActive { get; set; }
-
-        public int Age { get; set; }
-        public int Rating { get; set; }
-
+	    public IEnumerable<CommentDto>? Comments { get; set; }
 
 
-    }
+	}
 }

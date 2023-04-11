@@ -14,12 +14,12 @@ namespace TeamKville.Shared.Models
 
         public decimal Price { get; set; }
 
-        //public Category List<Category> { get; set; }
+        public int CategoryId { get; set; }
+        public int GenreId { get; set; }
 
         public bool IsActive { get; set; }
 
         public int Age { get; set; }
 
-        public int Rating { get; set; }
     }
 }
