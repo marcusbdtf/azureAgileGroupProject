@@ -94,7 +94,7 @@
 
 											</div>
 										</div>
-										<p>@review.Date</p>
+										<em>@review.Date.ToString("yyyy-MM-dd")</em>
 									</div>
 								</div>
 							}
@@ -106,8 +106,8 @@
 						}
 
 						<div class="d-flex align-items-center justify-content-center text-center mt-2 mb-0">
-							<button type="button" class="btn btn-primary text-center m-1">Skriv</button>
-							<button type="button" class="btn btn-primary text-center m-1" @onclick="ShowReviews">Se alla</button>
+							<button type="button" class="btn btn-primary text-center m-1 fa-solid fa-pen-to-square"></button>
+							<button type="button" class="btn btn-primary text-center m-1 fa fa-list" @onclick="ShowReviews"></button>
 						</div>
 					
 					</div>

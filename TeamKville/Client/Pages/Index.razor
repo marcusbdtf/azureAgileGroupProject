@@ -19,24 +19,24 @@
 	</div>
 	
 	<h3 class="p-3 text-center">Nya produkter</h3>
-	<div class="container p-3 text-center control-container shadow" style="max-width: 80vh; height: 50vh; background-color: white; margin: 0 auto;">
+	<div class="container p-3 text-center shadow-sm w-50" style="height: 500px;">
 		<SfCarousel>
 			<ChildContent>
-			@foreach (ProductDto product in SharedClass.allProducts.OrderByDescending(x => x.Id).Take(5))
-			{
-				<CarouselItem>
-					<div class="carousel-caption" style="color: black;">
-						<img class="card-img-top pt-2 pb-2" style="height: 250px; object-fit: contain;" src=@SharedClass.GetImage("product", product.Id)/>
-						<div class="border-top" style="padding:1rem;">
-							<h5>@product.Name</h5>
-							<p>@product.Price kr</p>
-							<a href="/product/@product.Id" class="btn btn-primary">Läs mer</a>
+				@foreach (ProductDto product in SharedClass.allProducts.OrderByDescending(x => x.Id).Take(5))
+				{
+					<CarouselItem>
+						<div class="carousel-caption" style="color: black;">
+							<img class="card-img-top pt-2 pb-2" style="height: 250px; object-fit: contain;" src=@SharedClass.GetImage("product", product.Id) />
+							<div class="border-top" style="padding:1rem;">
+								<h5>@product.Name</h5>
+								<p>@product.Price kr</p>
+								<a href="/product/@product.Id" class="btn btn-primary ">Läs mer</a>
+							</div>
 						</div>
-					</div>
-				</CarouselItem>
-			}
+					</CarouselItem>
+				}
 			</ChildContent>
-				 <PreviousButtonTemplate>
+			<PreviousButtonTemplate>
 				<SfButton CssClass="e-flat e-outline nav-btn" title="Previous">
 					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40">
 						<path d="m13.5 7.01 13 13m-13 13 13-13"></path>
@@ -52,6 +52,7 @@
 			</NextButtonTemplate>
 		</SfCarousel>
 	</div>
+
 
 
 	<div class="container text-center p-5">
@@ -106,4 +107,7 @@
 	.e-carousel .e-carousel-navigators .e-previous .e-btn svg {
 		transform: rotate(180deg);
 	}
+
+	
+
 </style>
