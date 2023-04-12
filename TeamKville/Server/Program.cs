@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<DataContext>(option =>
 {
-    option.UseSqlServer("Server=tcp:teamkville.database.windows.net,1433;Initial Catalog=teamkville-db;Persist Security Info=False;User ID=teamkville;Password=morotärgott123!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
+	option.UseSqlServer("Server=tcp:teamkville.database.windows.net,1433;Initial Catalog=teamkville-db;Persist Security Info=False;User ID=teamkville;Password=morotärgott123!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
 });
 
 builder.Services.AddControllers();
@@ -23,6 +23,8 @@ builder.Services.AddScoped<IGenreRepository, GenreRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IOrderRepository<Order>, OrderRepository>();
+builder.Services.AddScoped<IEventRepository<Event>, EventRepository>();
+
 
 
 var app = builder.Build();
