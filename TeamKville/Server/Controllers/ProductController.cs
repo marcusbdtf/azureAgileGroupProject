@@ -56,7 +56,7 @@ namespace TeamKville.Server.Controllers
             return Ok();
         }
 
-        //Hämtar en updateProductInput baserat på Id
+        //Hämtar en produkt baserat på Id
         [HttpGet("{productId:int}", Name = "GetProductById")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<ProductDto>> GetProductById(int productId)
