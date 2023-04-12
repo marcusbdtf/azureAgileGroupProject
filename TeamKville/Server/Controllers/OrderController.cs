@@ -11,29 +11,32 @@ namespace TeamKville.Server.Controllers
 	public class OrderController : ControllerBase
 	{
 		private readonly IOrderRepository<Order> _orderRepository;
+		private readonly IProductRepository _productRepository;
 
-		public OrderController(IOrderRepository<Order> orderRepository)
+		public OrderController(IOrderRepository<Order> orderRepository, IProductRepository productRepository)
 		{
-			_orderRepository = orderRepository; }
+			_orderRepository = orderRepository;
+			_productRepository = productRepository;
+		}
 
 		[HttpPost]
 		public async Task<IActionResult> AddOrder(OrderDto newOrder) //TODO: ska det vara ett orderobjekt eller DTO?
 		{
-			return Ok(await _orderRepository.AddItemAsync(ConvertTOrder(newOrder)));
+			return Ok(await _orderRepository.AddItemAsync(await ConvertToOrder(newOrder)));
 		}
 		
-		/*[HttpGet] 
+		[HttpGet] 
 		public async Task<IActionResult> GetByEmail(string email) //TODO: ska det returneras orderobjekt eller DTO?
 		{
 			var orderToReturn = await _orderRepository.GetByEmail(email);
 			
 			return Ok(orderToReturn.Select(ConvertToOrderDto));
-		}*/
+		}
 
 		[HttpPatch]
 		public async Task<IActionResult> PatchOrder(OrderDto orderToPatch)
 		{
-			var result = await _orderRepository.PatchOrder(ConvertTOrder(orderToPatch));
+			var result = await _orderRepository.PatchOrder(await ConvertToOrder(orderToPatch));
 
 			return Ok(result);
 		}
@@ -44,25 +47,70 @@ namespace TeamKville.Server.Controllers
 			return new OrderDto()
 			{
 				OrderId = orderToConvert.OrderId,
-				//OrderProducts = orderToConvert.OrderProducts,
+				OrderedProductsDto = orderToConvert.OrderedProducts.Select(pq =>
+				
+					new ProductQuantityDto()
+					{
+						ProductDto = new ProductDto()
+						{
+							Age = pq.Product.Age,
+							Category = new CategoryDto()
+							{
+								Name = pq.Product.Category.Name,
+								CategoryId = pq.Product.CategoryId
+							},
+							Description = pq.Product.Description,
+							Comments = pq.Product.Comments.Select(ConvertCommentsToDto),
+							IsActive = pq.Product.IsActive,
+							Name = pq.Product.Name,
+							Price = pq.Product.Price
+						},
+						Quantity = pq.Quantity,
+					}
+				).ToList(),
 				UserId = orderToConvert.UserId,
 				OrderDate = orderToConvert.OrderDate,
-				Status = orderToConvert.Status
+				Status = orderToConvert.Status,
+				Name = orderToConvert.Name,
+				City = orderToConvert.City,
+				PostalCode = orderToConvert.PostalCode,
+				Street = orderToConvert.Street
 			};
 		}
 
-		private Order ConvertTOrder(OrderDto orderDtoToConvert)
+		private CommentDto ConvertCommentsToDto(Comment arg)
 		{
-			return new Order()
+			return new CommentDto()
+			{
+				CommentId = arg.CommentId,
+				Date = arg.Date,
+				Name = arg.Name,
+				Text = arg.Text,
+				Rating = arg.Rating
+			};
+		}
+
+		private async Task<Order> ConvertToOrder(OrderDto orderDtoToConvert)
+		{
+			var newOrder = new Order()
 			{
 				OrderId = orderDtoToConvert.OrderId,
-				//OrderProducts = orderDtoToConvert.OrderProducts,
+				OrderedProducts = orderDtoToConvert.OrderedProductsDto.Select(pqDto => 
+					new ProductQuantity()
+						{
+							Product = _productRepository.GetProductById(pqDto.ProductDto.Id),
+							Quantity = pqDto.Quantity
+						}).ToList(),
 				UserId = orderDtoToConvert.UserId,
 				OrderDate = orderDtoToConvert.OrderDate,
-				Status = orderDtoToConvert.Status
+				Status = orderDtoToConvert.Status,
+				Name = orderDtoToConvert.Name,
+				City = orderDtoToConvert.City,
+				PostalCode = orderDtoToConvert.PostalCode,
+				Street = orderDtoToConvert.Street
 			};
+
+			return newOrder;
 		}
 	}
-
-	
 }

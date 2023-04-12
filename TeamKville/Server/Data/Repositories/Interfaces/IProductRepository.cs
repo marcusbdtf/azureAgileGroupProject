@@ -12,5 +12,6 @@ namespace TeamKville.Server.Data.Repositories.Interfaces
         Task<string> DeleteProduct(int id);
         Task<string> UpdateProduct(UpdateProductModel updateProductInput);
         Task<ProductDto> GetById(int productId);
+        Product GetProductById(int productDtoId);
     }
 }
