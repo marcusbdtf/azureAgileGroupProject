@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using TeamKville.Shared;
 @using TeamKville.Shared.Dto;
+@inject IJSRuntime JSRuntime
 
 <div class="container shadow" style="background-color: white;">
 	<h3 class="p-3 text-center">Kommande Event</h3>
@@ -79,7 +80,10 @@
 
 	protected override async Task OnInitializedAsync()
 	{
+		//Utan dessa scrollToTop så scrollar hemsidan till SfCarousel div. Detta är en temporär buggfix om jag inte hittar någon lösning alls till problemet.
+		await JSRuntime.InvokeVoidAsync("scrollToTop");
 		GetEvent();
+		await JSRuntime.InvokeVoidAsync("scrollToTop");
 	}
 
 	void GetEvent()
