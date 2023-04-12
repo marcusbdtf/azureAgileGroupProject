@@ -20,7 +20,7 @@
 	</div>
 	
 	<h3 class="p-3 text-center">Nya produkter</h3>
-	<div class="container p-3 text-center shadow-sm w-50" style="height: 500px;">
+	<div class="container p-3 text-center shadow-sm" style="height: 500px; max-width: 90vh;">
 		<SfCarousel>
 			<ChildContent>
 				@foreach (ProductDto product in SharedClass.allProducts.OrderByDescending(x => x.Id).Take(5))
