@@ -2,8 +2,27 @@
 
 <Navbar/>
 
-<main>
-    @Body
-</main>
+<div class="d-flex flex-column" style="min-height: 100vh;">
+    <main role="main" class="container flex-grow-1" 
+          style="padding-bottom: 2rem; padding-top: 1.5rem">
+        @Body
+    </main>
+        
+    <Footer />
+</div>
 
+@code{
 
+    protected override async Task OnInitializedAsync()
+    {
+        Shared.SharedClass.allProducts = await HttpClient.GetFromJsonAsync<List<ProductDto>>(HttpClient.BaseAddress + "api/product");
+    }
+}
+
+<style>
+
+    main {
+        font-family: 'Montserrat', sans-serif;
+    }
+
+</style>

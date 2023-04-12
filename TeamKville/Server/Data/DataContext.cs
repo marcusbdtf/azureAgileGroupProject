@@ -19,6 +19,7 @@ namespace TeamKville.Server.Data
         public DbSet<Address> Address { get; set; }
 
 
+        public DbSet<Event> Events { get; set; }
 
 
 

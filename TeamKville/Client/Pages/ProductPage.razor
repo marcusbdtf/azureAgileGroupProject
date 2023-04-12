@@ -1,136 +1,153 @@
 ﻿@page "/product/{id:int}"
 @using TeamKville.Shared;
 @using TeamKville.Shared.Dto;
+@using TeamKville.Shared.Models;
 @inject NavigationManager NavigationManager;
 
 <div class="container">
-	<div class="container d-flex h-100">
+	@if(currentProduct == null)
+	{
+		<p>Laddar...</p>
+	}
+	else
+	{
+		<div class="container d-flex h-100">
 		
-		<div class="container mt-5 border border-2 d-flex justify-content-center w-75">
+			<div class="container mt-5 border border-2 d-flex justify-content-center w-75">
 			
-			<img src="@imagesrc" style="height: 400px; width: auto; object-fit: contain;" />
-		</div>
-		<div class="card mt-5 mx-3 w-25 h-75 border border-0 rounded-0" style="background-color:#c2d1d9; ">
-			<div class="card-body" style="height: 404px; ">
-				<h5 class="text-center">Detaljer</h5>
-				<div class="card-text h-50 mt-5">					
+				<img src="@imagesrc" style="height: 400px; width: auto; object-fit: contain;" />
+			</div>
+			<div class="card mt-5 mx-3 w-25 h-75 border border-0 rounded-0" style="background-color:#c2d1d9; ">
+				<div class="card-body" style="height: 404px; ">
+					<h5 class="text-center">Detaljer</h5>
+					<div class="card-text h-50 mt-5">					
 
-					<p class="p-0 m-0"><b>Kategori:</b> @currentProduct.Category</p>
-						@if(currentProduct.Category.Name == "game")
-						{
-						<p class="p-0 m-0"><b>Genre:</b> @currentProduct.Genre</p>
-						<p class="p-0 m-0"><b>Åldersgräns:</b> @currentProduct.Age</p>
-						}
+						<p class="p-0 m-0"><b>Kategori:</b> @currentProduct.Category.Name</p>
+							@if(currentProduct.Category.CategoryId == 1)
+							{
+							<p class="p-0 m-0"><b>Genre:</b> @currentProduct.Genre.Name</p>
+							<p class="p-0 m-0"><b>Åldersgräns:</b> @currentProduct.Age</p>
+							}
 						
 										
-				</div>
+					</div>
 
-				<div class="stars d-flex align-items-center justify-content-center pb-2">
-						@for (int r = 1; r <= 5; r++)
-						{
-							//Ändra till en average av alla recensioner sen
-							if (r <= 5)
+					<div class="stars d-flex align-items-center justify-content-center pb-2">
+						@if(currentProduct.Comments.Count() > 0)
+						{					
+							for (int r = 1; r <= 5; r++)
 							{
-								<i class="fa fa-star" style="color: #ffa500;"></i>
-							}
-							else
-							{
-								<i class="fa fa-star" style="color: #6c757d;"></i>
+								if (r <= reviews.Average(p => p.Rating))
+								{
+									<i class="fa fa-star" style="color: #ffa500;"></i>
+								}
+								else
+								{
+									<i class="fa fa-star" style="color: #6c757d;"></i>
+								}
 							}
 						}
               
-				</div>
-				<div class="text-center">
-				<h3>@currentProduct.Price kr</h3>						
-				<button class="btn btn-primary">Köp</button>
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<div class="container d-flex h-100">
-		<div class="container mt-3">
-			<h2>@currentProduct.Name</h2>
-			<p>
-				@currentProduct.Description;
-			</p>
-		
-		</div>
-		<div class="container card mt-3 mx-3 w-50 h-75 border border-0 rounded-0" style="background-color: #c2d1d9;">
-			<div class="card-body" style="height: 400px;">
-				<h3 class="card-title mb-3">
-					Recensioner
-				</h3>
-				<div class="container">
-					@for (int i = 0; i < 2; i++)
-					{
-						<div class="card m-1 d-flex">
-							<div class="card-body">
-								<div class="card-title m-0">
-									<h5>Namn</h5>									
-									<div class="stars ms-auto">
-										@for (int r = 1; r <= 5; r++)
-										{
-											if (r <= 5)
-											{
-												<i class="fa fa-star" style="color: #ffa500;"></i>
-											}
-											else
-											{
-												<i class="fa fa-star" style="color: #6c757d;"></i>
-											}
-										}
-
-									</div>
-								</div>	
-								<p>2023-01-01</p>
-							</div>							
-						</div>
-					}
-					<div class="text-center mt-2 mb-0">
-						<button type="button" class="btn btn-primary text-center" @onclick="ShowModal">Se alla</button>
 					</div>
-					
+					<div class="text-center">
+					<h3>@currentProduct.Price kr</h3>						
+					<button class="btn btn-primary">Köp</button>
+					</div>
 				</div>
-			
 			</div>
 		</div>
-	</div>
 
+		<div class="container d-flex h-100">
+			<div class="container mt-3">
+				<h2>@currentProduct.Name</h2>
+				<p>
+					@currentProduct.Description;
+				</p>
+		
+			</div>
+			<div class="container card mt-3 mx-3 w-50 h-75 border border-0 rounded-0" style="background-color: #c2d1d9;">
+				<div class="card-body" style="height: 400px;">
+					<h3 class="card-title mb-3">
+						Recensioner
+					</h3>
+					<div class="container">
+						@if(currentProduct.Comments.Count() > 0)
+						{
+							@foreach (var review in currentProduct.Comments.Take(2).ToList())
+							{
+								<div class="card m-1 d-flex">
+									<div class="card-body">
+										<div class="card-title m-0">
+											<h5>@review.Name</h5>
+											<div class="stars ms-auto">
+												@for (int r = 1; r <= review.Rating; r++)
+												{
+													if (r <= review.Rating)
+													{
+														<i class="fa fa-star" style="color: #ffa500;"></i>
+													}
+													else
+													{
+														<i class="fa fa-star" style="color: #6c757d;"></i>
+													}
+												}
 
+											</div>
+										</div>
+										<em>@review.Date.ToString("yyyy-MM-dd")</em>
+									</div>
+								</div>
+							}
+							
+						}
+						else
+						{
+							<p>Inga recensioner ännu.</p>
+						}
+
+						<div class="d-flex align-items-center justify-content-center text-center mt-2 mb-0">
+							<button type="button" class="btn btn-primary text-center m-1 fa-solid fa-pen-to-square"></button>
+							<button type="button" class="btn btn-primary text-center m-1 fa fa-list" @onclick="ShowReviews"></button>
+						</div>
+					
+					</div>
+			
+				</div>
+			</div>
+		</div>
+
+	}
 
 </div>
 
 
+
 @code {
 	[Parameter]
-	public int? Id { get; set; }
+	public int Id { get; set; }
 
 	[CascadingParameter] IModalService Modal { get; set; } = default!;
 
 	public string imagesrc;
 
 	ProductDto currentProduct;
+	List<CommentDto> reviews;
+
+	double averageRating;
 
 	protected override async Task OnInitializedAsync()
 	{
-		currentProduct = new ProductDto();
+		currentProduct = await HttpClient.GetFromJsonAsync<ProductDto>(HttpClient.BaseAddress + "api/product/" + Id);
+		reviews = currentProduct.Comments.ToList();
 	}
 
 	protected override async Task OnParametersSetAsync()
 	{
-		if(Id is not null)
-		{
-			imagesrc = SharedClass.GetImage("product",(int)Id);
-		}
-		else
-		{
-			//Failsafe ifall produkten inte finns
-			NavigationManager.NavigateTo("/produkter");
-		}
+		imagesrc = SharedClass.GetImage("product",(int)Id);	
 	}
 
-	private async Task ShowModal()
+
+	private async Task ShowReviews()
 	{
 		var options = new ModalOptions
 		{
@@ -141,7 +158,7 @@
 		};
 
 
-		var parameters = new ModalParameters().Add(nameof(Reviews.ReviewId), currentProduct.Id);
+		var parameters = new ModalParameters().Add(nameof(Reviews.reviews), reviews);
 		var modal = Modal.Show<Reviews>("Recensioner", parameters, options);
 		var result = await modal.Result;
 	}
