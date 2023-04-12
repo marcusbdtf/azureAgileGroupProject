@@ -5,19 +5,22 @@
 
 <div class="container shadow" style="background-color: white;">
 	<h3 class="p-3 text-center">Kommande Event</h3>
+	
 	<div class="container text-center">
 		<div class="card mx-auto d-block w-50 h-50 shadow-sm">
-			<img src=@SharedClass.GetImage("event", id) class="card-img-top"style="object-fit: contain;">
+			<img src=@SharedClass.GetImage("event", currentEvent.Id) class="card-img-top" style="object-fit: contain;">
 			<div class="card-body">
-				<div class="cardcard-title">					
-						<h4>@name</h4>
-						<p>@description</p>
-						<h5>Datum: @date</h5>
+				<div class="cardcard-title">
+					<h4>@currentEvent.Name</h4>
+					<p>@currentEvent.Description</p>
+					<h5>Datum: @currentEvent.Date</h5>
 				</div>
-				<a href="/event/@id" class="btn btn-primary">Läs mer</a>
-			</div>	
+				<a href="/event/@currentEvent.Id" class="btn btn-primary">Läs mer</a>
+			</div>
 		</div>
 	</div>
+	
+	
 	
 	<h3 class="p-3 text-center">Nya produkter</h3>
 	<div class="container p-3 text-center shadow-sm" style="height: 500px; max-width: 90vh;">
@@ -67,10 +70,7 @@
 @code{
 
 	//Event properties
-	int id;
-	string description;
-	string name;
-	DateTime date;
+	EventDto currentEvent = new EventDto();
 
 	//Product
 	List<ProductDto> recommendedProducts = new List<ProductDto>();
@@ -81,19 +81,15 @@
 	protected override async Task OnInitializedAsync()
 	{
 		//Utan dessa scrollToTop så scrollar hemsidan till SfCarousel div. Detta är en temporär buggfix om jag inte hittar någon lösning alls till problemet.
-		await JSRuntime.InvokeVoidAsync("scrollToTop");
-		GetEvent();
+		await JSRuntime.InvokeVoidAsync("scrollToTop");		
+		var events = await HttpClient.GetFromJsonAsync<IEnumerable<EventDto>>(HttpClient.BaseAddress + "event/all");
+		GetEvent(events);
 		await JSRuntime.InvokeVoidAsync("scrollToTop");
 	}
 
-	void GetEvent()
-	{
-		//Hämta från API/Databas när det är klart
-
-		name = "Nördgibb";
-		description = "Wow kolla vilket coolt lan event!";
-		date = DateTime.Now;
-		id = 2;
+	void GetEvent(IEnumerable<EventDto> events)
+	{		
+		currentEvent = events.OrderByDescending(e => e.Date).First();
 	}
 }
 
