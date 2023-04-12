@@ -82,14 +82,26 @@
 	{
 		//Utan dessa scrollToTop så scrollar hemsidan till SfCarousel div. Detta är en temporär buggfix om jag inte hittar någon lösning alls till problemet.
 		await JSRuntime.InvokeVoidAsync("scrollToTop");		
+
 		var events = await HttpClient.GetFromJsonAsync<IEnumerable<EventDto>>(HttpClient.BaseAddress + "event/all");
 		GetEvent(events);
+
 		await JSRuntime.InvokeVoidAsync("scrollToTop");
 	}
 
 	void GetEvent(IEnumerable<EventDto> events)
 	{		
-		currentEvent = events.OrderByDescending(e => e.Date).First();
+		try
+		{
+			currentEvent = events.Where(e => e.Date > DateTime.Now).OrderBy(e => Math.Abs((e.Date - DateTime.Now).Ticks)).First();
+		}
+		catch
+		{
+			currentEvent = new EventDto{Name = "Inga Event :(", Description = "", Date = DateTime.Now};
+		}
+
+
+		
 	}
 }
 
