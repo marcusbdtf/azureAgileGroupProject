@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TeamKville.Server.Data;
 
@@ -11,9 +12,11 @@ using TeamKville.Server.Data;
 namespace TeamKville.Server.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230412121020_updatedOrder")]
+    partial class updatedOrder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,31 +24,6 @@ namespace TeamKville.Server.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("TeamKville.Server.Data.DataModels.Address", b =>
-                {
-                    b.Property<int>("AddressId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AddressId"));
-
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PostNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Street")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("AddressId");
-
-                    b.ToTable("Address");
-                });
 
             modelBuilder.Entity("TeamKville.Server.Data.DataModels.Category", b =>
                 {
@@ -215,38 +193,6 @@ namespace TeamKville.Server.Data.Migrations
                     b.ToTable("Products");
                 });
 
-
-            modelBuilder.Entity("TeamKville.Server.Data.DataModels.User", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("AddressId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("UserId");
-
-                    b.HasIndex("AddressId");
-
-                    b.ToTable("Users");
-                });
-
             modelBuilder.Entity("TeamKville.Server.Data.DataModels.ProductQuantity", b =>
                 {
                     b.Property<int>("Id")
@@ -272,7 +218,6 @@ namespace TeamKville.Server.Data.Migrations
 
                     b.ToTable("ProductQuantity");
                 });
-
 
             modelBuilder.Entity("TeamKville.Server.Data.DataModels.Comment", b =>
                 {
@@ -304,24 +249,6 @@ namespace TeamKville.Server.Data.Migrations
                     b.Navigation("Genre");
                 });
 
-
-            modelBuilder.Entity("TeamKville.Server.Data.DataModels.User", b =>
-                {
-                    b.HasOne("TeamKville.Server.Data.DataModels.Address", "Address")
-                        .WithMany("Users")
-                        .HasForeignKey("AddressId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Address");
-                });
-
-            modelBuilder.Entity("TeamKville.Server.Data.DataModels.Address", b =>
-                {
-                    b.Navigation("Users");
-                });
-
-
             modelBuilder.Entity("TeamKville.Server.Data.DataModels.ProductQuantity", b =>
                 {
                     b.HasOne("TeamKville.Server.Data.DataModels.Order", null)
@@ -336,7 +263,6 @@ namespace TeamKville.Server.Data.Migrations
 
                     b.Navigation("Product");
                 });
-
 
             modelBuilder.Entity("TeamKville.Server.Data.DataModels.Category", b =>
                 {

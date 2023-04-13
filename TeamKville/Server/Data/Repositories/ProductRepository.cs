@@ -96,6 +96,7 @@ namespace TeamKville.Server.Data.Repositories
             return productDto;
         }
 
+
         //Skapar produkt
         public Task<string> CreateProduct(CreateProductModel createProductInput)
         {
@@ -152,5 +153,11 @@ namespace TeamKville.Server.Data.Repositories
 
             return Task.FromResult("product could not be updated");
         }
-    }
+        public Product GetProductById(int productId)
+        {
+			var product = _dbContext.Products.FirstOrDefault(x => x.ProductId == productId);
+
+			return product;
+        }
+	}
 }

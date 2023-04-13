@@ -23,20 +23,20 @@ public class OrderRepository : IOrderRepository<Order>
 
 		return "Saved to database";
 	}
-	
-	/*public async Task<IEnumerable<Order>> GetByEmail(string email)
+
+	public async Task<IEnumerable<Order>> GetByEmail(string email)
 	{
 		//Metod för att hitta användaren baserat på email. Och sen ta 
-		var userToFindID = _dataContext.Users.FirstOrDefault(x => x.Email == email);
+		//var userToFindID = _dataContext.Users.FirstOrDefault(x => x.Email == email);
 
-		if (userToFindID != null)
-		{
-			var orders = _dataContext.Orders.Where(o => o.UserId.Equals(userToFindID.Id));
-			return orders;
-		}
+		//if (userToFindID != null)
+		//{
+		//	var orders = _dataContext.Orders.Where(o => o.UserId.Equals(userToFindID.Id));
+		//	return orders;
+		//}
 
 		return null;
-	}*/
+	}
 
 	public async Task<string> PatchOrder(Order item)
 	{
