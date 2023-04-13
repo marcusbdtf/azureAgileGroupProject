@@ -4,6 +4,7 @@ using TeamKville.Server.Data.DataModels;
 using TeamKville.Server.Data.Repositories.Interfaces;
 using TeamKville.Shared.Dto;
 using TeamKville.Shared.Models;
+using Xamarin.Forms.Internals;
 
 namespace TeamKville.Server.Data.Repositories
 {
@@ -15,10 +16,13 @@ namespace TeamKville.Server.Data.Repositories
 		{
 			_dbContext = dbContext;
 		}
-		public async Task<ActionResult<IEnumerable<UserDto>>> GetAllUsers()
+		public async Task<IEnumerable<UserDto>> GetAllUsers()
 		{
 			var users = await _dbContext.Users
 			.Include(x => x.Address)
+			.Include(x => x.ShoppingCart)
+			.ThenInclude(x => x.CartItems)
+			.ThenInclude(x => x.Product)
 			.Select(x => new UserDto
 			{
 				UserId = x.UserId,
@@ -34,8 +38,24 @@ namespace TeamKville.Server.Data.Repositories
 					Street = x.Address.Street,
 					PostNumber = x.Address.PostNumber,
 
+				},
+
+				ShoppingCart = new ShoppingCartDto
+				{
+					ShoppingCartTotalPrice = x.ShoppingCart.CartItems.Select(x => x.Quantity * x.Product.Price).Sum(),
+					Products = x.ShoppingCart.CartItems.Select(x => new CartItemDto
+					{
+						ProductName = x.Product.Name,
+						Price = x.Product.Price,
+						TotalProductPrice = x.Quantity * x.Product.Price,
+						Quantity = x.Quantity
+					}),
 				}
+
 			}).ToListAsync();
+
+			if (!users.Any())
+				return new List<UserDto>();
 
 			return users;
 		}
@@ -55,7 +75,9 @@ namespace TeamKville.Server.Data.Repositories
 					City = newUserInput.Address.City,
 					Street = newUserInput.Address.Street,
 					PostNumber = newUserInput.Address.PostNumber,
-				}
+				},
+				ShoppingCart = new ShoppingCart()
+
 			};
 
 			_dbContext.Users.Add(newUser);
@@ -88,10 +110,13 @@ namespace TeamKville.Server.Data.Repositories
 
 		}
 
-		public async Task<ActionResult<UserDto>> GetByUserId(string userId)
+		public async Task<UserDto> GetByUserId(string userId)
 		{
 			var user = await _dbContext.Users
 				.Include(x => x.Address)
+				.Include(x => x.ShoppingCart)
+				.ThenInclude(x => x.CartItems)
+				.ThenInclude(x => x.Product)
 				.Where(x => x.UserId == userId)
 				.Select(x => new UserDto
 				{
@@ -106,12 +131,91 @@ namespace TeamKville.Server.Data.Repositories
 						City = x.Address.City,
 						Street = x.Address.Street,
 						PostNumber = x.Address.PostNumber,
+					},
+					ShoppingCart = new ShoppingCartDto
+					{
+						ShoppingCartTotalPrice = x.ShoppingCart.CartItems.Select(x => x.Quantity * x.Product.Price).Sum(),
+						Products = x.ShoppingCart.CartItems.Select(x => new CartItemDto
+						{
+							ProductName = x.Product.Name,
+							Price = x.Product.Price,
+							TotalProductPrice = x.Quantity * x.Product.Price,
+							Quantity = x.Quantity
+						}),
 					}
 				})
 				.FirstOrDefaultAsync();
 
-			return user;
+			if (user == null)
+				return new UserDto();
 
+			return user;
+		}
+
+		public async Task<ShoppingCartDto> GetShoppingCartByUserId(string userId)
+		{
+			var shoppingCart = await _dbContext.ShoppingCarts
+				.Where(x => x.UserId == userId)
+				.Select(x => new ShoppingCartDto
+				{
+					ShoppingCartTotalPrice = x.CartItems.Select(x => x.Quantity * x.Product.Price).Sum(),
+					Products = x.CartItems.Select(x => new CartItemDto
+					{
+						ProductName = x.Product.Name,
+						Price = x.Product.Price,
+						TotalProductPrice = x.Quantity * x.Product.Price,
+						Quantity = x.Quantity
+					}),
+				}).FirstOrDefaultAsync();
+
+			if (shoppingCart == null)
+				return new ShoppingCartDto();
+
+			return shoppingCart;
+		}
+
+		public async Task<string> AddProductToShoppingCart(AddProductToShoppingCartModel input)
+		{
+			var user = await _dbContext.Users
+				.Include(x => x.ShoppingCart)
+				.ThenInclude(x => x.CartItems)
+				.ThenInclude(x => x.Product)
+				.FirstOrDefaultAsync(x => x.UserId == input.UserId);
+
+			var productFromDb = await _dbContext.Products.FirstOrDefaultAsync(x => x.ProductId == input.ProductId);
+
+			if(user == null)
+				return await Task.FromResult($"User with UserId '{input.UserId}' does not exists");
+
+			if(productFromDb == null)
+				return await Task.FromResult($"Product with ProductId '{input.ProductId} could not be found.");
+
+			var userCartItem = user.ShoppingCart.CartItems.ToList();
+
+			if (userCartItem.Select(x => x.ProductId).Contains(input.ProductId))
+			{
+				foreach (var product in userCartItem)
+				{
+					if (product.ProductId == input.ProductId)
+					{
+						product.Quantity += input.Quantity;
+					}
+				}
+			}
+			else
+			{
+				var newCartItem = new CartItem
+				{
+					ProductId = input.ProductId,
+					Quantity = input.Quantity,
+					ShoppingCartId = user.ShoppingCart.ShoppingCartId
+				};
+
+				user.ShoppingCart.CartItems.Add(newCartItem);
+			}
+
+			await _dbContext.SaveChangesAsync();
+			return await Task.FromResult("Product added to shopping cart!");
 		}
 	}
 }

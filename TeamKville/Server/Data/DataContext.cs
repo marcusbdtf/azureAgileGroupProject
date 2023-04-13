@@ -8,7 +8,7 @@ namespace TeamKville.Server.Data
         public DataContext(DbContextOptions options) : base(options)
         {
 
-        }
+		}
 
         public DbSet<Order> Orders { get; set; }
         public DbSet<Product> Products { get; set; }
@@ -17,9 +17,10 @@ namespace TeamKville.Server.Data
         public DbSet<Genre> Genres { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Address> Address { get; set; }
+        public DbSet<ShoppingCart> ShoppingCarts { get; set; }
 
 
-        public DbSet<Event> Events { get; set; }
+		public DbSet<Event> Events { get; set; }
 
 
 

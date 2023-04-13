@@ -15,5 +15,7 @@ namespace TeamKville.Shared.Dto
 		public string PhoneNumber { get; set; }
 
 		public AddressDto Address { get; set; }
+
+		public ShoppingCartDto? ShoppingCart { get; set; }
 	} 
 }

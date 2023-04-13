@@ -6,9 +6,11 @@ namespace TeamKville.Server.Data.Repositories.Interfaces
 {
 	public interface IUserRepository
 	{
-		Task<ActionResult<IEnumerable<UserDto>>> GetAllUsers();
+		Task<IEnumerable<UserDto>> GetAllUsers();
 		Task<string> CreateUser(CreateUserModel newUserInput);
 		Task<string> UpdateUser(UpdateUserModel updateUserInput);
-		Task<ActionResult<UserDto>> GetByUserId(string userId);
+		Task<UserDto> GetByUserId(string userId);
+		Task<ShoppingCartDto> GetShoppingCartByUserId(string userId);
+		Task<string> AddProductToShoppingCart(AddProductToShoppingCartModel input);
 	}
 }

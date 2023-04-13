@@ -22,18 +22,18 @@ namespace TeamKville.Server.Controllers
         //Hämta alla users
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<IEnumerable<UserDto>>> GetAllUsers()
+        public async Task<IActionResult> GetAllUsers()
         {
             var data = await _userRepository.GetAllUsers();
             
 
-            return Ok(data.Value);
+            return Ok(data);
         }
 
         //Skapar user
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult> CreateUser(CreateUserModel newUserInput)
+        public async Task<IActionResult> CreateUser(CreateUserModel newUserInput)
         {
             var newUser = await _userRepository.CreateUser(newUserInput);
 
@@ -43,7 +43,7 @@ namespace TeamKville.Server.Controllers
         //Updaterar user baserat på id
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<string>>  UpdateUser([FromBody] UpdateUserModel updateUserInput)
+        public async Task<IActionResult>  UpdateUser([FromBody] UpdateUserModel updateUserInput)
         {
             var user = await _userRepository.UpdateUser(updateUserInput);
             return Ok(user);
@@ -52,15 +52,32 @@ namespace TeamKville.Server.Controllers
         //Hämtar en user baserat på Id
         [HttpGet("{userId}", Name = "GetByUserId")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<UserDto>> GetByUserId(string userId)
+        public async Task<IActionResult> GetByUserId(string userId)
         {
 			 var data = await _userRepository.GetByUserId(userId);
-			 if (data.Value != null)
-			 {
-				 return Ok(data.Value);
-			 }
 
-			 return NotFound();
+			 return Ok(data);
+
         }
-    }
+
+        //Hämtar en shoppingCart baserat på UserId
+        [HttpGet("shoppingcart/{userId}", Name = "GetShoppingCartByUserId")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetShoppingCartByUserId(string userId)
+        {
+	        var data = await _userRepository.GetShoppingCartByUserId(userId);
+		    
+	        return Ok(data);
+        }
+
+		//Lägga till produkt i shoppingcart
+		[HttpPost("shoppingcart/add", Name = "AddProductToShoppingCart")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> AddProductToShoppingCart([FromBody] AddProductToShoppingCartModel input)
+        {
+	        var addedProductToShoppingCart = await _userRepository.AddProductToShoppingCart(input);
+
+	        return Ok(addedProductToShoppingCart);
+        }
+	}
 }

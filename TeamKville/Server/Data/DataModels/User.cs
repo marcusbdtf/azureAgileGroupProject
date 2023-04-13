@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TeamKville.Server.Data.DataModels
 {
@@ -11,6 +12,8 @@ namespace TeamKville.Server.Data.DataModels
 		public string PhoneNumber { get; set; }
 		public int AddressId { get; set; }
 		public Address Address { get; set; }
+
+		public ShoppingCart ShoppingCart { get; set; }
 
 	}
 }

@@ -47,6 +47,32 @@ namespace TeamKville.Server.Data.Migrations
                     b.ToTable("Address");
                 });
 
+            modelBuilder.Entity("TeamKville.Server.Data.DataModels.CartItem", b =>
+                {
+                    b.Property<int>("CartItemId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CartItemId"));
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ShoppingCartId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CartItemId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("ShoppingCartId");
+
+                    b.ToTable("CartItem");
+                });
+
             modelBuilder.Entity("TeamKville.Server.Data.DataModels.Category", b =>
                 {
                     b.Property<int>("CategoryId")
@@ -199,6 +225,26 @@ namespace TeamKville.Server.Data.Migrations
                     b.ToTable("Products");
                 });
 
+            modelBuilder.Entity("TeamKville.Server.Data.DataModels.ShoppingCart", b =>
+                {
+                    b.Property<int>("ShoppingCartId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ShoppingCartId"));
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("ShoppingCartId");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("ShoppingCarts");
+                });
+
             modelBuilder.Entity("TeamKville.Server.Data.DataModels.User", b =>
                 {
                     b.Property<string>("UserId")
@@ -228,6 +274,25 @@ namespace TeamKville.Server.Data.Migrations
                     b.HasIndex("AddressId");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("TeamKville.Server.Data.DataModels.CartItem", b =>
+                {
+                    b.HasOne("TeamKville.Server.Data.DataModels.Product", "Product")
+                        .WithMany("CartItems")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TeamKville.Server.Data.DataModels.ShoppingCart", "ShoppingCart")
+                        .WithMany("CartItems")
+                        .HasForeignKey("ShoppingCartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("ShoppingCart");
                 });
 
             modelBuilder.Entity("TeamKville.Server.Data.DataModels.Comment", b =>
@@ -260,6 +325,17 @@ namespace TeamKville.Server.Data.Migrations
                     b.Navigation("Genre");
                 });
 
+            modelBuilder.Entity("TeamKville.Server.Data.DataModels.ShoppingCart", b =>
+                {
+                    b.HasOne("TeamKville.Server.Data.DataModels.User", "User")
+                        .WithOne("ShoppingCart")
+                        .HasForeignKey("TeamKville.Server.Data.DataModels.ShoppingCart", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("TeamKville.Server.Data.DataModels.User", b =>
                 {
                     b.HasOne("TeamKville.Server.Data.DataModels.Address", "Address")
@@ -288,7 +364,20 @@ namespace TeamKville.Server.Data.Migrations
 
             modelBuilder.Entity("TeamKville.Server.Data.DataModels.Product", b =>
                 {
+                    b.Navigation("CartItems");
+
                     b.Navigation("Comments");
+                });
+
+            modelBuilder.Entity("TeamKville.Server.Data.DataModels.ShoppingCart", b =>
+                {
+                    b.Navigation("CartItems");
+                });
+
+            modelBuilder.Entity("TeamKville.Server.Data.DataModels.User", b =>
+                {
+                    b.Navigation("ShoppingCart")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

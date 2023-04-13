@@ -15,7 +15,9 @@
         public int GenreId { get; set; }
         public Genre Genre { get; set; }
 
-        public ICollection<Comment>? Comments { get; set; }
+		public ICollection<CartItem> CartItems { get; set; }
+
+		public ICollection<Comment>? Comments { get; set; }
 
     }
 }
