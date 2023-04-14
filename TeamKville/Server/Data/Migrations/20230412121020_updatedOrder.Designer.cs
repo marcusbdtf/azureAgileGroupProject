@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TeamKville.Server.Data;
 
@@ -11,9 +12,11 @@ using TeamKville.Server.Data;
 namespace TeamKville.Server.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230412121020_updatedOrder")]
+    partial class updatedOrder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,57 +24,6 @@ namespace TeamKville.Server.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("TeamKville.Server.Data.DataModels.Address", b =>
-                {
-                    b.Property<int>("AddressId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AddressId"));
-
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PostNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Street")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("AddressId");
-
-                    b.ToTable("Address");
-                });
-
-            modelBuilder.Entity("TeamKville.Server.Data.DataModels.CartItem", b =>
-                {
-                    b.Property<int>("CartItemId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CartItemId"));
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ShoppingCartId")
-                        .HasColumnType("int");
-
-                    b.HasKey("CartItemId");
-
-                    b.HasIndex("ProductId");
-
-                    b.HasIndex("ShoppingCartId");
-
-                    b.ToTable("CartItem");
-                });
 
             modelBuilder.Entity("TeamKville.Server.Data.DataModels.Category", b =>
                 {
@@ -241,76 +193,6 @@ namespace TeamKville.Server.Data.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("TeamKville.Server.Data.DataModels.ShoppingCart", b =>
-                {
-                    b.Property<int>("ShoppingCartId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ShoppingCartId"));
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("ShoppingCartId");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("ShoppingCarts");
-                });
-
-            modelBuilder.Entity("TeamKville.Server.Data.DataModels.User", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("AddressId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("UserId");
-
-                    b.HasIndex("AddressId");
-
-                    b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("TeamKville.Server.Data.DataModels.CartItem", b =>
-                {
-                    b.HasOne("TeamKville.Server.Data.DataModels.Product", "Product")
-                        .WithMany("CartItems")
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TeamKville.Server.Data.DataModels.ShoppingCart", "ShoppingCart")
-                        .WithMany("CartItems")
-                        .HasForeignKey("ShoppingCartId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-
-                    b.Navigation("ShoppingCart");
-                });
-
             modelBuilder.Entity("TeamKville.Server.Data.DataModels.ProductQuantity", b =>
                 {
                     b.Property<int>("Id")
@@ -336,7 +218,6 @@ namespace TeamKville.Server.Data.Migrations
 
                     b.ToTable("ProductQuantity");
                 });
-
 
             modelBuilder.Entity("TeamKville.Server.Data.DataModels.Comment", b =>
                 {
@@ -368,34 +249,6 @@ namespace TeamKville.Server.Data.Migrations
                     b.Navigation("Genre");
                 });
 
-            modelBuilder.Entity("TeamKville.Server.Data.DataModels.ShoppingCart", b =>
-                {
-                    b.HasOne("TeamKville.Server.Data.DataModels.User", "User")
-                        .WithOne("ShoppingCart")
-                        .HasForeignKey("TeamKville.Server.Data.DataModels.ShoppingCart", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("TeamKville.Server.Data.DataModels.User", b =>
-                {
-                    b.HasOne("TeamKville.Server.Data.DataModels.Address", "Address")
-                        .WithMany("Users")
-                        .HasForeignKey("AddressId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Address");
-                });
-
-            modelBuilder.Entity("TeamKville.Server.Data.DataModels.Address", b =>
-                {
-                    b.Navigation("Users");
-                });
-
-
             modelBuilder.Entity("TeamKville.Server.Data.DataModels.ProductQuantity", b =>
                 {
                     b.HasOne("TeamKville.Server.Data.DataModels.Order", null)
@@ -410,7 +263,6 @@ namespace TeamKville.Server.Data.Migrations
 
                     b.Navigation("Product");
                 });
-
 
             modelBuilder.Entity("TeamKville.Server.Data.DataModels.Category", b =>
                 {
@@ -429,20 +281,7 @@ namespace TeamKville.Server.Data.Migrations
 
             modelBuilder.Entity("TeamKville.Server.Data.DataModels.Product", b =>
                 {
-                    b.Navigation("CartItems");
-
                     b.Navigation("Comments");
-                });
-
-            modelBuilder.Entity("TeamKville.Server.Data.DataModels.ShoppingCart", b =>
-                {
-                    b.Navigation("CartItems");
-                });
-
-            modelBuilder.Entity("TeamKville.Server.Data.DataModels.User", b =>
-                {
-                    b.Navigation("ShoppingCart")
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
