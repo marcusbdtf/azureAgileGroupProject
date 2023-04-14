@@ -79,5 +79,11 @@ namespace TeamKville.Server.Controllers
 
 	        return Ok(addedProductToShoppingCart);
         }
+
+
+        //TODO
+        //Delete from ShoppingCart
+        //Empty shoppingCart
+        //decrease/increase implementera??
 	}
 }
