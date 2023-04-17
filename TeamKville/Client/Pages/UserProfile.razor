@@ -1,8 +1,8 @@
 @page "/profile"
 @using Microsoft.AspNetCore.Authorization
+@using TeamKville.Shared;
 @using Microsoft.Graph
 @inject Microsoft.Graph.GraphServiceClient GraphServiceClient
-@inject AuthenticationStateProvider AuthProvider
 
 @attribute [Authorize]
 
@@ -30,23 +30,23 @@ else
         </tr>
     </table>
 
-  
-     <p>@userAuthState.User.Identities.First()</p>
-    
+    if(SharedClass.IsAdmin(user.Id))
+    {
+        <p>ADMIN</p>
+    }
+
+
 }
 
 @code {
     User? user;
-    AuthenticationState userAuthState;
-
+    bool isAdmin;
 
     protected override async Task OnInitializedAsync()
     {
         try
-        {
+        {  
             user = await GraphServiceClient.Me.Request().GetAsync();    
-            userAuthState = await AuthProvider.GetAuthenticationStateAsync();
-            
         }
         catch (Exception ex)
         {
