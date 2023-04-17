@@ -3,66 +3,66 @@
 @using TeamKville.Shared.Dto;
 @inject IJSRuntime JSRuntime
 
-<div class="container shadow" style="background-color: white;">
-	<h3 class="p-3 text-center">Kommande Event</h3>
+
+<h3 class="p-3 text-center">Kommande Event</h3>
 	
-	<div class="container text-center">
-		<div class="card mx-auto d-block w-50 h-50 shadow-sm">
-			<img src=@SharedClass.GetImage("event", currentEvent.Id) class="card-img-top" style="object-fit: contain;">
-			<div class="card-body">
-				<div class="cardcard-title">
-					<h4>@currentEvent.Name</h4>
-					<p>@currentEvent.Description</p>
-					<h5>Datum: @currentEvent.Date</h5>
-				</div>
-				<a href="/event/@currentEvent.Id" class="btn btn-primary">Läs mer</a>
+<div class="container text-center">
+	<div class="card mx-auto d-block w-50 h-50 shadow-sm">
+		<img src=@SharedClass.GetImage("event", currentEvent.Id) class="card-img-top" style="object-fit: contain;">
+		<div class="card-body">
+			<div class="cardcard-title">
+				<h4>@currentEvent.Name</h4>
+				<p>@currentEvent.Description</p>
+				<h5>Datum: @currentEvent.Date</h5>
 			</div>
+			<a href="/event/@currentEvent.Id" class="btn btn-primary">Läs mer</a>
 		</div>
 	</div>
-	
-	
-	
-	<h3 class="p-3 text-center">Nya produkter</h3>
-	<div class="container p-3 text-center shadow-sm" style="height: 500px; max-width: 90vh;">
-		<SfCarousel>
-			<ChildContent>
-				@foreach (ProductDto product in SharedClass.allProducts.OrderByDescending(x => x.Id).Take(5))
-				{
-					<CarouselItem>
-						<div class="carousel-caption" style="color: black;">
-							<img class="card-img-top pt-2 pb-2" style="height: 250px; object-fit: contain;" src=@SharedClass.GetImage("product", product.Id) />
-							<div class="border-top" style="padding:1rem;">
-								<h5>@product.Name</h5>
-								<p>@product.Price kr</p>
-								<a href="/product/@product.Id" class="btn btn-primary ">Läs mer</a>
-							</div>
-						</div>
-					</CarouselItem>
-				}
-			</ChildContent>
-			<PreviousButtonTemplate>
-				<SfButton CssClass="e-flat e-outline nav-btn" title="Previous">
-					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40">
-						<path d="m13.5 7.01 13 13m-13 13 13-13"></path>
-					</svg>
-				</SfButton>
-			</PreviousButtonTemplate>
-			<NextButtonTemplate>
-				<SfButton CssClass="e-flat e-outline nav-btn" title="Next">
-					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40">
-						<path d="m13.5 7.01 13 13m-13 13 13-13"></path>
-					</svg>
-				</SfButton>
-			</NextButtonTemplate>
-		</SfCarousel>
-	</div>
-
-
-
-	<div class="container text-center p-5">
-		<h1>Never quit, always Finish IT!</h1>
-	</div>
 </div>
+	
+	
+	
+<h3 class="p-3 text-center">Nya produkter</h3>
+<div class="container p-3 text-center shadow-sm" style="height: 500px; max-width: 90vh;">
+	<SfCarousel>
+		<ChildContent>
+			@foreach (ProductDto product in SharedClass.allProducts.OrderByDescending(x => x.Id).Take(5))
+			{
+				<CarouselItem>
+					<div class="carousel-caption" style="color: black;">
+						<img class="card-img-top pt-2 pb-2" style="height: 250px; object-fit: contain;" src=@SharedClass.GetImage("product", product.Id) />
+						<div class="border-top" style="padding:1rem;">
+							<h5>@product.Name</h5>
+							<p>@product.Price kr</p>
+							<a href="/product/@product.Id" class="btn btn-primary ">Läs mer</a>
+						</div>
+					</div>
+				</CarouselItem>
+			}
+		</ChildContent>
+		<PreviousButtonTemplate>
+			<SfButton CssClass="e-flat e-outline nav-btn" title="Previous">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40">
+					<path d="m13.5 7.01 13 13m-13 13 13-13"></path>
+				</svg>
+			</SfButton>
+		</PreviousButtonTemplate>
+		<NextButtonTemplate>
+			<SfButton CssClass="e-flat e-outline nav-btn" title="Next">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40">
+					<path d="m13.5 7.01 13 13m-13 13 13-13"></path>
+				</svg>
+			</SfButton>
+		</NextButtonTemplate>
+	</SfCarousel>
+</div>
+
+
+
+<div class="container text-center p-5">
+	<h1>Never quit, always Finish IT!</h1>
+</div>
+
 
 
 
