@@ -1,4 +1,4 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
 
 <Navbar/>
 
@@ -16,7 +16,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Shared.SharedClass.allProducts = await HttpClient.GetFromJsonAsync<List<ProductDto>>(HttpClient.BaseAddress + "api/product");
+        TeamKville.Shared.SharedClass.allProducts = await HttpClient.GetFromJsonAsync<List<ProductDto>>(HttpClient.BaseAddress + "api/product");
     }
 }
 

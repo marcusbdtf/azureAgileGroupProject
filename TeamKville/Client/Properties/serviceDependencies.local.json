@@ -9,6 +9,12 @@
       "type": "storage.azure",
       "connectionId": "connectionStringBlobTK",
       "dynamicId": null
+    },
+    "identityapp1": {
+      "secretStore": "LocalSecretsFile",
+      "type": "identityapp.secretStore",
+      "connectionId": "AzureAD:ClientSecret",
+      "dynamicId": null
     }
   }
 }

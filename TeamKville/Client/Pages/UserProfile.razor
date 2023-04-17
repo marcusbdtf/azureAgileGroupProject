@@ -1,0 +1,56 @@
+@page "/profile"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.Graph
+@inject Microsoft.Graph.GraphServiceClient GraphServiceClient
+@inject AuthenticationStateProvider AuthProvider
+
+@attribute [Authorize]
+
+<h3>User Profile</h3>
+@if (user == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Property</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tr>
+            <td> DisplayName </td>
+            <td> @user.DisplayName </td>
+        </tr>
+        <tr>
+            <td> UserPrincipalName </td>
+            <td> @user.UserPrincipalName </td>
+        </tr>
+    </table>
+
+  
+     <p>@userAuthState.User.Identities.First()</p>
+    
+}
+
+@code {
+    User? user;
+    AuthenticationState userAuthState;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            user = await GraphServiceClient.Me.Request().GetAsync();    
+            userAuthState = await AuthProvider.GetAuthenticationStateAsync();
+            
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+}
