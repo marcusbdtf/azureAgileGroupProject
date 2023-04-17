@@ -1,6 +1,110 @@
 ﻿@page "/Events"
-<h3>Events</h3>
+
+@using TeamKville.Shared;
+
+<h1 class="text-center p-2 pt-4">Events</h1>
+
+<div class="container text-center">
+	<div class="card mx-auto d-block w-50 h-50 shadow-sm">
+		<img src=@SharedClass.GetImage("event", nextEvent.Id) class="card-img-top" style="object-fit: contain;">
+		<div class="card-body">
+			<div class="cardcard-title">
+				<h4>@nextEvent.Name</h4>
+				<p>@nextEvent.Description</p>
+				<h5>Datum: @nextEvent.Date</h5>
+			</div>
+			<a href="/event/@nextEvent.Id" class="btn btn-primary">Läs mer</a>
+		</div>
+	</div>
+</div>
+
+
+
+<h2 class="text-center p-2 pt-4">Kommande Event</h2>
+<div class="container d-flex p-4">
+	<div class="row overflow-auto flex-nowrap g-0" id="scroll-1">
+		@if(allEvents != null)
+		{
+			foreach (EventDto events in upcomingEvents)
+			{
+				Console.WriteLine(events.Id);
+				<div class="col-sm" style="flex: 0 0 25%; flex-grow: 1;">
+					<div class="card w-100 m-0 rounded rounded-0">	
+						<a href="event/@events.Id">
+							<img src="@SharedClass.GetImage("event",events.Id)" class="card-img-top rounded rounded-0" style="height: 200px; width: 100%; object-fit: contain; background-color: gray;" />
+						</a>
+						<div class="card-body border-top">
+							<div class="card-title">
+								<h5><b>@events.Name</b></h5>
+								<h5>@events.Date.ToString("yyyy-MM-dd")</h5>
+							</div>
+						</div>
+					</div>
+				</div>
+			}
+		}	
+	</div>
+</div>
+
+<h2 class="text-center p-2 pt-4">Dåtida Event</h2>
+<div class="container d-flex p-4 pb-5">
+	<div class="row overflow-auto flex-nowrap g-0" id="scroll-1">
+		@if (allEvents != null)
+		{
+			foreach (EventDto events in pastEvents)
+			{
+				Console.WriteLine(events.Id);
+				<div class="col-sm" style="flex: 0 0 25%; flex-grow: 1;">
+					<div class="card w-100 m-0 rounded rounded-0">
+						<a href="event/@events.Id">
+							<img src="@SharedClass.GetImage("event",events.Id)" class="card-img-top rounded rounded-0" style="height: 200px; width: 100%; object-fit: contain; background-color: gray;" />
+						</a>
+						<div class="card-body border-top">
+							<div class="card-title">
+								<h5><b>@events.Name</b></h5>
+								<h5>@events.Date.ToString("yyyy-MM-dd")</h5>
+							</div>
+						</div>
+					</div>
+				</div>
+			}
+		}
+	</div>
+</div>
 
 @code {
 
+	IEnumerable<EventDto> allEvents;
+	EventDto nextEvent = new EventDto();
+	List<EventDto> upcomingEvents = new List<EventDto>();
+	List<EventDto> pastEvents = new List<EventDto>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		allEvents = await HttpClient.GetFromJsonAsync<IEnumerable<EventDto>>(HttpClient.BaseAddress + "event/all");
+		nextEvent = allEvents.Where(e => e.Date > DateTime.Now).OrderBy(e => Math.Abs((e.Date - DateTime.Now).Ticks)).First();
+
+		upcomingEvents = allEvents.Where(e => e.Date > DateTime.Now).ToList();
+		pastEvents = allEvents.Where(e => e.Date < DateTime.Now).ToList();
+	}
 }
+
+<style>
+	#scroll-1::-webkit-scrollbar-track
+	{
+		-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+		border-radius: 10px;
+	}
+
+	#scroll-1::-webkit-scrollbar
+	{
+		height: 8px;
+	}
+
+	#scroll-1::-webkit-scrollbar-thumb
+	{
+		border-radius: 10px;
+		-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+		background-color: #555;
+	}
+</style>
