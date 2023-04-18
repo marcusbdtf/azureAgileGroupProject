@@ -16,5 +16,13 @@ builder.Services.AddBlazoredModal();
 // Supply HttpClient instances that include access tokens when making requests to the server project
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("TeamKville.Server"));
 
+builder.Services.AddMsalAuthentication(options =>
+{
+    builder.Configuration.Bind("AzureAd", options.ProviderOptions.Authentication);
+    options.ProviderOptions.DefaultAccessTokenScopes.Add("https://graph.microsoft.com/User.Read");
+});
+
+builder.Services.AddMicrosoftGraphClient("https://graph.microsoft.com/User.Read");
+
 
 await builder.Build().RunAsync();

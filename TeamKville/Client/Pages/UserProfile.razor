@@ -1,0 +1,64 @@
+@page "/profile"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using TeamKville.Shared;
+@using TeamKville.Shared.Models;
+@using TeamKville.Shared.Dto;
+@using Microsoft.Graph
+@inject Microsoft.Graph.GraphServiceClient GraphServiceClient
+@inject NavigationManager Navigation
+@inject SignOutSessionStateManager SignOutManager
+@attribute [Authorize]
+
+<h3>User Profile</h3>
+
+@if (dbUser == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+
+
+
+
+    <AuthorizeView>
+        <Authorized>
+            <button class="btn btn-link" @onclick="BeginLogout">Log out</button>
+        </Authorized>
+    </AuthorizeView>
+}
+
+@code {
+
+    UserDto dbUser;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {  
+            var azureUser = await GraphServiceClient.Me.Request().GetAsync();
+
+            dbUser = await HttpClient.GetFromJsonAsync<UserDto>(HttpClient.BaseAddress + ("api/user/" + azureUser.Id));
+
+            if(dbUser.UserId == null)
+            {
+                await HttpClient.PostAsJsonAsync<CreateUserModel>(HttpClient.BaseAddress + ("api/user"), new CreateUserModel { UserId = azureUser.Id, FirstName = "", LastName = "", Email = azureUser.UserPrincipalName, Address = new AddressModel{City = "", Street = "", PostNumber = ""}, PhoneNumber = "" });
+            }
+
+            SharedClass.activeUserID = dbUser.UserId;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+    private async Task BeginLogout(MouseEventArgs args)
+    {
+        await SignOutManager.SetSignOutState();
+        Navigation.NavigateTo("authentication/logout");
+    }
+
+    
+}
