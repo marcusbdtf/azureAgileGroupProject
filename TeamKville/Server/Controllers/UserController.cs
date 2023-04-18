@@ -7,7 +7,6 @@ using TeamKville.Shared.Models;
 
 namespace TeamKville.Server.Controllers
 {
-    //[Route["api/[controller]")]
     [Route("api/user")]
     [ApiController]
     public class UserController : ControllerBase
@@ -19,7 +18,6 @@ namespace TeamKville.Server.Controllers
             _userRepository = userRepository;
         }
 
-        //Hämta alla users
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAllUsers()
@@ -30,7 +28,6 @@ namespace TeamKville.Server.Controllers
             return Ok(data);
         }
 
-        //Skapar user
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> CreateUser(CreateUserModel newUserInput)
@@ -40,7 +37,6 @@ namespace TeamKville.Server.Controllers
             return Ok(newUser);
         }
 
-        //Updaterar user baserat på id
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> UpdateUser([FromBody] UpdateUserModel updateUserInput)
@@ -49,7 +45,6 @@ namespace TeamKville.Server.Controllers
             return Ok(user);
         }
         
-        //Hämtar en user baserat på Id
         [HttpGet("{userId}", Name = "GetByUserId")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetByUserId(string userId)
@@ -60,7 +55,6 @@ namespace TeamKville.Server.Controllers
 
         }
 
-        //Hämtar en shoppingCart baserat på UserId
         [HttpGet("shoppingcart/{userId}", Name = "GetShoppingCartByUserId")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetShoppingCartByUserId(string userId)
@@ -70,7 +64,6 @@ namespace TeamKville.Server.Controllers
 	        return Ok(data);
         }
 
-		//Lägga till produkt i shoppingcart
 		[HttpPost("shoppingcart/add", Name = "AddProductToShoppingCart")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> AddProductToShoppingCart([FromBody] AddProductToShoppingCartModel input)
@@ -80,7 +73,6 @@ namespace TeamKville.Server.Controllers
 	        return Ok(addedProductToShoppingCart);
         }
 
-        //Tömer kundkorg baserat på UserId
         [HttpPost("shoppingcart/empty/{userId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> EmptyShoppingCart(string userId)
@@ -89,7 +81,6 @@ namespace TeamKville.Server.Controllers
 	        return Ok(result);
         }
 
-        //Lägger till quantity i en viss produkt baserat på id i kundkorgen
         [HttpPost("shoppingcart/increase/{userId}/{productId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> IncreaseQuantity(string userId, int productId)
@@ -99,7 +90,6 @@ namespace TeamKville.Server.Controllers
 
         }
 
-        //Tar bort quantity i en viss produkt baserat på id i kundkorgen
         [HttpPost("shoppingcart/decrease/{userId}/{productId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> DecreaseQuantity(string userId, int productId)
@@ -109,7 +99,6 @@ namespace TeamKville.Server.Controllers
 
         }
 
-
         [HttpPost("shoppingcart/delete-cartitem/{userId}/{productId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> DeleteCartItemFromShoppingCart(string userId, int productId)
@@ -118,13 +107,6 @@ namespace TeamKville.Server.Controllers
 	        return Ok(result);
 
         }
-
-
-
-
-		//TODO
-		//Delete from ShoppingCart
-		//Empty shoppingCart WIP
-		//decrease/increase implementera??
+        
 	}
 }

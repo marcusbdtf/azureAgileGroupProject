@@ -7,7 +7,6 @@ using TeamKville.Shared.Models;
 
 namespace TeamKville.Server.Controllers
 {
-    //[Route["api/[controller]")]
     [Route("api/genre")]
     [ApiController]
     public class GenreController : ControllerBase
@@ -19,7 +18,6 @@ namespace TeamKville.Server.Controllers
 	        _genreRepository = genreRepository;
         }
 
-        //Hämta alla genre
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<GenreDto>>> GetAll()
@@ -29,7 +27,6 @@ namespace TeamKville.Server.Controllers
             return Ok(data);
         }
 
-        //Skapar genre
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> CreateGenre(string genre)
