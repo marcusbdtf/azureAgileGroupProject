@@ -18,7 +18,12 @@
     {
         var azureUser = await GraphServiceClient.Me.Request().GetAsync();
         TeamKville.Shared.SharedClass.allProducts = await HttpClient.GetFromJsonAsync<List<ProductDto>>(HttpClient.BaseAddress + "api/product");
-        TeamKville.Shared.SharedClass.activeUser = await HttpClient.GetFromJsonAsync<UserDto>(HttpClient.BaseAddress + ("api/user/" + azureUser.Id));
+
+        if(azureUser.Id != null)
+        {
+            TeamKville.Shared.SharedClass.activeUser = await HttpClient.GetFromJsonAsync<UserDto>(HttpClient.BaseAddress + ("api/user/" + azureUser.Id));
+        }
+       
     }
 }
 

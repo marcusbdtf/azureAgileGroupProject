@@ -18,10 +18,6 @@
 }
 else
 {
-
-
-
-
     <AuthorizeView>
         <Authorized>
             <button class="btn btn-link" @onclick="BeginLogout">Log out</button>
@@ -43,7 +39,16 @@ else
 
             if(dbUser.UserId == null)
             {
-                await HttpClient.PostAsJsonAsync<CreateUserModel>(HttpClient.BaseAddress + ("api/user"), new CreateUserModel { UserId = azureUser.Id, FirstName = "", LastName = "", Email = azureUser.UserPrincipalName, Address = new AddressModel{City = "", Street = "", PostNumber = ""}, PhoneNumber = "" });
+                await HttpClient.PostAsJsonAsync<CreateUserModel>(HttpClient.BaseAddress + ("api/user"), new CreateUserModel 
+                { UserId = azureUser.Id, 
+                    FirstName = "", 
+                    LastName = "", 
+                    Email = azureUser.UserPrincipalName, 
+                    Address = new AddressModel{City = "", Street = "", PostNumber = ""}, 
+                    PhoneNumber = "",
+                    //Ändra till false när vi är klara, gör bara så att om vi i teamet loggar in blir vi admins så vi kan testa produkten.
+                    IsAdmin = true
+                });
             }
 
         }
