@@ -43,7 +43,7 @@ namespace TeamKville.Server.Controllers
         //Updaterar user baserat på id
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult>  UpdateUser([FromBody] UpdateUserModel updateUserInput)
+        public async Task<IActionResult> UpdateUser([FromBody] UpdateUserModel updateUserInput)
         {
             var user = await _userRepository.UpdateUser(updateUserInput);
             return Ok(user);
@@ -80,10 +80,51 @@ namespace TeamKville.Server.Controllers
 	        return Ok(addedProductToShoppingCart);
         }
 
+        //Tömer kundkorg baserat på UserId
+        [HttpPost("shoppingcart/empty/{userId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> EmptyShoppingCart(string userId)
+        {
+	        var result = await _userRepository.EmptyShoppingCart(userId);
+	        return Ok(result);
+        }
 
-        //TODO
-        //Delete from ShoppingCart
-        //Empty shoppingCart
-        //decrease/increase implementera??
+        //Lägger till quantity i en viss produkt baserat på id i kundkorgen
+        [HttpPost("shoppingcart/increase/{userId}/{productId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> IncreaseQuantity(string userId, int productId)
+        {
+	        var result = await _userRepository.IncreaseShoppingCartProduct(userId, productId);
+	        return Ok(result);
+
+        }
+
+        //Tar bort quantity i en viss produkt baserat på id i kundkorgen
+        [HttpPost("shoppingcart/decrease/{userId}/{productId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> DecreaseQuantity(string userId, int productId)
+        {
+	        var result = await _userRepository.DecreaseShoppingCartProduct(userId, productId);
+	        return Ok(result);
+
+        }
+
+
+        [HttpPost("shoppingcart/delete-cartitem/{userId}/{productId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> DeleteCartItemFromShoppingCart(string userId, int productId)
+        {
+	        var result = await _userRepository.DeleteCartItemFromShoppingCart(userId, productId);
+	        return Ok(result);
+
+        }
+
+
+
+
+		//TODO
+		//Delete from ShoppingCart
+		//Empty shoppingCart WIP
+		//decrease/increase implementera??
 	}
 }

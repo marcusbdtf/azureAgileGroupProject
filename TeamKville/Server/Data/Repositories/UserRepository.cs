@@ -30,6 +30,7 @@ namespace TeamKville.Server.Data.Repositories
 				LastName = x.LastName,
 				Email = x.Email,
 				PhoneNumber = x.PhoneNumber,
+				IsAdmin = x.IsAdmin,
 
 				Address = new AddressDto
 				{
@@ -45,6 +46,7 @@ namespace TeamKville.Server.Data.Repositories
 					ShoppingCartTotalPrice = x.ShoppingCart.CartItems.Select(x => x.Quantity * x.Product.Price).Sum(),
 					Products = x.ShoppingCart.CartItems.Select(x => new CartItemDto
 					{
+						ProductId = x.Product.ProductId,
 						ProductName = x.Product.Name,
 						Price = x.Product.Price,
 						TotalProductPrice = x.Quantity * x.Product.Price,
@@ -69,6 +71,7 @@ namespace TeamKville.Server.Data.Repositories
 				LastName = newUserInput.LastName,
 				Email = newUserInput.Email,
 				PhoneNumber = newUserInput.PhoneNumber,
+				IsAdmin = newUserInput.IsAdmin,
 
 				Address = new Address
 				{
@@ -98,6 +101,7 @@ namespace TeamKville.Server.Data.Repositories
 				userToUpdate.LastName = updateUserInput.LastName;
 				userToUpdate.Email = updateUserInput.Email;
 				userToUpdate.PhoneNumber = updateUserInput.PhoneNumber;
+				userToUpdate.IsAdmin = updateUserInput.IsAdmin;
 				userToUpdate.Address.City = updateUserInput.Address.City;
 				userToUpdate.Address.Street = updateUserInput.Address.Street;
 				userToUpdate.Address.PostNumber = updateUserInput.Address.PostNumber;
@@ -125,6 +129,7 @@ namespace TeamKville.Server.Data.Repositories
 					LastName = x.LastName,
 					Email = x.Email,
 					PhoneNumber = x.PhoneNumber,
+					IsAdmin = x.IsAdmin,
 					Address = new AddressDto
 					{
 						AddressId = x.Address.AddressId,
@@ -137,6 +142,7 @@ namespace TeamKville.Server.Data.Repositories
 						ShoppingCartTotalPrice = x.ShoppingCart.CartItems.Select(x => x.Quantity * x.Product.Price).Sum(),
 						Products = x.ShoppingCart.CartItems.Select(x => new CartItemDto
 						{
+							ProductId = x.Product.ProductId,
 							ProductName = x.Product.Name,
 							Price = x.Product.Price,
 							TotalProductPrice = x.Quantity * x.Product.Price,
@@ -161,6 +167,7 @@ namespace TeamKville.Server.Data.Repositories
 					ShoppingCartTotalPrice = x.CartItems.Select(x => x.Quantity * x.Product.Price).Sum(),
 					Products = x.CartItems.Select(x => new CartItemDto
 					{
+						ProductId = x.Product.ProductId,
 						ProductName = x.Product.Name,
 						Price = x.Product.Price,
 						TotalProductPrice = x.Quantity * x.Product.Price,
@@ -217,5 +224,99 @@ namespace TeamKville.Server.Data.Repositories
 			await _dbContext.SaveChangesAsync();
 			return await Task.FromResult("Product added to shopping cart!");
 		}
+
+
+		
+		public async Task<string> EmptyShoppingCart(string userId)
+		{
+			var user = await _dbContext.Users
+				.Include(x => x.ShoppingCart)
+				.ThenInclude(x => x.CartItems)
+				.ThenInclude(x => x.Product)
+				.FirstOrDefaultAsync(x => x.UserId == userId);
+
+			if (user != null)
+			{
+				user.ShoppingCart.CartItems = new List<CartItem>(); // sätter cartItems till en tom lista av CartItem
+
+
+				await _dbContext.SaveChangesAsync();
+
+				return await Task.FromResult("ShoppingCart emptied");
+			}
+
+			return await Task.FromResult("ShoppingCart could not be emptied");
+		}
+
+
+		public async Task<string> IncreaseShoppingCartProduct(string userId, int productId)
+		{
+			var user = await _dbContext.Users
+				.Include(x => x.ShoppingCart)
+				.ThenInclude(x => x.CartItems)
+				.ThenInclude(x => x.Product)
+				.FirstOrDefaultAsync(x => x.UserId == userId);
+
+			if (user != null)
+			{
+				var product = user.ShoppingCart.CartItems.FirstOrDefault(x => x.ProductId == productId);
+				if (product != null)
+				{
+					product.Quantity++;
+					await _dbContext.SaveChangesAsync();
+					return await Task.FromResult("Product item increased");
+				}
+				return await Task.FromResult("Product could not be found");
+
+			}
+			return await Task.FromResult("User could not be found");
+		}
+
+		public async Task<string> DecreaseShoppingCartProduct(string userId, int productId)
+		{
+			var user = await _dbContext.Users
+				.Include(x => x.ShoppingCart)
+				.ThenInclude(x => x.CartItems)
+				.ThenInclude(x => x.Product)
+				.FirstOrDefaultAsync(x => x.UserId == userId);
+
+			if (user != null)
+			{
+				var product = user.ShoppingCart.CartItems.FirstOrDefault(x => x.ProductId == productId);
+				if (product != null)
+				{
+					product.Quantity--;
+					await _dbContext.SaveChangesAsync();
+					return await Task.FromResult("Product item decreased");
+				}
+				return await Task.FromResult("Product could not be found");
+				
+			}
+			return await Task.FromResult("User could not be found");
+		}
+
+		public async Task<string> DeleteCartItemFromShoppingCart(string userId, int productId)
+		{
+			var user = await _dbContext.Users
+				.Include(x => x.ShoppingCart)
+				.ThenInclude(x => x.CartItems)
+				.ThenInclude(x => x.Product)
+				.FirstOrDefaultAsync(x => x.UserId == userId);
+			
+			if (user != null)
+			{
+				var product = user.ShoppingCart.CartItems.FirstOrDefault(x => x.ProductId == productId);
+				if (product != null )
+				{
+					user.ShoppingCart.CartItems.Remove(product);
+					await _dbContext.SaveChangesAsync();
+					return await Task.FromResult("Product item removed");
+				}
+				return await Task.FromResult("Product could not be found");
+			}
+			return await Task.FromResult("User could not be found");
+
+		}
 	}
+
 }
