@@ -1,0 +1,83 @@
+﻿@page "/admin"
+@using TeamKville.Shared;
+@using TeamKville.Client.Pages.AdminPage
+
+<div class="container-fluid">
+
+    <div class="row flex-nowrap">
+        <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-sidebar">
+            <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
+	            <a class="d-flex  pb-3 mb-md-0 me-md-auto text-white text-decoration-none align-items-center">
+		            <span class="fs-5 d-none d-sm-inline m-2">Admin panel</span>
+		            <i class="fa-solid fa-crown"></i>
+                </a>
+                <hr/>
+                <ul class=" bg-sidebar nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
+                    <li class="nav-item">
+                        <button @onclick="@(() => SetPage("events"))" class="nav-link align-middle px-0">
+                            <i class="fa-solid fa-gamepad"></i> <span class="ms-2 d-none d-sm-inline">Event/LAN</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button @onclick="@(() => SetPage("reserved"))" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
+	                        <i class="fa-solid fa-basket-shopping"></i> <span class="ms-2 d-none d-sm-inline">Reserverade</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button @onclick="@(() => SetPage("orders"))" class="nav-link px-0 align-middle">
+	                        <i class="fa-regular fa-file-lines"></i> <span class="ms-3 d-none d-sm-inline">Ordrar</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button @onclick="@(() => SetPage("customers"))" data-bs-toggle="collapse" class="nav-link px-0 align-middle ">
+                            <i class="fa-solid fa-user-gear"></i> <span class="ms-2 d-none d-sm-inline">Kunder</span>
+                        </button>
+                    </li>
+                    <li>
+                        <button @onclick="@(() => SetPage("products"))" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
+	                        <i class="fa-solid fa-pencil"></i> <span class="ms-2 d-none d-sm-inline">Produkter</span>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+	    <div>
+	        @if (selectedType is not null)
+                {
+                <div class="border border-primary my-1 p-1">
+                    <DynamicComponent Type="@selectedType" />
+                </div>
+                }
+        </div>
+    </div>
+</div>
+
+@code {
+
+    private Type selectedType;
+
+    private void SetPage(string pageName)
+        {
+			switch (pageName)
+            {
+            //Ändra till rätt sidor när de är skapade, bara placeholders just nu.
+            case "events":
+                selectedType = typeof(Index);
+                break;
+            case "reserved":
+                selectedType = typeof(Event);
+                break;
+            case "orders":
+                //selectedType = typeof(Orders);
+                break;
+            case "customers":
+                //selectedType = typeof(Customers);
+                break;
+            case "products":
+                selectedType = typeof(ProductCatalog);
+                break;
+            default:
+                break;
+            }
+        }
+}
