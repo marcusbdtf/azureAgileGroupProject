@@ -2,6 +2,12 @@
 @using TeamKville.Shared;
 @using TeamKville.Client.Pages.AdminPage
 
+@if(!SharedClass.activeUser.IsAdmin)
+{
+    <p>Not Authorized</p>
+}
+else
+{
 <div class="container-fluid">
 
     <div class="row flex-nowrap">
@@ -50,7 +56,9 @@
                 }
         </div>
     </div>
-</div>
+</div> 
+}
+
 
 @code {
 
@@ -60,21 +68,21 @@
         {
 			switch (pageName)
             {
-            //Ändra till rätt sidor när de är skapade, bara placeholders just nu.
+            //Ändra till rätt sidor när de är skapade och kommentera ut
             case "events":
-                selectedType = typeof(Index);
+                //selectedType = typeof();
                 break;
             case "reserved":
-                selectedType = typeof(Event);
+                //selectedType = typeof();
                 break;
             case "orders":
-                //selectedType = typeof(Orders);
+                //selectedType = typeof();
                 break;
             case "customers":
-                //selectedType = typeof(Customers);
+                //selectedType = typeof();
                 break;
             case "products":
-                selectedType = typeof(ProductCatalog);
+                //selectedType = typeof();
                 break;
             default:
                 break;

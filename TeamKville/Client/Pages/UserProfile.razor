@@ -21,7 +21,14 @@ else
     <AuthorizeView>
         <Authorized>
             <button class="btn btn-link" @onclick="BeginLogout">Log out</button>
+
+            @if(dbUser.IsAdmin)
+            {
+                <button class="btn btn-link" @onclick="AdminNavigation">Admin Panel</button>
+            }
+            
         </Authorized>
+        
     </AuthorizeView>
 }
 
@@ -62,6 +69,11 @@ else
     {
         await SignOutManager.SetSignOutState();
         Navigation.NavigateTo("authentication/logout");
+    }
+
+    private void AdminNavigation()
+    {
+        Navigation.NavigateTo("/admin");
     }
 
     
