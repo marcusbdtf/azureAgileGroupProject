@@ -16,8 +16,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        //Lägg till i Configuration i Web appen sen.
-        Environment.SetEnvironmentVariable("Admins", "b5cf3d05-3efa-4c52-8013-17afe4411c86;");
         TeamKville.Shared.SharedClass.allProducts = await HttpClient.GetFromJsonAsync<List<ProductDto>>(HttpClient.BaseAddress + "api/product");
     }
 }

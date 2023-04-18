@@ -30,17 +30,11 @@ else
         </tr>
     </table>
 
-    if(SharedClass.IsAdmin(user.Id))
-    {
-        <p>ADMIN</p>
-    }
-
-
 }
 
 @code {
+
     User? user;
-    bool isAdmin;
 
     protected override async Task OnInitializedAsync()
     {

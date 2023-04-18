@@ -17,22 +17,6 @@ namespace TeamKville.Shared
         {
             return char.ToUpper(input[0]) + input.Substring(1);
         }
-
-        public static bool IsAdmin(string id)
-        {
-            List<string> admins = Environment.GetEnvironmentVariable("Admins").Split(';').ToList();
-
-            if (admins.Contains(id))
-            {
-                return true;
-
-            }
-            else
-            {
-                return false;            
-            }
-        }
-
        
     }
 }
