@@ -1,0 +1,15 @@
+﻿
+.bg-sidebar {
+    background-color: #2C1A4D;
+    color: #FFFFFF;
+}
+.nav-link {
+    color: #FFFFFF!important;
+    font-weight: 500;
+}
+
+.nav > li > button:hover {
+    background-color: transparent;
+    color: #FFFFFF;
+    transform: scale(1.2);
+}
