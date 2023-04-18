@@ -1,11 +1,13 @@
 @page "/profile"
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using TeamKville.Shared;
 @using TeamKville.Shared.Models;
 @using TeamKville.Shared.Dto;
 @using Microsoft.Graph
 @inject Microsoft.Graph.GraphServiceClient GraphServiceClient
-
+@inject NavigationManager Navigation
+@inject SignOutSessionStateManager SignOutManager
 @attribute [Authorize]
 
 <h3>User Profile</h3>
@@ -16,10 +18,15 @@
 }
 else
 {
-    <table class="table">
-        
-    </table>
 
+
+
+
+    <AuthorizeView>
+        <Authorized>
+            <button class="btn btn-link" @onclick="BeginLogout">Log out</button>
+        </Authorized>
+    </AuthorizeView>
 }
 
 @code {
@@ -45,6 +52,12 @@ else
         {
             Console.WriteLine(ex.Message);
         }
+    }
+
+    private async Task BeginLogout(MouseEventArgs args)
+    {
+        await SignOutManager.SetSignOutState();
+        Navigation.NavigateTo("authentication/logout");
     }
 
     
