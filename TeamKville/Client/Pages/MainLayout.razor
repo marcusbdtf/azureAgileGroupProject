@@ -1,5 +1,5 @@
 @inherits LayoutComponentBase
-
+@inject Microsoft.Graph.GraphServiceClient GraphServiceClient
 <Navbar/>
 
 <div class="side-background d-flex flex-column">
@@ -16,7 +16,9 @@
 
     protected override async Task OnInitializedAsync()
     {
+        var azureUser = await GraphServiceClient.Me.Request().GetAsync();
         TeamKville.Shared.SharedClass.allProducts = await HttpClient.GetFromJsonAsync<List<ProductDto>>(HttpClient.BaseAddress + "api/product");
+        TeamKville.Shared.SharedClass.activeUser = await HttpClient.GetFromJsonAsync<UserDto>(HttpClient.BaseAddress + ("api/user/" + azureUser.Id));
     }
 }
 

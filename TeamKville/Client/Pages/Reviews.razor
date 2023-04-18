@@ -36,14 +36,7 @@
 
 @code {
 
-	[CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; } = default!;
-
 	[Parameter] 
 	public List<CommentDto> reviews { get; set; }
-
-	
-
-	private async Task Close() => await BlazoredModal.CloseAsync();
-
 
 }
