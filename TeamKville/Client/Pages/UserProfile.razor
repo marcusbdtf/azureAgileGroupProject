@@ -46,7 +46,6 @@ else
                 await HttpClient.PostAsJsonAsync<CreateUserModel>(HttpClient.BaseAddress + ("api/user"), new CreateUserModel { UserId = azureUser.Id, FirstName = "", LastName = "", Email = azureUser.UserPrincipalName, Address = new AddressModel{City = "", Street = "", PostNumber = ""}, PhoneNumber = "" });
             }
 
-            SharedClass.activeUserID = dbUser.UserId;
         }
         catch (Exception ex)
         {
