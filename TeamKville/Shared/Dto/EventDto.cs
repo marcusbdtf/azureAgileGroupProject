@@ -11,7 +11,7 @@ namespace TeamKville.Shared.Dto
 			public int Id { get; set; }
 			public string Name { get; set; }
 			public string Description { get; set; }
-			//public List<UserDto> RegisteredCustomersDtos { get; set; } = new List<UserDto>();
+			public List<UserDto> RegisteredCustomersDtos { get; set; } = new List<UserDto>();
 			public DateTime Date { get; set; }
 		}
 	}
