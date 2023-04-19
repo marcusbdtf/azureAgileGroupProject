@@ -2,12 +2,12 @@
 @using TeamKville.Shared;
 @using TeamKville.Client.Pages.AdminPage
 
-@if(!SharedClass.activeUser.IsAdmin)
+@*@if(!SharedClass.activeUser.IsAdmin)
 {
     <p>Not Authorized</p>
 }
 else
-{
+{*@
 <div class="container-fluid">
 
     <div class="row flex-nowrap">
@@ -57,7 +57,7 @@ else
         </div>
     </div>
 </div> 
-}
+@*}*@
 
 
 @code {
@@ -70,7 +70,7 @@ else
             {
             //Ändra till rätt sidor när de är skapade och kommentera ut
             case "events":
-                //selectedType = typeof();
+                selectedType = typeof(CreateEventForm);
                 break;
             case "reserved":
                 //selectedType = typeof();
