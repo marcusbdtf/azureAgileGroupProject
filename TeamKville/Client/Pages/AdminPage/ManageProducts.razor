@@ -38,9 +38,8 @@
 		}
 
 	</select>
-
-	<h5 class="m-1">Ålder: </h5>
-	<select class="m-1" @bind="age">
+		<h5 class="m-1">Ålder: </h5>
+		<select class="m-1" @bind="age">
 		<option value=""></option>
 		<option value="3">3</option>
 		<option value="7">7</option>
@@ -51,23 +50,15 @@
 	
 		<h5 class="m-1">Pris: </h5>
 		<input class="m-1" type="number" @bind="price" />
-		</div>
 
-	<h5>Produktbild:</h5>
-	<InputFile OnChange="@LoadFiles"></InputFile>
+		<h5 class="m-1">Produktbild: </h5>
+		<InputFile OnChange="@LoadFiles"></InputFile>
+	</div>
 
-	<button @onclick="CreateProduct">Skapa</button>
+
+	<button class="btn btn-primary m-1" @onclick="CreateProduct">Skapa</button>
+
 }
-
-
-
-
-
-
-
-
-
-
 
 @code {
 
@@ -81,6 +72,8 @@
 	decimal price;
 	Stream image;
 
+	bool uploadSuccessful = false;
+
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -90,8 +83,8 @@
 
 	private async void CreateProduct()
 	{
-		await HttpClient.PostAsJsonAsync<CreateProductModel>(HttpClient.BaseAddress + "api/product", new CreateProductModel
-			{
+		var result = await HttpClient.PostAsJsonAsync<CreateProductModel>(HttpClient.BaseAddress + "api/product", new CreateProductModel
+		{
 				Name = productName,
 				Description = productDescription,
 				CategoryId = selectedCategory.CategoryId,
@@ -101,13 +94,19 @@
 				IsActive = true
 		});
 
-		BlobContainerClient blobContainerClient = new BlobContainerClient(SharedClass.connectionStringBlob, "product");
-		blobContainerClient.UploadBlobAsync($"{productName}.png", image);
+		if(result.StatusCode == System.Net.HttpStatusCode.OK)
+		{
+
+			BlobContainerClient blobContainerClient = new BlobContainerClient(SharedClass.connectionStringBlob, "product");
+			await blobContainerClient.UploadBlobAsync($"{productName}.png", image);
+
+		}
+
 	}
 
 	private async Task LoadFiles(InputFileChangeEventArgs e)
 	{
-		image = e.File.OpenReadStream();
+		image = e.File.OpenReadStream(16777215);
 	}
 
 }
