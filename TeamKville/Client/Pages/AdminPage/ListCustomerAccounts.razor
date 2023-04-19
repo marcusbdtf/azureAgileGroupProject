@@ -1,0 +1,32 @@
+﻿@page "/ListCustomerAccounts"
+<h3>ListCustomerAccounts</h3>
+
+<div class="container d-flex p-4">
+	<div class="accordion" id="UsersAccordian">
+
+	@foreach (UserDto userToList in allUsers)
+	{
+		<div class="accordion-item" id="heading + @userCounter" >
+			<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="collape + @userCounter">@allUsers[userCounter].Email</button>
+		</div>
+	}
+	</div>
+
+</div>
+
+@code {
+	//Här hämta kunderna när sidan listan
+
+	UserDto[]? allUsers;
+	private int userCounter = 0;
+
+	protected override async Task OnInitializedAsync()
+	{
+		
+		var allUsers = await HttpClient.GetFromJsonAsync<UserDto[]>(HttpClient.BaseAddress + "api/user");
+
+
+
+	}
+
+}
