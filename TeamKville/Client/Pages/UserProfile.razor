@@ -1,5 +1,6 @@
 @page "/profile"
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using TeamKville.Shared;
 @using TeamKville.Shared.Models;
@@ -8,9 +9,13 @@
 @inject Microsoft.Graph.GraphServiceClient GraphServiceClient
 @inject NavigationManager Navigation
 @inject SignOutSessionStateManager SignOutManager
+@inject HttpClient HttpClient
 @attribute [Authorize]
 
-<h3>User Profile</h3>
+<div class="container">
+    <div class="row align-items-start">
+        <div class="col-12 col-md-8 col-lg-6 mx-auto profile-form">
+        <h3>Användar Profil</h3>
 
 @if (dbUser == null)
 {
@@ -26,11 +31,51 @@ else
             {
                 <button class="btn btn-link" @onclick="AdminNavigation">Admin Panel</button>
             }
-            
+
+            <EditForm Model="@dbUser" OnValidSubmit="@HandleFormSubmit" @ref="editForm">
+                <ChildContent Context="editContext">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+
+                    <div class="mb-3">
+                        <label for="FirstName" class="form-label">Namn:</label>
+                        <input type="text" id="FirstName" @bind="dbUser.FirstName" class="form-control" placeholder="@dbUser.FirstName" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="LastName" class="form-label">Efternamn:</label>
+                        <input type="text" id="LastName" @bind="dbUser.LastName" class="form-control" placeholder="@dbUser.LastName" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="Email" class="form-label">Email:</label>
+                        <input type="email" id="Email" @bind="dbUser.Email" class="form-control" placeholder="@dbUser.Email" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="PhoneNumber" class="form-label">Telefon:</label>
+                        <input type="text" id="PhoneNumber" @bind="dbUser.PhoneNumber" class="form-control" placeholder="@dbUser.PhoneNumber" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="City" class="form-label">Stad:</label>
+                        <input type="text" id="City" @bind="dbUser.Address.City" class="form-control" placeholder="@dbUser.Address.City" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="Street" class="form-label">Gata:</label>
+                        <input type="text" id="Street" @bind="dbUser.Address.Street" class="form-control" placeholder="@dbUser.Address.Street" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="PostNumber" class="form-label">Postnummer:</label>
+                        <input type="text" id="PostNumber" @bind="dbUser.Address.PostNumber" class="form-control" placeholder="@dbUser.Address.PostNumber" />
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Spara Ändringar</button>
+                </ChildContent>
+            </EditForm>
+
         </Authorized>
-        
     </AuthorizeView>
 }
+        </div>
+    </div>
+</div>
 
 @code {
 
@@ -38,6 +83,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+
         try
         {  
             var azureUser = await GraphServiceClient.Me.Request().GetAsync();
@@ -64,6 +110,45 @@ else
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
+        }
+    }
+    private EditForm editForm;
+
+    private async Task HandleFormSubmit()
+    {
+        if (editForm.EditContext.Validate())
+        {
+            await UpdateUser();
+        }
+    }
+
+    private async Task UpdateUser()
+    {
+        try
+        {
+            var updateUserModel = new UpdateUserModel
+            {
+                UserId = dbUser.UserId,
+                FirstName = dbUser.FirstName,
+                LastName = dbUser.LastName,
+                Email = dbUser.Email,
+                PhoneNumber = dbUser.PhoneNumber,
+                Address = new AddressModel
+                {
+                    City = dbUser.Address.City,
+                    Street = dbUser.Address.Street,
+                    PostNumber = dbUser.Address.PostNumber,
+                }
+
+            };
+
+            await HttpClient.PutAsJsonAsync<UpdateUserModel>("api/user", updateUserModel);
+            Console.WriteLine("Successfully updated user");
+            Navigation.NavigateTo("/profile");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error updating user: " + ex.Message);
         }
     }
 
