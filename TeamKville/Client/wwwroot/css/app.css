@@ -31,6 +31,9 @@ h1:focus {
     outline: none;
 }
 
+.profile-form {
+    margin: 10% 0;
+}
 
 #blazor-error-ui {
     background: lightyellow;
