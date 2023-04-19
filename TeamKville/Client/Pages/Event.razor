@@ -11,16 +11,18 @@
 				<h5 class="text-center">Detaljer</h5>
 				<div class="card-text h-50 mt-5">					
 
-					<p class="p-0 m-0"><b>Deltagare:</b></p> <!--Lägg till sen när vi löst det i API-->
+					<p class="p-0 m-0"><b>Deltagare:</b> @currentEvent.RegisteredCustomersDtos.Count()</p> 
 						
 										
 				</div>
 
 				@if(currentEvent.Date > DateTime.Now)
 				{
+					<AuthorizeView>
 					<div class="text-center">
-						<button class="btn btn-primary">Registrera</button>
+						<button class="btn btn-primary" @onclick="RegisterUserToEvent">Registrera</button>
 					</div>
+					</AuthorizeView>
 				}
 			
 			</div>
@@ -42,5 +44,10 @@
 	{
 		var allEvents = await HttpClient.GetFromJsonAsync<IEnumerable<EventDto>>(HttpClient.BaseAddress + "event/all");
 		currentEvent = allEvents.Where(e => e.Id == Id).First();
+	}
+
+	private async void RegisterUserToEvent()
+	{
+		await HttpClient.PatchAsJsonAsync<UserDto>(HttpClient.BaseAddress + "event?eventId=" + currentEvent.Id, SharedClass.activeUser);
 	}
 }
