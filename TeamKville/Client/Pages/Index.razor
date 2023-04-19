@@ -8,7 +8,7 @@
 	
 <div class="container text-center">
 	<div class="card mx-auto d-block w-50 h-50 shadow-sm">
-		<img src=@SharedClass.GetImage("event", currentEvent.Id) class="card-img-top" style="object-fit: contain;">
+		<img src=@SharedClass.GetImage("event", currentEvent.Name) class="card-img-top" style="object-fit: contain;">
 		<div class="card-body">
 			<div class="cardcard-title">
 				<h4>@currentEvent.Name</h4>
@@ -30,7 +30,7 @@
 			{
 				<CarouselItem>
 					<div class="carousel-caption" style="color: black;">
-						<img class="card-img-top pt-2 pb-2" style="height: 250px; object-fit: contain;" src=@SharedClass.GetImage("product", product.Id) />
+						<img class="card-img-top pt-2 pb-2" style="height: 250px; object-fit: contain;" src=@SharedClass.GetImage("product", product.Name) />
 						<div class="border-top" style="padding:1rem;">
 							<h5>@product.Name</h5>
 							<p>@product.Price kr</p>
