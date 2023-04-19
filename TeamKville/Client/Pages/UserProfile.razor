@@ -53,10 +53,12 @@ else
                     Email = azureUser.UserPrincipalName, 
                     Address = new AddressModel{City = "", Street = "", PostNumber = ""}, 
                     PhoneNumber = "",
-                    //Ändra till false när vi är klara, gör bara så att om vi i teamet loggar in blir vi admins så vi kan testa produkten.
+                    //Ã„ndra till false nÃ¤r vi Ã¤r klara, gÃ¶r bara sÃ¥ att om vi i teamet loggar in blir vi admins sÃ¥ vi kan testa produkten.
                     IsAdmin = true
                 });
             }
+
+            SharedClass.activeUser = dbUser;
 
         }
         catch (Exception ex)
