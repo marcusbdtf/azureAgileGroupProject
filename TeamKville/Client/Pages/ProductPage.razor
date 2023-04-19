@@ -146,7 +146,7 @@
 
 	protected override async Task OnParametersSetAsync()
 	{
-		imagesrc = SharedClass.GetImage("product",(int)Id);	
+		imagesrc = SharedClass.GetImage("product",currentProduct.Name);	
 	}
 
 

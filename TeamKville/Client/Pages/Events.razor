@@ -6,7 +6,7 @@
 
 <div class="container text-center">
 	<div class="card mx-auto d-block w-50 h-50 shadow-sm">
-		<img src=@SharedClass.GetImage("event", nextEvent.Id) class="card-img-top" style="object-fit: contain;">
+		<img src=@SharedClass.GetImage("event", nextEvent.Name) class="card-img-top" style="object-fit: contain;">
 		<div class="card-body">
 			<div class="cardcard-title">
 				<h4>@nextEvent.Name</h4>
@@ -31,7 +31,7 @@
 				<div class="col-sm" style="flex: 0 0 25%; flex-grow: 1;">
 					<div class="card w-100 m-0 rounded rounded-0">	
 						<a href="event/@events.Id">
-							<img src="@SharedClass.GetImage("event",events.Id)" class="card-img-top rounded rounded-0" style="height: 200px; width: 100%; object-fit: contain; background-color: gray;" />
+							<img src="@SharedClass.GetImage("event",events.Name)" class="card-img-top rounded rounded-0" style="height: 200px; width: 100%; object-fit: contain; background-color: gray;" />
 						</a>
 						<div class="card-body border-top">
 							<div class="card-title">
@@ -57,7 +57,7 @@
 				<div class="col-sm" style="flex: 0 0 25%; flex-grow: 1;">
 					<div class="card w-100 m-0 rounded rounded-0">
 						<a href="event/@events.Id">
-							<img src="@SharedClass.GetImage("event",events.Id)" class="card-img-top rounded rounded-0" style="height: 200px; width: 100%; object-fit: contain; background-color: gray;" />
+							<img src="@SharedClass.GetImage("event",events.Name)" class="card-img-top rounded rounded-0" style="height: 200px; width: 100%; object-fit: contain; background-color: gray;" />
 						</a>
 						<div class="card-body border-top">
 							<div class="card-title">
