@@ -1,15 +1,16 @@
 ﻿@page "/Cart"
 @using TeamKville.Shared;
 @using Microsoft.AspNetCore.Components.Forms;
+@using Blazored.LocalStorage;
+@inject ILocalStorageService LocalStorage;
 @inject NavigationManager NavigationManager
 
 <h3 class="pt-3 text-center">Kundvagn</h3>
  <hr style="width: 75%; margin: 0 auto;"/>
 
-
  @if (cartItems == null || cartItems.Count() <= 0)
     {
-        <span>You have no items in your cart.</span>
+        <span>Du har inga produkter tillagda än.</span>
     }
     else
     {
@@ -22,9 +23,11 @@
                     <div class="item-name">
                         <h5><a href="/product/@item.ProductId">@item.ProductName</a></h5>
                         <button class="btn-delete" @onclick="@(() => DeleteItem(item))">Ta bort</button>
-                        <EditForm Model="item">
-                            <InputNumber  id="quantity" @bind-Value="item.Quantity" @oninput="((e) => QuantityChange(e,item))" class="form-control" style="width: 70px" />
-                        </EditForm>
+                        <div class="container d-flex">
+                        <button style="background: none; border: none; m-0" @onclick="(() => {DecreaseQuantity(item); item.Quantity = item.Quantity != 1 ? item.Quantity -= 1 : item.Quantity = item.Quantity;})">-</button>
+                            <input type="number" id="quantity" @bind="item.Quantity" class="form-control" style="width: 70px" readonly/>
+                            <button style="background: none; border: none; m-0" @onclick="(() => {IncreaseQuantity(item); item.Quantity = item.Quantity += 1;})">+</button>
+                        </div>
                     </div>
                     <div class="item-price align-self-center justify-content-center">@(item.Price * item.Quantity)kr</div>
                 </div>
@@ -34,61 +37,101 @@
                 Total (@cartItems.Count()): @cartItems.Sum(item => item.Price * item.Quantity)kr
             </div>
             <div class="text-center m-4 p-4">
-                <button class="btn btn-primary btn-lg" @onclick="PlaceOrder">Lägg beställning</button>
+                <button class="btn btn-primary btn-lg" @onclick="Checkout">Till Betalning</button>
             </div>
         </div>
     }
 
 @code {
     List<CartItemDto> cartItems = new List<CartItemDto>();
-    StringContent stringContent = new StringContent(SharedClass.activeUser.UserId);
+    StringContent stringContent = new StringContent("");
 
     protected override async Task OnInitializedAsync()
-    {
-        await RefreshCart();
+    {   
+        if (SharedClass.activeUser != null)
+        {
+            await RefreshCartUser();
+        }
+        else if(SharedClass.activeUser == null)
+        {
+            await RefreshCart();
+        }
     }
 
     private async Task RefreshCart()
     {
-        if (SharedClass.activeUser != null)
+
+        List<CartItemDto> tempList = new List<CartItemDto>();
+        foreach(var product in SharedClass.allProducts)
         {
-            var shoppingCart = await HttpClient.GetFromJsonAsync<ShoppingCartDto>(HttpClient.BaseAddress + "api/user/shoppingcart/" + SharedClass.activeUser.UserId);
-            cartItems = shoppingCart.Products.ToList();
+            tempList.Add(await LocalStorage.GetItemAsync<CartItemDto>(product.Id.ToString()));
+        }
+
+        cartItems = tempList.Where(p => p != null).ToList();
+
+
+    }
+
+    private async Task RefreshCartUser()
+    {
+        if (SharedClass.activeUser.UserId != null)
+        {
+            var userShoppingCart = await HttpClient.GetFromJsonAsync<ShoppingCartDto>(HttpClient.BaseAddress + "api/user/shoppingcart/" + SharedClass.activeUser.UserId);
+            cartItems = userShoppingCart.Products.ToList();
         }
     }
 
     private async void DeleteItem(CartItemDto item)
     {
         cartItems.Remove(item);
-
-        await HttpClient.PostAsync(HttpClient.BaseAddress + "api/user/shoppingcart/delete-cartitem/" + SharedClass.activeUser.UserId + "/" + item.ProductId, stringContent);
-    }
-
-    private void PlaceOrder()
-    {
-        //Navigera till checkout sida?
-    }
-
-    private async Task QuantityChange(Microsoft.AspNetCore.Components.ChangeEventArgs e, CartItemDto item)
-    {
-        var shoppingCart = await HttpClient.GetFromJsonAsync<ShoppingCartDto>(HttpClient.BaseAddress + "api/user/shoppingcart/" + SharedClass.activeUser.UserId);
-        int prevProductQuantity = shoppingCart.Products.Where(p => p.ProductName == item.ProductName).First().Quantity;
-
-        Console.WriteLine("Item Quantity:" + item.Quantity);
-        Console.WriteLine("Prev Item Quantity:" + prevProductQuantity);
-
-        if(prevProductQuantity < item.Quantity)
+        if(SharedClass.activeUser != null)
         {
-            await HttpClient.PostAsync(HttpClient.BaseAddress + "api/user/shoppingcart/increase/" + SharedClass.activeUser.UserId + "/" + item.ProductId, stringContent);
+            await HttpClient.PostAsync(HttpClient.BaseAddress + "api/user/shoppingcart/delete-cartitem/" + SharedClass.activeUser.UserId + "/" + item.ProductId, stringContent);
         }
-        else if(prevProductQuantity > item.Quantity)
+        else
+        {
+            await LocalStorage.RemoveItemAsync(item.ProductId.ToString());
+        }
+
+        
+    }
+
+    private void Checkout()
+    {
+        //Navigera till checkout sida
+    }
+
+    private async Task DecreaseQuantity(CartItemDto item)
+    {
+
+        if(SharedClass.activeUser != null)
         {
             await HttpClient.PostAsync(HttpClient.BaseAddress + "api/user/shoppingcart/decrease/" + SharedClass.activeUser.UserId + "/" + item.ProductId, stringContent);
         }
+        else
+        {
+            await LocalStorage.SetItemAsync<CartItemDto>(item.ProductId.ToString(), item);
+        }
+
     }
+
+    private async Task IncreaseQuantity(CartItemDto item)
+    {
+        if(SharedClass.activeUser != null)
+        {
+            await HttpClient.PostAsync(HttpClient.BaseAddress + "api/user/shoppingcart/increase/" + SharedClass.activeUser.UserId + "/" + item.ProductId, stringContent);
+        }
+        else
+        {
+            await LocalStorage.SetItemAsync<CartItemDto>(item.ProductId.ToString(), item);
+        }
+
+    }
+
 }
 
 <style>
+
     ﻿.item-container {
         display: flex;
         padding: 6px
