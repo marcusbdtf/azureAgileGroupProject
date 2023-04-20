@@ -216,9 +216,7 @@ else
                                
                                     </div>
                                     <p class="card-text">Pris: @product.Price kr</p>
-
-                                    <!--Lägg in funktion för att lägga till i varukorgen!-->
-                                    <button class="btn btn-primary">Köp</button>
+                                    <button class="btn btn-primary" @onclick="(() => AddToShoppingCart(product.Id))">Köp</button>
                                 </div>
                                 </div>
 
@@ -340,6 +338,19 @@ else
         catch
         {
 
+        }
+    }
+
+    private async void AddToShoppingCart(int Id)
+    {
+        if (SharedClass.activeUser != null)
+        {
+            await HttpClient.PostAsJsonAsync<AddProductToShoppingCartModel>(HttpClient.BaseAddress + "api/user/shoppingcart/add", new AddProductToShoppingCartModel
+                {
+                    ProductId = Id,
+                    Quantity = 1,
+                    UserId = SharedClass.activeUser.UserId
+                });
         }
     }
 

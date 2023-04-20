@@ -6,7 +6,6 @@
 <h3 class="pt-3 text-center">Kundvagn</h3>
  <hr style="width: 75%; margin: 0 auto;"/>
 
-
  @if (cartItems == null || cartItems.Count() <= 0)
     {
         <span>You have no items in your cart.</span>
@@ -22,9 +21,11 @@
                     <div class="item-name">
                         <h5><a href="/product/@item.ProductId">@item.ProductName</a></h5>
                         <button class="btn-delete" @onclick="@(() => DeleteItem(item))">Ta bort</button>
-                        <EditForm Model="item">
-                            <InputNumber  id="quantity" @bind-Value="item.Quantity" @oninput="((e) => QuantityChange(e,item))" class="form-control" style="width: 70px" />
-                        </EditForm>
+                        <div class="container d-flex">
+                            <button style="background: none; border: none;" @onclick="(() => {DecreaseQuantity(item); item.Quantity -= 1;})">-</button>
+                            <input type="number" id="quantity" @bind="item.Quantity" class="form-control" style="width: 70px" readonly/>
+                            <button style="background: none; border: none;" @onclick="(() => {IncreaseQuantity(item); item.Quantity += 1;})">+</button>
+                        </div>
                     </div>
                     <div class="item-price align-self-center justify-content-center">@(item.Price * item.Quantity)kr</div>
                 </div>
@@ -34,27 +35,32 @@
                 Total (@cartItems.Count()): @cartItems.Sum(item => item.Price * item.Quantity)kr
             </div>
             <div class="text-center m-4 p-4">
-                <button class="btn btn-primary btn-lg" @onclick="PlaceOrder">Lägg beställning</button>
+                <button class="btn btn-primary btn-lg" @onclick="PlaceOrder">Till Betalning</button>
             </div>
         </div>
     }
 
 @code {
     List<CartItemDto> cartItems = new List<CartItemDto>();
-    StringContent stringContent = new StringContent(SharedClass.activeUser.UserId);
+    StringContent stringContent = new StringContent("");
 
     protected override async Task OnInitializedAsync()
-    {
-        await RefreshCart();
+    {   
+        if (SharedClass.activeUser != null)
+        {
+            await Task.Delay(1000);
+            await RefreshCart();
+        }
+        else
+        {
+            
+        }
     }
 
     private async Task RefreshCart()
-    {
-        if (SharedClass.activeUser != null)
-        {
-            var shoppingCart = await HttpClient.GetFromJsonAsync<ShoppingCartDto>(HttpClient.BaseAddress + "api/user/shoppingcart/" + SharedClass.activeUser.UserId);
-            cartItems = shoppingCart.Products.ToList();
-        }
+    {  
+        var shoppingCart = await HttpClient.GetFromJsonAsync<ShoppingCartDto>(HttpClient.BaseAddress + "api/user/shoppingcart/" + SharedClass.activeUser.UserId);
+        cartItems = shoppingCart.Products.ToList();      
     }
 
     private async void DeleteItem(CartItemDto item)
@@ -69,23 +75,16 @@
         //Navigera till checkout sida?
     }
 
-    private async Task QuantityChange(Microsoft.AspNetCore.Components.ChangeEventArgs e, CartItemDto item)
+    private async Task DecreaseQuantity(CartItemDto item)
     {
-        var shoppingCart = await HttpClient.GetFromJsonAsync<ShoppingCartDto>(HttpClient.BaseAddress + "api/user/shoppingcart/" + SharedClass.activeUser.UserId);
-        int prevProductQuantity = shoppingCart.Products.Where(p => p.ProductName == item.ProductName).First().Quantity;
-
-        Console.WriteLine("Item Quantity:" + item.Quantity);
-        Console.WriteLine("Prev Item Quantity:" + prevProductQuantity);
-
-        if(prevProductQuantity < item.Quantity)
-        {
-            await HttpClient.PostAsync(HttpClient.BaseAddress + "api/user/shoppingcart/increase/" + SharedClass.activeUser.UserId + "/" + item.ProductId, stringContent);
-        }
-        else if(prevProductQuantity > item.Quantity)
-        {
-            await HttpClient.PostAsync(HttpClient.BaseAddress + "api/user/shoppingcart/decrease/" + SharedClass.activeUser.UserId + "/" + item.ProductId, stringContent);
-        }
+        await HttpClient.PostAsync(HttpClient.BaseAddress + "api/user/shoppingcart/decrease/" + SharedClass.activeUser.UserId + "/" + item.ProductId, stringContent);
     }
+
+    private async Task IncreaseQuantity(CartItemDto item)
+    {
+        await HttpClient.PostAsync(HttpClient.BaseAddress + "api/user/shoppingcart/increase/" + SharedClass.activeUser.UserId + "/" + item.ProductId, stringContent);
+    }
+
 }
 
 <style>
