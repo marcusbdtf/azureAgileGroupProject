@@ -11,6 +11,11 @@
     "storage1": {
       "type": "storage",
       "connectionId": "connectionStringBlobTK"
+    },
+    "mssql1": {
+      "type": "mssql",
+      "connectionId": "ConnectionStrings",
+      "dynamicId": null
     }
   }
 }
