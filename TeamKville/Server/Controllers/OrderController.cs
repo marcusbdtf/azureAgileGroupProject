@@ -53,14 +53,15 @@ namespace TeamKville.Server.Controllers
 					{
 						ProductDto = new ProductDto()
 						{
+							Id = pq.Product.ProductId,
 							Age = pq.Product.Age,
-							Category = new CategoryDto()
-							{
-								Name = pq.Product.Category.Name,
-								CategoryId = pq.Product.CategoryId
-							},
+							//Category = new CategoryDto()
+							//{
+							//	Name = pq.Product.Category.Name,
+							//	CategoryId = pq.Product.CategoryId
+							//},
 							Description = pq.Product.Description,
-							Comments = pq.Product.Comments.Select(ConvertCommentsToDto),
+							//Comments = pq.Product.Comments.Select(ConvertCommentsToDto),
 							IsActive = pq.Product.IsActive,
 							Name = pq.Product.Name,
 							Price = pq.Product.Price

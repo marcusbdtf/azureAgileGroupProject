@@ -26,7 +26,10 @@ public class OrderRepository : IOrderRepository<Order>
 
 	public async Task<IEnumerable<Order>> GetByUserIdentity(string userId)
 	{
-		var orders = _dataContext.Orders.Where(o => o.UserId.Equals(userId));
+		var orders = _dataContext.Orders
+			.Include(p => p.OrderedProducts)
+			.ThenInclude(p => p.Product)
+			.Where(o => o.UserId.Equals(userId));
 		return orders;
 	}
 

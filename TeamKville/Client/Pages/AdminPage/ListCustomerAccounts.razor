@@ -53,43 +53,41 @@
 									</ul>
 								</div>
 								<div class="col-md-6">
-									
-
-	@*								<label>Choose an order:</label>
-									<select @bind="@SelectedOrderId" @onclick="SelectActiveOrder" id="customerOrders">
-										@foreach (var orderDto in UserOrders)
-										{
-											<option value="@orderDto.OrderId">Order Id: @orderDto.OrderId</option>
-										}
-									</select>*@
-									
 									<EditForm Model="UserOrders" OnValidSubmit="SelectActiveOrder">
 										<InputSelect @bind-Value="SelectedOrderId">
-											<option value="">--Select--</option>
+											<option value="">--Select Order--</option>
 											@foreach (var orderDto in UserOrders)
 											{
 												<option value="@orderDto.OrderId">OrderId: @orderDto.OrderId</option>
 											}
 										</InputSelect>
-										<button >klick!</button>
+										<button class="btn btn-secondary">klick!</button>
 									</EditForm>
 									
 									@if (ActiveOrderDto != null)
 									{
-										@ActiveOrderDto.OrderDate
-										@ActiveOrderDto.OrderId
-										@ActiveOrderDto.Street
-										@ActiveOrderDto.City
-										@ActiveOrderDto.PostalCode
-										<div>Products
-										<Virtualize Items="ActiveOrderDto.OrderedProductsDto" Context="productQuantity">
-											<li class="list-group">
-												<div>
-													Name: @productQuantity.ProductDto.Name Quantity: @productQuantity.Quantity
-												</div>
-											</li>
-										</Virtualize>
-									</div>
+
+										
+										<div>
+											Order date: @ActiveOrderDto.OrderDate
+											<br />
+											Order id: @ActiveOrderDto.OrderId
+											<br />
+											Street: @ActiveOrderDto.Street
+											<br />
+											City: @ActiveOrderDto.City
+											<br />
+											Postal code: @ActiveOrderDto.PostalCode
+											<br />
+											Ordered Products
+											<Virtualize Items="ActiveOrderDto.OrderedProductsDto" Context="productQuantity">
+												<li class="list-group">
+													<div>
+														Name: @productQuantity.ProductDto.Name Quantity: @productQuantity.Quantity
+													</div>
+												</li>
+											</Virtualize>
+										</div>
 									}
 								</div>
 							</div>
@@ -105,18 +103,7 @@
 	public List<UserDto> AllUsers = new ();
 	public List<OrderDto> UserOrders = new();
 	public OrderDto? ActiveOrderDto = new ();
-
-	private int _selectedOrderId;
-
-	public int SelectedOrderId
-	{
-		get { return _selectedOrderId; }
-		set
-		{
-			_selectedOrderId = value;
-			//SelectActiveOrder();
-		}
-	}
+	public int SelectedOrderId;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -131,6 +118,8 @@
 	private async Task LoadOrders(UserDto usertoFind)
 	{
 		UserOrders.Clear();
+		ActiveOrderDto = null;
+		SelectedOrderId = 0;
 		
 		var result = await HttpClient.GetFromJsonAsync<OrderDto[]>(HttpClient.BaseAddress + $"api/order?userId={usertoFind.UserId}");
 
