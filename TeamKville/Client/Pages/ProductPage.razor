@@ -52,7 +52,7 @@
 					</div>
 					<div class="text-center">
 					<h3>@currentProduct.Price kr</h3>						
-					<button class="btn btn-primary">Köp</button>
+					<button class="btn btn-primary" @onclick="AddToShoppingCart">Köp</button>
 					</div>
 				</div>
 			</div>
@@ -149,6 +149,18 @@
 		imagesrc = SharedClass.GetImage("product",currentProduct.Name);	
 	}
 
+	private async void AddToShoppingCart()
+	{
+		if(SharedClass.activeUser != null)
+		{
+			await HttpClient.PostAsJsonAsync<AddProductToShoppingCartModel>(HttpClient.BaseAddress + "api/user/shoppingcart/add", new AddProductToShoppingCartModel
+			{
+					ProductId = currentProduct.Id,
+					Quantity = 1,
+					UserId = SharedClass.activeUser.UserId
+			});
+		}
+	}
 
 	private async Task ShowReviews()
 	{
