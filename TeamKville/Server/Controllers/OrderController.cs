@@ -26,9 +26,9 @@ namespace TeamKville.Server.Controllers
 		}
 		
 		[HttpGet] 
-		public async Task<IActionResult> GetByEmail(string email) //TODO: ska det returneras orderobjekt eller DTO?
+		public async Task<IActionResult> GetByUserId(string userId) //TODO: ska det returneras orderobjekt eller DTO?
 		{
-			var orderToReturn = await _orderRepository.GetByEmail(email);
+			var orderToReturn = await _orderRepository.GetByUserIdentity(userId);
 			
 			return Ok(orderToReturn.Select(ConvertToOrderDto));
 		}
