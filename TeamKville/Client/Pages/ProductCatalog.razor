@@ -5,6 +5,8 @@
 @using TeamKville.Shared.Dto;
 @using Syncfusion.Blazor;
 @using Syncfusion.Blazor.Inputs;
+@using Blazored.LocalStorage;
+@inject ILocalStorageService LocalStorage;
 @inject IJSRuntime JsRuntime;
 @inject HttpClient HttpClient;
 
@@ -216,7 +218,7 @@ else
                                
                                     </div>
                                     <p class="card-text">Pris: @product.Price kr</p>
-                                    <button class="btn btn-primary" @onclick="(() => AddToShoppingCart(product.Id))">Köp</button>
+                                    <button class="btn btn-primary" @onclick="(() => AddToShoppingCart(product))">Köp</button>
                                 </div>
                                 </div>
 
@@ -341,16 +343,27 @@ else
         }
     }
 
-    private async void AddToShoppingCart(int Id)
+    private async void AddToShoppingCart(ProductDto product)
     {
         if (SharedClass.activeUser != null)
         {
             await HttpClient.PostAsJsonAsync<AddProductToShoppingCartModel>(HttpClient.BaseAddress + "api/user/shoppingcart/add", new AddProductToShoppingCartModel
                 {
-                    ProductId = Id,
+                    ProductId = product.Id,
                     Quantity = 1,
                     UserId = SharedClass.activeUser.UserId
                 });
+        }
+        else
+        {
+            await LocalStorage.SetItemAsync<CartItemDto>(product.Id.ToString(), new CartItemDto
+            {
+                ProductId = product.Id,
+                Quantity = 1,
+                Price = product.Price,
+                ProductName = product.Name,
+                TotalProductPrice = product.Price * 1
+            });
         }
     }
 

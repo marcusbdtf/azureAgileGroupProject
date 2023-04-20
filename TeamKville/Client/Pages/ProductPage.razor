@@ -3,6 +3,8 @@
 @using TeamKville.Shared;
 @using TeamKville.Shared.Dto;
 @using TeamKville.Shared.Models;
+@using Blazored.LocalStorage;
+@inject ILocalStorageService LocalStorage;
 @inject NavigationManager NavigationManager;
 
 <div class="container">
@@ -158,6 +160,17 @@
 					ProductId = currentProduct.Id,
 					Quantity = 1,
 					UserId = SharedClass.activeUser.UserId
+			});
+		}
+		else
+		{
+			await LocalStorage.SetItemAsync<CartItemDto>(currentProduct.Id.ToString(), new CartItemDto
+			{
+				ProductId = currentProduct.Id,
+				Quantity = 1,
+				Price = currentProduct.Price,
+				ProductName = currentProduct.Name,
+				TotalProductPrice = currentProduct.Price * 1
 			});
 		}
 	}
