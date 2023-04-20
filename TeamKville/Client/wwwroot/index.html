@@ -16,6 +16,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
+
     <script>
         function openContainer() {
             var container = document.getElementById("filter-tab");
@@ -41,27 +42,28 @@
         <a href="" class="reload">Reload</a>
         <a class="dismiss">🗙</a>
     </div>
-<script src="_framework/blazor.webassembly.js"></script>
-<script>
-    // When button is clicked scroll to top
-    
-    function scrollToTop() {
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
-    }
+    <script src="_framework/blazor.webassembly.js"></script>
+    <script src="_content/Microsoft.Authentication.WebAssembly.Msal/AuthenticationService.js"></script>
+    <script>
+        // When button is clicked scroll to top
 
-    // Hide button when the page is already at the top
-    window.addEventListener('scroll', () => {
-        const scrollTopBtn = document.getElementById('scrollTopBtn');
-        if (window.pageYOffset > 100) {
-            scrollTopBtn.style.display = 'block';
-        } else {
-            scrollTopBtn.style.display = 'none';
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
         }
-    });
-</script>
+
+        // Hide button when the page is already at the top
+        window.addEventListener('scroll', () => {
+            const scrollTopBtn = document.getElementById('scrollTopBtn');
+            if (window.pageYOffset > 100) {
+                scrollTopBtn.style.display = 'block';
+            } else {
+                scrollTopBtn.style.display = 'none';
+            }
+        });
+    </script>
 </body>
 
 </html>

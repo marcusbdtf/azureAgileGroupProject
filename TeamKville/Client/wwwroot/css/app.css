@@ -17,11 +17,23 @@
         color: white;
     }
 
+.product-image {
+    position: relative;
+    transition: transform 0.3s ease-in-out;
+    z-index: 1;
+}
+
+.product-image:hover {
+    transform: scale(1.3);
+}
    
 h1:focus {
     outline: none;
 }
 
+.profile-form {
+    margin: 10% 0;
+}
 
 #blazor-error-ui {
     background: lightyellow;
@@ -51,3 +63,7 @@ h1:focus {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+.nav-link {
+    color: #212529;
+}

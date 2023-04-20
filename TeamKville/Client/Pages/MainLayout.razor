@@ -1,11 +1,12 @@
-﻿@inherits LayoutComponentBase
-
+@inherits LayoutComponentBase
+@inject Microsoft.Graph.GraphServiceClient GraphServiceClient
 <Navbar/>
 
-<div class="d-flex flex-column" style="min-height: 100vh;">
-    <main role="main" class="container flex-grow-1" 
-          style="padding-bottom: 2rem; padding-top: 1.5rem">
+<div class="side-background d-flex flex-column">
+    <main role="main" class="container p-0 flex-grow-1">
+        <div class="body shadow">
         @Body
+        </div>
     </main>
         
     <Footer />
@@ -15,7 +16,14 @@
 
     protected override async Task OnInitializedAsync()
     {
-        Shared.SharedClass.allProducts = await HttpClient.GetFromJsonAsync<List<ProductDto>>(HttpClient.BaseAddress + "api/product");
+        var azureUser = await GraphServiceClient.Me.Request().GetAsync();
+        TeamKville.Shared.SharedClass.allProducts = await HttpClient.GetFromJsonAsync<List<ProductDto>>(HttpClient.BaseAddress + "api/product");
+
+        if(azureUser.Id != null)
+        {
+            TeamKville.Shared.SharedClass.activeUser = await HttpClient.GetFromJsonAsync<UserDto>(HttpClient.BaseAddress + ("api/user/" + azureUser.Id));
+        }
+       
     }
 }
 
@@ -23,6 +31,15 @@
 
     main {
         font-family: 'Montserrat', sans-serif;
+    }
+
+    .side-background {
+        min-height: 100vh;
+        background-color: lightgray;
+    }
+
+    .body{
+        background-color: white;
     }
 
 </style>

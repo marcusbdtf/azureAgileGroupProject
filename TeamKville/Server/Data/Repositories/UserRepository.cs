@@ -317,6 +317,13 @@ namespace TeamKville.Server.Data.Repositories
 			return await Task.FromResult("User could not be found");
 
 		}
+
+		public User GetUserByEmail(string email)
+		{
+			var user = _dbContext.Users.FirstOrDefault(u => u.Email == email);
+
+			return user;
+		}
 	}
 
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 using TeamKville.Server.Data.DataModels;
 using TeamKville.Server.Data.Repositories.Interfaces;
 using TeamKville.Shared.Dto;
@@ -10,10 +11,12 @@ namespace TeamKville.Server.Controllers
 	public class EventController : ControllerBase
 		{
 			private readonly IEventRepository<Event> _eventRepository;
+			private readonly IUserRepository _userRepository;
 
-		public EventController(IEventRepository<Event> eventRepository)
+		public EventController(IEventRepository<Event> eventRepository, IUserRepository userRepository)
 			{
 				_eventRepository = eventRepository;
+				_userRepository = userRepository;
 			}
 
 		[HttpGet("all")]
@@ -22,9 +25,7 @@ namespace TeamKville.Server.Controllers
 
 		public async Task<IActionResult> GetAllEvents()
 		{
-var result = await _eventRepository.GetEvents();
-
-var test = result.Select(ConvertToEventDto);
+			var result = await _eventRepository.GetEvents();
 
 			return Ok(result.Select(ConvertToEventDto));
 		}
@@ -37,23 +38,21 @@ var test = result.Select(ConvertToEventDto);
 				Id = eventItem.Id,
 				Name = eventItem.Name,
 				Description = eventItem.Description,
-				//RegisteredCustomers = eventItem.RegisteredCustomers, //Convertera till User
+				RegisteredCustomers = eventItem.RegisteredCustomersDtos.Select(GetUserByEmail).ToList(),
 				Date = eventItem.Date
-
 			};
 
-var result = await _eventRepository.AddEvent(newEvent);
-return Ok(result);
-			
+			var result = await _eventRepository.AddEvent(newEvent);
+			return Ok(result);
 		}
 
-//		[HttpPatch]
-//		//Ta reda på vad från eventet som skickas från frontend
-//		public async Task<IActionResult> AddCustomerToEvent(UserDto userDto, int eventId)
-//		{
-//var result = await _eventRepository.AddUserToEvent(userDto, eventId);
-//return Ok(result);
-//		}
+
+		[HttpPatch]
+		public async Task<IActionResult> AddCustomerToEvent(UserDto userDto, int eventId)
+		{
+			var result = await _eventRepository.AddUserToEvent(GetUserByEmail(userDto), eventId);
+			return Ok(result);
+		}
 
 		private EventDto ConvertToEventDto(Event eventToConvert)
 		{
@@ -62,26 +61,35 @@ return Ok(result);
 				Id = eventToConvert.Id,
 				Name = eventToConvert.Name,
 				Description = eventToConvert.Description,
-				//RegisteredCustomersDtos = eventToConvert.RegisteredCustomers.Select(ConvertUserToDto),
-Date = eventToConvert.Date
+				RegisteredCustomersDtos = eventToConvert.RegisteredCustomers.Select(ConvertUserToDto).ToList(),
+				Date = eventToConvert.Date
 			};
-
-		//private UserDto ConvertUserToDto(User userToConvert)
-
-		//{
-		//	return new UserDto()
-		//	{
-		//		Email = userToConvert.Email,
-		//		FirstName = userToConvert.FirstName,
-		//		LastName = userToConvert.LastName,
-		//		Street = userToConvert.Street,
-		//		City = userToConvert.City,
-		//		PostNr = userToConvert.PostNr
-		//	};
-
-
-
-		//}
 		}
+
+		private UserDto ConvertUserToDto(User userToConvert)
+		{
+			return new UserDto()
+			{
+				Email = userToConvert.Email,
+				FirstName = userToConvert.FirstName,
+				LastName = userToConvert.LastName,
+				Address = new AddressDto()
+				{
+					AddressId = userToConvert.Address.AddressId,
+					Street = userToConvert.Address.Street,
+					City = userToConvert.Address.City,
+					PostNumber = userToConvert.Address.PostNumber
+				}
+			};
 		}
+
+
+		private User GetUserByEmail(UserDto userToFind)
+		{
+			var user = _userRepository.GetUserByEmail(userToFind.Email);
+
+			return user;
+		}
+
 	}
+}

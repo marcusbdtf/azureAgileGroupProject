@@ -1,4 +1,5 @@
 ﻿@page "/product/{id:int}"
+@using TeamKville.Client.Pages;
 @using TeamKville.Shared;
 @using TeamKville.Shared.Dto;
 @using TeamKville.Shared.Models;
@@ -106,7 +107,9 @@
 						}
 
 						<div class="d-flex align-items-center justify-content-center text-center mt-2 mb-0">
-							<button type="button" class="btn btn-primary text-center m-1 fa-solid fa-pen-to-square"></button>
+							<AuthorizeView>
+								<button type="button" class="btn btn-primary text-center m-1 fa-solid fa-pen-to-square" @onclick="NewReview"></button>
+							</AuthorizeView>
 							<button type="button" class="btn btn-primary text-center m-1 fa fa-list" @onclick="ShowReviews"></button>
 						</div>
 					
@@ -143,7 +146,7 @@
 
 	protected override async Task OnParametersSetAsync()
 	{
-		imagesrc = SharedClass.GetImage("product",(int)Id);	
+		imagesrc = SharedClass.GetImage("product",currentProduct.Name);	
 	}
 
 
@@ -160,6 +163,21 @@
 
 		var parameters = new ModalParameters().Add(nameof(Reviews.reviews), reviews);
 		var modal = Modal.Show<Reviews>("Recensioner", parameters, options);
+		var result = await modal.Result;
+	}
+
+	private async Task NewReview()
+	{
+		var options = new ModalOptions
+			{
+				Size = ModalSize.Large,
+				AnimationType = ModalAnimationType.FadeInOut,
+				HideCloseButton = false,
+				DisableBackgroundCancel = true
+			};
+
+		var parameters = new ModalParameters().Add(nameof(CreateReview.productId), Id);
+		var modal = Modal.Show<CreateReview>("Ny Recension", parameters,options);
 		var result = await modal.Result;
 	}
 

@@ -1,0 +1,47 @@
+﻿@using TeamKville.Shared.Models;
+@using TeamKville.Shared;
+
+<h5>Betyg:</h5>
+<div class="stars ms-auto">
+    @foreach (int rating in ratings)
+    {
+        <button style="background: none; border: none; padding: 0;" @onclick="@((e) => { selectedRating = rating; })">
+            <i class="fa fa-star" style="color: @(rating <= selectedRating ? "#ffa500" : "#6c757d")"></i>
+        </button>
+    }
+</div>
+<h5>Kommentar:</h5>
+<textarea @bind="Comment" rows="6" cols="99" style="resize: none;"></textarea>
+<button class="btn btn-primary" @onclick="Submit">Skriv</button>
+
+   
+
+@code {
+
+    [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; } = default!;
+
+    [Parameter]
+    public int productId { get; set; }
+
+    private string Comment { get; set; }
+
+    private int[] ratings = { 1, 2, 3, 4, 5 };
+
+    private int selectedRating = 0;
+
+    async Task Submit()
+    {
+        await HttpClient.PostAsJsonAsync<CreateCommentModel>(HttpClient.BaseAddress + ("api/comment"), new CreateCommentModel
+        {
+            Name = SharedClass.activeUser.FirstName + " " + SharedClass.activeUser.LastName, 
+            ProductId = productId, 
+            Rating = selectedRating, 
+            Text = Comment
+        });
+
+        await BlazoredModal.CloseAsync();
+    }
+
+}
+
+

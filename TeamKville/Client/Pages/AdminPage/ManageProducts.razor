@@ -1,0 +1,112 @@
+﻿@using Azure.Storage.Blobs;
+@using TeamKville.Shared;
+@using TeamKville.Shared.Models;
+@using Microsoft.AspNetCore.Components.Forms;
+
+
+@if(categories != null && genres != null)
+{
+	<h5>Produktens Namn:</h5>
+	<input type="text" @bind="productName" />
+
+	<h5>Produktbeskrivning:</h5>
+	<textarea @bind="productDescription" rows="6" cols="99" style="resize: none;"></textarea>
+
+	<div class="container d-flex p-2">
+	<h5 class="m-1">Kategori: </h5>
+	 <select class="m-1" @bind="selectedCategory.CategoryId">
+			<option value=""></option>
+		@if (categories != null)
+		{
+			@foreach (var category in categories)
+			{
+				<option value="@category.CategoryId">@category.Name</option>
+			}
+		}
+	</select>
+
+		<h5 class="m-1">Genre: </h5>
+		<select class="m-1" @bind="selectedGenre.GenreId">
+
+		<option value=""></option>
+		@if (genres != null)
+		{
+			@foreach (var genre in genres)
+			{
+				<option value="@genre.GenreId">@genre.Name</option>
+			}
+		}
+
+	</select>
+		<h5 class="m-1">Ålder: </h5>
+		<select class="m-1" @bind="age">
+		<option value=""></option>
+		<option value="3">3</option>
+		<option value="7">7</option>
+		<option value="12">12</option>
+		<option value="16">16</option>
+		<option value="18">18</option>
+	</select>
+	
+		<h5 class="m-1">Pris: </h5>
+		<input class="m-1" type="number" @bind="price" />
+
+		<h5 class="m-1">Produktbild: </h5>
+		<InputFile OnChange="@LoadFiles"></InputFile>
+	</div>
+
+
+	<button class="btn btn-primary m-1" @onclick="CreateProduct">Skapa</button>
+
+}
+
+@code {
+
+	string productName;
+	string productDescription;
+	IEnumerable<CategoryDto> categories;
+	CategoryDto selectedCategory = new CategoryDto();
+	IEnumerable<GenreDto> genres;
+	GenreDto selectedGenre = new GenreDto();
+	int age;
+	decimal price;
+	Stream image;
+
+	bool uploadSuccessful = false;
+
+
+	protected override async Task OnInitializedAsync()
+	{
+		categories = await HttpClient.GetFromJsonAsync<IEnumerable<CategoryDto>>(HttpClient.BaseAddress + "Category/all");
+		genres = await HttpClient.GetFromJsonAsync<IEnumerable<GenreDto>>(HttpClient.BaseAddress + "api/genre");
+	}
+
+	private async void CreateProduct()
+	{
+		var result = await HttpClient.PostAsJsonAsync<CreateProductModel>(HttpClient.BaseAddress + "api/product", new CreateProductModel
+		{
+				Name = productName,
+				Description = productDescription,
+				CategoryId = selectedCategory.CategoryId,
+				GenreId = selectedGenre.GenreId,
+				Age = age,
+				Price = price,
+				IsActive = true
+		});
+
+		if(result.StatusCode == System.Net.HttpStatusCode.OK)
+		{
+
+			BlobContainerClient blobContainerClient = new BlobContainerClient(SharedClass.connectionStringBlob, "product");
+			await blobContainerClient.UploadBlobAsync($"{productName}.png", image);
+
+		}
+
+	}
+
+	private async Task LoadFiles(InputFileChangeEventArgs e)
+	{
+		image = e.File.OpenReadStream(16777215);
+	}
+
+}
