@@ -1,4 +1,5 @@
 ﻿@page "/listcustomeraccounts"
+@using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 
 <h1 class="text-center p-2 pt-4">List of Customer Accounts</h1>
@@ -54,13 +55,24 @@
 								<div class="col-md-6">
 									
 
-									<label>Choose an order:</label>
-									<select @bind="SelectedOrderId" @onclick="SelectActiveOrder">
+	@*								<label>Choose an order:</label>
+									<select @bind="@SelectedOrderId" @onclick="SelectActiveOrder" id="customerOrders">
 										@foreach (var orderDto in UserOrders)
 										{
 											<option value="@orderDto.OrderId">Order Id: @orderDto.OrderId</option>
 										}
-									</select>
+									</select>*@
+									
+									<EditForm Model="UserOrders" OnValidSubmit="SelectActiveOrder">
+										<InputSelect @bind-Value="SelectedOrderId">
+											<option value="">--Select--</option>
+											@foreach (var orderDto in UserOrders)
+											{
+												<option value="@orderDto.OrderId">OrderId: @orderDto.OrderId</option>
+											}
+										</InputSelect>
+										<button >klick!</button>
+									</EditForm>
 									
 									@if (ActiveOrderDto != null)
 									{
@@ -92,8 +104,19 @@
 @code {
 	public List<UserDto> AllUsers = new ();
 	public List<OrderDto> UserOrders = new();
-	public OrderDto? ActiveOrderDto;
-	public int SelectedOrderId;
+	public OrderDto? ActiveOrderDto = new ();
+
+	private int _selectedOrderId;
+
+	public int SelectedOrderId
+	{
+		get { return _selectedOrderId; }
+		set
+		{
+			_selectedOrderId = value;
+			//SelectActiveOrder();
+		}
+	}
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -107,6 +130,8 @@
 
 	private async Task LoadOrders(UserDto usertoFind)
 	{
+		UserOrders.Clear();
+		
 		var result = await HttpClient.GetFromJsonAsync<OrderDto[]>(HttpClient.BaseAddress + $"api/order?userId={usertoFind.UserId}");
 
 		UserOrders.AddRange(result);
