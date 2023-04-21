@@ -84,8 +84,8 @@
 		allEvents = await HttpClient.GetFromJsonAsync<IEnumerable<EventDto>>(HttpClient.BaseAddress + "event/all");
 		nextEvent = allEvents.Where(e => e.Date > DateTime.Now).OrderBy(e => Math.Abs((e.Date - DateTime.Now).Ticks)).First();
 
-		upcomingEvents = allEvents.Where(e => e.Date > DateTime.Now).ToList();
-		pastEvents = allEvents.Where(e => e.Date < DateTime.Now).ToList();
+		upcomingEvents = allEvents.Where(e => e.Date > DateTime.Now).OrderBy(e => e.Date).ToList();
+		pastEvents = allEvents.Where(e => e.Date < DateTime.Now).OrderBy(e => e.Date).ToList();
 	}
 }
 

@@ -1,79 +1,94 @@
 ﻿@using Azure.Storage.Blobs;
 @using TeamKville.Shared;
+@using TeamKville.Shared.Dto;
 @using TeamKville.Shared.Models;
 @using Microsoft.AspNetCore.Components.Forms;
+@using Syncfusion.Blazor.Inputs;
 @inject IToastService ToastService
 
 <h3 class="pt-3 pb-2">Lägg till produkt</h3>
 <hr />
 @if(categories != null && genres != null)
 {
-	<h5>Produktens Namn:</h5>
-	<input type="text" @bind="productName" />
+	<div class="container align-items-center">
+		<EditForm Model="newProduct" OnSubmit="CreateProduct" class="width-fix">
 
-	<h5>Produktbeskrivning:</h5>
-	<textarea @bind="productDescription" rows="6" cols="30" style="resize: none;"></textarea>
+				<div class="mb-3">
+					<label for="name" class="form-label">Namn</label>
+					<InputText class="form-control" id="name" @bind-Value="newProduct.Name" />
+				</div>
 
 
-	<h5 class="m-1">Kategori: </h5>
-	 <select class="m-1" @bind="selectedCategory.CategoryId">
-			<option value=""></option>
-		@if (categories != null)
-		{
-			@foreach (var category in categories)
-			{
-				<option value="@category.CategoryId">@category.Name</option>
-			}
-		}
-	</select>
+				<div class="mb-3">
+					<label for="description" class="form-label">Beskrivning</label>
+					<InputTextArea type="text" class="form-control" id="description" @bind-Value="newProduct.Description" />
+				</div>
 
-		<h5 class="m-1">Genre: </h5>
-		<select class="m-1" @bind="selectedGenre.GenreId">
+				<div class="mb-3">
+					<label for="category" class="form-label">Kategori</label>
+					<InputSelect class="form-control" @bind-Value="newProduct.CategoryId" id="category">
+						<option value=""></option>
+						@if(categories != null)
+						{
+							@foreach(var category in categories)
+							{
+								<option value="@category.CategoryId">@category.Name</option>
+							}
+						}
+					
+					</InputSelect>
+				</div>
 
-		<option value=""></option>
-		@if (genres != null)
-		{
-			@foreach (var genre in genres)
-			{
-				<option value="@genre.GenreId">@genre.Name</option>
-			}
-		}
+				<div class="mb-3">
+					<label for="genre" class="form-label">Genre</label>
+					<InputSelect class="form-control" @bind-Value="newProduct.GenreId" id="genre">
+						<option value=""></option>
+						@if (genres != null)
+						{
+							@foreach (var genre in genres)
+							{
+								<option value="@genre.GenreId">@genre.Name</option>
+							}
+						}
 
-	</select>
-		<h5 class="m-1">Ålder: </h5>
-		<select class="m-1" @bind="age">
-		<option value=""></option>
-		<option value="3">3</option>
-		<option value="7">7</option>
-		<option value="12">12</option>
-		<option value="16">16</option>
-		<option value="18">18</option>
-	</select>
-	
-		<h5 class="m-1">Pris: </h5>
-		<input class="m-1" type="number" @bind="price" />	
-		<h5 class="m-1">Produktbild: </h5>
-		<InputFile OnChange="@LoadFile"></InputFile>
+					</InputSelect>
+				</div>
 
-		
-	<button class="btn btn-primary m-1" @onclick="CreateProduct">Skapa</button>
+				<div class="mb-3">
+					<label for="age" class="form-label">Ålder</label>
+					<SfSlider Min="3" Max="18" @bind-Value="newProduct.Age" Type="SliderType.Default" ID="age">
+						<SliderTooltip IsVisible="true"></SliderTooltip>
+						<SliderLimits Enabled="true" MinStart="3" MinEnd="18" MaxEnd="18" MaxStart="3"></SliderLimits>
+					</SfSlider>
+					<p>@newProduct.Age</p>
+				</div>
+			
+				<div class="mb-3">
+					<label for="price" class="form-label">Pris</label>
+				<InputNumber class="form-control"  @bind-Value="newProduct.Price" />
+				</div>
+
+				<div class="mb-3">
+					<label for="image" class="form-label">Bild</label>
+					<InputFile  type="file" class="form-control" id="image" OnChange="@LoadFile" />
+				</div>
+
+				<button class="btn btn-secondary">Skapa</button>
+
+		</EditForm>
+	</div>
 
 }
 
+
+
 @code {
 
-	string productName;
-	string productDescription;
+	CreateProductModel newProduct = new CreateProductModel { IsActive = true };
+
 	IEnumerable<CategoryDto> categories;
-	CategoryDto selectedCategory = new CategoryDto();
 	IEnumerable<GenreDto> genres;
-	GenreDto selectedGenre = new GenreDto();
-	int age;
-	decimal price;
 	Stream? image;
-
-	bool uploadSuccessful = false;
-
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -83,21 +98,12 @@
 
 	private async void CreateProduct()
 	{
-		var result = await HttpClient.PostAsJsonAsync<CreateProductModel>(HttpClient.BaseAddress + "api/product", new CreateProductModel
-		{
-				Name = productName,
-				Description = productDescription,
-				CategoryId = selectedCategory.CategoryId,
-				GenreId = selectedGenre.GenreId,
-				Age = age,
-				Price = price,
-				IsActive = true
-		});
+		var result = await HttpClient.PostAsJsonAsync<CreateProductModel>(HttpClient.BaseAddress + "api/product", newProduct);
 
 		if(result.StatusCode == System.Net.HttpStatusCode.OK)
 		{
 			BlobContainerClient blobContainerClient = new BlobContainerClient(SharedClass.connectionStringBlob, "product");
-			await blobContainerClient.UploadBlobAsync($"{productName}.png", image);
+			await blobContainerClient.UploadBlobAsync($"{newProduct.Name}.png", image);
 			ToastService.ShowSuccess("Produkt tillagd i sortimentet.");
 		}
 		else
