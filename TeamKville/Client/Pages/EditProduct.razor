@@ -1,0 +1,88 @@
+﻿@using TeamKville.Shared.Dto;
+@using TeamKville.Shared.Models;
+@using Syncfusion.Blazor.Inputs;
+@using Microsoft.AspNetCore.Components.Forms;
+@using Azure.Storage.Blobs;
+@using TeamKville.Shared;
+@inject IToastService ToastService;
+
+<div class="container align-items-center">
+	<EditForm Model="updatedProduct" OnSubmit="UpdateProduct" class="width-fix">
+
+		<div class="mb-3">
+			<label for="name" class="form-label">Namn</label>
+			<InputText class="form-control" id="name" @bind-Value="updatedProduct.Name" />
+		</div>
+
+		<div class="mb-3">
+			<label for="description" class="form-label">Beskrivning</label>
+			<InputTextArea type="text" class="form-control" id="description" @bind-Value="updatedProduct.Description" />
+		</div>
+
+		<div class="mb-3">
+			<label for="age" class="form-label">Ålder</label>
+			<SfSlider Min="3" Max="18" @bind-Value="updatedProduct.Age" Type="SliderType.Default" ID="age">
+				<SliderTooltip IsVisible="true"></SliderTooltip>
+				<SliderLimits Enabled="true" MinStart="3" MinEnd="18" MaxEnd="18" MaxStart="3"></SliderLimits>
+			</SfSlider>
+			<p>@updatedProduct.Age</p>
+		</div>
+			
+		<div class="mb-3">
+			<label for="price" class="form-label">Pris</label>
+		<InputNumber class="form-control"  @bind-Value="updatedProduct.Price" />
+		</div>
+
+		<button class="btn btn-secondary m-2">Uppdatera</button>
+
+	</EditForm>
+
+	<button class="btn btn-danger m-2" @onclick="DeleteProduct">Ta bort</button>
+</div>
+
+@code {
+
+	[Parameter]
+	public ProductDto product { get; set; }
+
+	private UpdateProductModel updatedProduct = new UpdateProductModel();
+	Stream? image;
+
+	protected override async Task OnInitializedAsync()
+	{
+		updatedProduct.Id = product.Id;
+		updatedProduct.Name = product.Name;
+		updatedProduct.Description = product.Description;
+		updatedProduct.Age = product.Age;
+		updatedProduct.Price = product.Price;
+		updatedProduct.IsActive = product.IsActive;
+	}
+
+	private async void UpdateProduct()
+	{
+		var result = await HttpClient.PutAsJsonAsync<UpdateProductModel>(HttpClient.BaseAddress + "api/product", updatedProduct);
+
+		if (result.StatusCode == System.Net.HttpStatusCode.OK)
+		{
+			ToastService.ShowSuccess("Produkt Uppdaterad");
+		}
+	}
+
+	private async void DeleteProduct()
+	{
+		var result = await HttpClient.DeleteAsync(HttpClient.BaseAddress + "api/product/" + product.Id.ToString() + "/delete");		
+
+		if (result.StatusCode == System.Net.HttpStatusCode.OK)
+		{
+			BlobContainerClient blobContainerClient = new BlobContainerClient(SharedClass.connectionStringBlob, "product");
+			await blobContainerClient.DeleteBlobAsync($"{product.Name}.png");
+			ToastService.ShowSuccess("Produkt Borttagen");
+		}
+
+	}
+
+	private async Task LoadFile(InputFileChangeEventArgs e)
+	{
+		image = e.File.OpenReadStream(16777215);
+	}
+}

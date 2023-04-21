@@ -15,8 +15,7 @@
 	}
 	else
 	{
-		<div class="container d-flex h-100">
-		
+		<div class="container d-flex h-100">		
 			<div class="container mt-5 border border-2 d-flex justify-content-center w-75">
 			
 				<img src="@imagesrc" style="height: 400px; width: auto; object-fit: contain;" />
@@ -56,6 +55,13 @@
 					<div class="text-center">
 					<h3>@currentProduct.Price kr</h3>						
 					<button class="btn btn-primary" @onclick="AddToShoppingCart">Köp</button>
+					<AuthorizeView>
+						@if (SharedClass.activeUser.IsAdmin)
+						{
+							<button class="btn btn-primary pt-2" @onclick="ShowProductEdit">Redigera</button>
+						}
+					</AuthorizeView>
+
 					</div>
 				</div>
 			</div>
@@ -182,6 +188,21 @@
 		}
 
 		ToastService.ShowSuccess($"'{currentProduct.Name}' tillagd i varukorgen.");
+	}
+
+	private async Task ShowProductEdit()
+	{
+		var options = new ModalOptions
+		{
+			Size = ModalSize.Large,
+			AnimationType = ModalAnimationType.FadeInOut,
+			HideCloseButton = false,
+			DisableBackgroundCancel = true
+		};
+
+		var parameters = new ModalParameters().Add(nameof(EditProduct.product), currentProduct);
+		var modal = Modal.Show<EditProduct>("Redigera Produkt", parameters, options);
+		var result = await modal.Result;
 	}
 
 	private async Task ShowReviews()
