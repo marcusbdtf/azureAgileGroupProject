@@ -7,7 +7,6 @@ using TeamKville.Shared.Models;
 
 namespace TeamKville.Server.Controllers
 {
-    //[Route["api/[controller]")]
     [Route("api/comment")]
     [ApiController]
     public class CommentController : ControllerBase
@@ -19,7 +18,6 @@ namespace TeamKville.Server.Controllers
             _commentRepository = commentRepository;
         }
 
-		//Hämta comments baserat på produktId
 		[HttpGet("{productId:int}", Name = "GetCommentsProductById")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		public async Task<ActionResult<List<CommentDto>>> GetCommentsProductById(int productId)
@@ -28,7 +26,6 @@ namespace TeamKville.Server.Controllers
 			return Ok(data);
 		}
 
-		//Skapar comment
 		[HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<ActionResult> CreateComment(CreateCommentModel newComment)
