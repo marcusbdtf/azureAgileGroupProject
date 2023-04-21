@@ -67,3 +67,19 @@ h1:focus {
 .nav-link {
     color: #212529;
 }
+
+.btn-secondary {
+    background-color: #a98eda;
+    border: none;
+    color: #1E2022;
+}
+    .btn-secondary:hover {
+        background-color: #C7B3ED;
+        border: none;
+        color: #1E2022;
+    }
+.btn-secondary:active {
+    background-color: #C7B3ED!important;
+    border: none!important;
+    color: #1E2022!important;
+}
