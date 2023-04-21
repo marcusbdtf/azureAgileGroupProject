@@ -1,0 +1,59 @@
+﻿
+@if(users != null) {
+	
+	<div class="container">
+		<h3>Reserverade produkter</h3>
+		<div class="accordion" id="accordionExample">
+
+			@foreach (var user in users.Where(x => x.ShoppingCart.Products.Any()))
+			{
+				var collapseId = $"collapse_{Guid.NewGuid()}";
+
+				<div class="accordion-item">
+					<h2 class="accordion-header" id="heading@user.FirstName">
+						<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#@collapseId" aria-expanded="true" aria-controls="@collapseId">
+							@user.Email
+						</button>
+					</h2>
+					<div id="@collapseId" class="accordion-collapse collapse" aria-labelledby="heading@user.FirstName" data-bs-parent="#accordionExample">
+						<div class="accordion-body">
+							<table class="table">
+								<thead>
+								<tr>
+									<th scope="col">Namn</th>
+									<th scope="col">Pris</th>
+									<th scope="col">Antal</th>
+									<th scope="col">Total pris</th>
+								</tr>
+								</thead>
+								@foreach (var product in user.ShoppingCart.Products)
+								{
+									<tbody>
+									<tr>
+										<td>@product.ProductName</td>
+										<td>@product.Price</td>
+										<td>@product.Quantity</td>
+										<td>@product.TotalProductPrice.ToString("0.00")</td>
+									</tr>
+									</tbody>
+								}
+							</table>
+						</div>
+					</div>
+				</div>
+			}
+		</div>
+	</div>
+}
+
+@code {
+
+	List<UserDto> users;
+
+
+	protected override async Task OnInitializedAsync()
+	{
+		users = await HttpClient.GetFromJsonAsync<List<UserDto>>(HttpClient.BaseAddress + "api/user");
+	}
+
+}
