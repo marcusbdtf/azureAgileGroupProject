@@ -3,16 +3,17 @@
 @using TeamKville.Shared.Models;
 @using Microsoft.AspNetCore.Components.Forms;
 
-
+<h3 class="pt-3 pb-2">Lägg till produkt</h3>
+<hr />
 @if(categories != null && genres != null)
 {
 	<h5>Produktens Namn:</h5>
 	<input type="text" @bind="productName" />
 
 	<h5>Produktbeskrivning:</h5>
-	<textarea @bind="productDescription" rows="6" cols="99" style="resize: none;"></textarea>
+	<textarea @bind="productDescription" rows="6" cols="30" style="resize: none;"></textarea>
 
-	<div class="container d-flex p-2">
+
 	<h5 class="m-1">Kategori: </h5>
 	 <select class="m-1" @bind="selectedCategory.CategoryId">
 			<option value=""></option>
@@ -49,13 +50,11 @@
 	</select>
 	
 		<h5 class="m-1">Pris: </h5>
-		<input class="m-1" type="number" @bind="price" />
-
+		<input class="m-1" type="number" @bind="price" />	
 		<h5 class="m-1">Produktbild: </h5>
 		<InputFile OnChange="@LoadFiles"></InputFile>
-	</div>
 
-
+		
 	<button class="btn btn-primary m-1" @onclick="CreateProduct">Skapa</button>
 
 }
