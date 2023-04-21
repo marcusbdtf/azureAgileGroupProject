@@ -66,27 +66,34 @@
 									
 									@if (ActiveOrderDto != null)
 									{
-
-										
 										<div>
+											<h5>Shipping info:</h5>
 											Order date: @ActiveOrderDto.OrderDate
-											<br />
+											<br/>
 											Order id: @ActiveOrderDto.OrderId
-											<br />
+											<br/>
 											Street: @ActiveOrderDto.Street
-											<br />
+											<br/>
 											City: @ActiveOrderDto.City
-											<br />
+											<br/>
 											Postal code: @ActiveOrderDto.PostalCode
-											<br />
-											Ordered Products
+											<br/>
+											<h5>Ordered Products</h5>
 											<Virtualize Items="ActiveOrderDto.OrderedProductsDto" Context="productQuantity">
-												<li class="list-group">
-													<div>
-														Name: @productQuantity.ProductDto.Name Quantity: @productQuantity.Quantity
-													</div>
-												</li>
+												<ol>
+													<li class="list-group">
+														<div align="justify">
+															Name: @productQuantity.ProductDto.Name Quantity: @productQuantity.Quantity
+															Sum: @CalculatePartialSum(@productQuantity.Quantity, @productQuantity.ProductDto.Price)
+														</div>
+													</li>
+												</ol>
 											</Virtualize>
+
+											<h6>
+												Total Order Sum: @TotalOrderSum
+											</h6>
+
 										</div>
 									}
 								</div>
@@ -104,6 +111,7 @@
 	public List<OrderDto> UserOrders = new();
 	public OrderDto? ActiveOrderDto = new ();
 	public int SelectedOrderId;
+	public decimal TotalOrderSum;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -130,6 +138,22 @@
 	{
 		Console.WriteLine($"Markerat orderid: {SelectedOrderId}");
 		ActiveOrderDto = UserOrders.FirstOrDefault(o => o.OrderId.Equals(SelectedOrderId));
+		CalculateTotalSum();
+	}
+
+	private void CalculateTotalSum()
+	{
+		TotalOrderSum = 0;
+
+		foreach (var orderDto in ActiveOrderDto.OrderedProductsDto)
+		{
+			TotalOrderSum += orderDto.Quantity * orderDto.ProductDto.Price;
+		}
+	}
+
+	private decimal CalculatePartialSum(int qty, decimal price)
+	{
+		return qty * price;
 	}
 
 }
