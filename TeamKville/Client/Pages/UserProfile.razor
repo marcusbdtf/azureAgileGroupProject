@@ -10,12 +10,10 @@
 @inject NavigationManager Navigation
 @inject SignOutSessionStateManager SignOutManager
 @inject HttpClient HttpClient
+@inject IToastService ToastService
 @attribute [Authorize]
 
-<div class="container">
-    <div class="row align-items-start">
-        <div class="col-12 col-md-8 col-lg-6 mx-auto profile-form">
-        <h3>Användar Profil</h3>
+
 
 @if (dbUser == null)
 {
@@ -24,62 +22,151 @@
 else
 {
     <AuthorizeView>
-        <Authorized>
-            <button class="btn btn-link" @onclick="BeginLogout">Log out</button>
+        <Authorized>     
+        <div class="container-fluid">
+            <div class="row flex-nowrap">
+                <div class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-sidebar">
+                    <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100">
+                        <a class="d-flex  pb-3 mb-md-0 me-md-auto text-white text-decoration-none align-items-center">
+                            <span class="fs-5 d-none d-sm-inline m-2">Användarprofil</span>
+                        </a>
+                        <hr />
+                            <ul class=" bg-sidebar nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
+                            <li class="nav-item">
+                                <button @onclick="@(() => {pageName = "userinfo";})" class="nav-link align-middle px-0">
+                                    <i class="fa-solid fa-user"></i> <span class="ms-2 d-none d-sm-inline">Profil</span>
+                                </button>
+                            </li>
+                            <li>
+                                <button @onclick="@(() => {pageName = "orders";})" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
+                                    <i class="fa-solid fa-basket-shopping"></i> <span class="ms-2 d-none d-sm-inline">Beställningar</span>
+                                </button>
+                            </li>
+                            <li>
+                                <button @onclick="@(() => {pageName = "payment";})" class="nav-link px-0 align-middle">
+                                <i class="fa-regular fa-credit-card"></i> <span class="ms-3 d-none d-sm-inline">Betalningsinfo</span>
+                                </button>
+                            </li>
+                            <li>
+                                <button class="nav-link px-0 align-middle" @onclick="BeginLogout">
+                                <i class="fa-solid fa-right-from-bracket"></i> <span class="ms-3 d-none d-sm-inline">Logga ut</span>
+                                </button>
+                            </li>
+                            @if(dbUser.IsAdmin)
+                            {
+                                <li>
+                                    <button class="nav-link px-0 align-middle" @onclick="AdminNavigation">
+                                    <i class="fa-solid fa-crown"></i> <span class="ms-3 d-none d-sm-inline">Admin</span>
+                                    </button>
+                                </li>
+                            }                          
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <div class="container" style="width: 50%; margin-left: 0px; position: relative;">
+                        @switch(pageName)
+                        {
+                           case "userinfo":
+                       
+                           <h3 class="pb-2 pt-3">Profilinställningar</h3>
+                                <EditForm Model="@dbUser" OnValidSubmit="@HandleFormSubmit" @ref="editForm">
+                                    <ChildContent Context="editContext">
+                                        <DataAnnotationsValidator />
+                                        <ValidationSummary />
 
-            @if(dbUser.IsAdmin)
-            {
-                <button class="btn btn-link" @onclick="AdminNavigation">Admin Panel</button>
-            }
+                                        <div class="mb-3">
+                                            <label for="FirstName" class="form-label">Namn:</label>
+                                            <input type="text" id="FirstName" @bind="dbUser.FirstName" class="form-control" placeholder="@dbUser.FirstName" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="LastName" class="form-label">Efternamn:</label>
+                                            <input type="text" id="LastName" @bind="dbUser.LastName" class="form-control" placeholder="@dbUser.LastName" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="Email" class="form-label">Email:</label>
+                                            <input type="email" id="Email" @bind="dbUser.Email" class="form-control" placeholder="@dbUser.Email" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="PhoneNumber" class="form-label">Telefon:</label>
+                                            <input type="text" id="PhoneNumber" @bind="dbUser.PhoneNumber" class="form-control" placeholder="@dbUser.PhoneNumber" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="City" class="form-label">Stad:</label>
+                                            <input type="text" id="City" @bind="dbUser.Address.City" class="form-control" placeholder="@dbUser.Address.City" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="Street" class="form-label">Gata:</label>
+                                            <input type="text" id="Street" @bind="dbUser.Address.Street" class="form-control" placeholder="@dbUser.Address.Street" />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="PostNumber" class="form-label">Postnummer:</label>
+                                            <input type="text" id="PostNumber" @bind="dbUser.Address.PostNumber" class="form-control" placeholder="@dbUser.Address.PostNumber" />
+                                        </div>
 
-            <EditForm Model="@dbUser" OnValidSubmit="@HandleFormSubmit" @ref="editForm">
-                <ChildContent Context="editContext">
-                    <DataAnnotationsValidator />
-                    <ValidationSummary />
+                                        <button type="submit" class="btn btn-primary">Spara Ändringar</button>
+                                    </ChildContent>
+                                </EditForm>
+                        
+                            break;
+                            case "orders":
+                                <h3 class="pb-2 pt-3">Beställningar</h3>
+                                @if (orderHistory == null)
+                                {
+                                    <p>Hämtar...</p>
+                                }
+                                else
+                                {
+                                    <hr />
+                                    <ul>                                  
+                                        @foreach(var order in orderHistory)
+                                        {
+                                            <li>
+                                                <p><b>Ordernr:</b> @order.OrderId</p>
+                                                <p><b>Datum:</b> @order.OrderDate</p>
+                                                <p><b>Produkter:</b></p>
+                                                <ul class="border border-2">
+                                                        @foreach (var product in order.OrderedProductsDto)
+                                                        {
+                                                            <li>
+                                                                <p class="p-0 pt-1"><b>@product.ProductDto.Name</b></p>
+                                                                <p class="p-0">@product.ProductDto.Price kr</p>
+                                                            </li>
+                                                        }
+                                                </ul>
+                                            
+                                            </li>
+                                            <p class="pt-2"><b>Totalt: </b>@order.OrderedProductsDto.Select(o => o.ProductDto).ToList().Sum(p => p.Price) kr</p>
+                                            <hr />
+                                        }                          
+                                    </ul>
+                                }
+                                
+                            break;
+                            case "payment":
+                            
 
-                    <div class="mb-3">
-                        <label for="FirstName" class="form-label">Namn:</label>
-                        <input type="text" id="FirstName" @bind="dbUser.FirstName" class="form-control" placeholder="@dbUser.FirstName" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="LastName" class="form-label">Efternamn:</label>
-                        <input type="text" id="LastName" @bind="dbUser.LastName" class="form-control" placeholder="@dbUser.LastName" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="Email" class="form-label">Email:</label>
-                        <input type="email" id="Email" @bind="dbUser.Email" class="form-control" placeholder="@dbUser.Email" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="PhoneNumber" class="form-label">Telefon:</label>
-                        <input type="text" id="PhoneNumber" @bind="dbUser.PhoneNumber" class="form-control" placeholder="@dbUser.PhoneNumber" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="City" class="form-label">Stad:</label>
-                        <input type="text" id="City" @bind="dbUser.Address.City" class="form-control" placeholder="@dbUser.Address.City" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="Street" class="form-label">Gata:</label>
-                        <input type="text" id="Street" @bind="dbUser.Address.Street" class="form-control" placeholder="@dbUser.Address.Street" />
-                    </div>
-                    <div class="mb-3">
-                        <label for="PostNumber" class="form-label">Postnummer:</label>
-                        <input type="text" id="PostNumber" @bind="dbUser.Address.PostNumber" class="form-control" placeholder="@dbUser.Address.PostNumber" />
-                    </div>
+                            break;
 
-                    <button type="submit" class="btn btn-primary">Spara Ändringar</button>
-                </ChildContent>
-            </EditForm>
-
-        </Authorized>
-    </AuthorizeView>
-}
+                        }
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
+
+
+        
+           
+    </Authorized>
+</AuthorizeView>
+}
 
 @code {
 
-    UserDto dbUser;
+    UserDto? dbUser;
+    string pageName = "userinfo";
+
+    IEnumerable<OrderDto> orderHistory;
 
     protected override async Task OnInitializedAsync()
     {
@@ -111,8 +198,10 @@ else
         {
             Console.WriteLine(ex.Message);
         }
+
+        GetOrderHistory();
     }
-    private EditForm editForm;
+    private EditForm? editForm;
 
     private async Task HandleFormSubmit()
     {
@@ -143,13 +232,18 @@ else
             };
 
             await HttpClient.PutAsJsonAsync<UpdateUserModel>("api/user", updateUserModel);
-            Console.WriteLine("Successfully updated user");
+            ToastService.ShowSuccess("Information uppdaterad.");
             Navigation.NavigateTo("/profile");
         }
         catch (Exception ex)
         {
             Console.WriteLine("Error updating user: " + ex.Message);
         }
+    }
+
+    private async void GetOrderHistory()
+    {
+        orderHistory = await HttpClient.GetFromJsonAsync<IEnumerable<OrderDto>>(HttpClient.BaseAddress + "api/order/?userId=" + dbUser.UserId);
     }
 
     private async Task BeginLogout(MouseEventArgs args)
@@ -165,3 +259,22 @@ else
 
     
 }
+
+<style>
+    .bg-sidebar {
+    background-color: #2C1A4D;
+    color: #FFFFFF;
+}
+
+    .nav-link {
+        color: #FFFFFF;
+        font-weight: 500;
+    }
+
+
+    .nav > li > button:hover {
+    background-color: transparent;
+    color: #FFFFFF;
+    transform: scale(1.2);
+}
+</style>

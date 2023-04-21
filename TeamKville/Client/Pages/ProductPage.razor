@@ -3,7 +3,10 @@
 @using TeamKville.Shared;
 @using TeamKville.Shared.Dto;
 @using TeamKville.Shared.Models;
-@inject NavigationManager NavigationManager;
+@using Blazored.LocalStorage;
+@inject ILocalStorageService LocalStorage
+@inject NavigationManager NavigationManager
+@inject IToastService ToastService
 
 <div class="container">
 	@if(currentProduct == null)
@@ -52,7 +55,7 @@
 					</div>
 					<div class="text-center">
 					<h3>@currentProduct.Price kr</h3>						
-					<button class="btn btn-primary">Köp</button>
+					<button class="btn btn-primary" @onclick="AddToShoppingCart">Köp</button>
 					</div>
 				</div>
 			</div>
@@ -149,6 +152,31 @@
 		imagesrc = SharedClass.GetImage("product",currentProduct.Name);	
 	}
 
+	private async void AddToShoppingCart()
+	{
+		if(SharedClass.activeUser != null)
+		{
+			await HttpClient.PostAsJsonAsync<AddProductToShoppingCartModel>(HttpClient.BaseAddress + "api/user/shoppingcart/add", new AddProductToShoppingCartModel
+			{
+				ProductId = currentProduct.Id,
+				Quantity = 1,
+				UserId = SharedClass.activeUser.UserId
+			});
+		}
+		else
+		{
+			await LocalStorage.SetItemAsync<CartItemDto>(currentProduct.Id.ToString(), new CartItemDto
+			{
+				ProductId = currentProduct.Id,
+				Quantity = 1,
+				Price = currentProduct.Price,
+				ProductName = currentProduct.Name,
+				TotalProductPrice = currentProduct.Price * 1
+			});
+		}
+
+		ToastService.ShowSuccess($"'{currentProduct.Name}' tillagd i varukorgen.");
+	}
 
 	private async Task ShowReviews()
 	{

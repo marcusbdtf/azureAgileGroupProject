@@ -1,6 +1,172 @@
 ﻿@page "/Cart"
-<h3>ShoppingCart</h3>
+@using TeamKville.Shared;
+@using Microsoft.AspNetCore.Components.Forms;
+@using Blazored.LocalStorage;
+@inject ILocalStorageService LocalStorage;
+@inject NavigationManager NavigationManager
+
+<h3 class="pt-3 text-center">Kundvagn</h3>
+ <hr style="width: 75%; margin: 0 auto;"/>
+
+ @if (cartItems == null || cartItems.Count() <= 0)
+    {
+        <span>Du har inga produkter tillagda än.</span>
+    }
+    else
+    {
+        <div>
+            @foreach (var item in cartItems)
+            {
+                
+                <div class="container item-container d-flex w-75 align-items-center">
+                    <div class="item-image-wrapper"><img src="@SharedClass.GetImage("product",item.ProductName)" class="item-image" /></div>
+                    <div class="item-name">
+                        <h5><a href="/product/@item.ProductId">@item.ProductName</a></h5>
+                        <button class="btn-delete" @onclick="@(() => DeleteItem(item))">Ta bort</button>
+                        <div class="container d-flex">
+                        <button style="background: none; border: none; m-0" @onclick="(() => {DecreaseQuantity(item); item.Quantity = item.Quantity != 1 ? item.Quantity -= 1 : item.Quantity = item.Quantity;})">-</button>
+                            <input type="number" id="quantity" @bind="item.Quantity" class="form-control" style="width: 70px" readonly/>
+                            <button style="background: none; border: none; m-0" @onclick="(() => {IncreaseQuantity(item); item.Quantity = item.Quantity += 1;})">+</button>
+                        </div>
+                    </div>
+                    <div class="item-price align-self-center justify-content-center">@(item.Price * item.Quantity)kr</div>
+                </div>
+                <hr style="width: 75%; margin: 0 auto;"/>
+            }
+            <div class="item-price w-75 container align-items-center pt-1">
+                Total (@cartItems.Count()): @cartItems.Sum(item => item.Price * item.Quantity)kr
+            </div>
+            <div class="text-center m-4 p-4">
+                <button class="btn btn-primary btn-lg" @onclick="Checkout">Till Betalning</button>
+            </div>
+        </div>
+    }
 
 @code {
+    List<CartItemDto> cartItems = new List<CartItemDto>();
+    StringContent stringContent = new StringContent("");
+
+    protected override async Task OnInitializedAsync()
+    {   
+        if (SharedClass.activeUser != null)
+        {
+            await RefreshCartUser();
+        }
+        else if(SharedClass.activeUser == null)
+        {
+            await RefreshCart();
+        }
+    }
+
+    private async Task RefreshCart()
+    {
+
+        List<CartItemDto> tempList = new List<CartItemDto>();
+        foreach(var product in SharedClass.allProducts)
+        {
+            tempList.Add(await LocalStorage.GetItemAsync<CartItemDto>(product.Id.ToString()));
+        }
+
+        cartItems = tempList.Where(p => p != null).ToList();
+
+
+    }
+
+    private async Task RefreshCartUser()
+    {
+        if (SharedClass.activeUser.UserId != null)
+        {
+            var userShoppingCart = await HttpClient.GetFromJsonAsync<ShoppingCartDto>(HttpClient.BaseAddress + "api/user/shoppingcart/" + SharedClass.activeUser.UserId);
+            cartItems = userShoppingCart.Products.ToList();
+        }
+    }
+
+    private async void DeleteItem(CartItemDto item)
+    {
+        cartItems.Remove(item);
+        if(SharedClass.activeUser != null)
+        {
+            await HttpClient.PostAsync(HttpClient.BaseAddress + "api/user/shoppingcart/delete-cartitem/" + SharedClass.activeUser.UserId + "/" + item.ProductId, stringContent);
+        }
+        else
+        {
+            await LocalStorage.RemoveItemAsync(item.ProductId.ToString());
+        }
+
+        
+    }
+
+    private void Checkout()
+    {
+        //Navigera till checkout sida
+    }
+
+    private async Task DecreaseQuantity(CartItemDto item)
+    {
+
+        if(SharedClass.activeUser != null)
+        {
+            await HttpClient.PostAsync(HttpClient.BaseAddress + "api/user/shoppingcart/decrease/" + SharedClass.activeUser.UserId + "/" + item.ProductId, stringContent);
+        }
+        else
+        {
+            await LocalStorage.SetItemAsync<CartItemDto>(item.ProductId.ToString(), item);
+        }
+
+    }
+
+    private async Task IncreaseQuantity(CartItemDto item)
+    {
+        if(SharedClass.activeUser != null)
+        {
+            await HttpClient.PostAsync(HttpClient.BaseAddress + "api/user/shoppingcart/increase/" + SharedClass.activeUser.UserId + "/" + item.ProductId, stringContent);
+        }
+        else
+        {
+            await LocalStorage.SetItemAsync<CartItemDto>(item.ProductId.ToString(), item);
+        }
+
+    }
 
 }
+
+<style>
+
+    ﻿.item-container {
+        display: flex;
+        padding: 6px
+    }
+
+    .item-image-wrapper {
+        width: 150px;
+        text-align: center;
+    }
+
+    .item-image {
+        max-height: 150px;
+        max-width: 150px;
+        padding: 6px;
+    }
+
+    .item-name {
+        flex-grow: 1;
+        padding: 6px;
+    }
+
+    .item-price {
+        font-weight: 600;
+        text-align: right;
+    }
+
+    .btn-delete {
+        background: none;
+        border: none;
+        padding: 0px;
+        color: red;
+        font-size: 12px;
+    }
+
+        .btn-delete:hover {
+            text-decoration: underline;
+        }
+</style>

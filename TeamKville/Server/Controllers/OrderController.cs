@@ -26,9 +26,9 @@ namespace TeamKville.Server.Controllers
 		}
 		
 		[HttpGet] 
-		public async Task<IActionResult> GetByEmail(string email) //TODO: ska det returneras orderobjekt eller DTO?
+		public async Task<IActionResult> GetByUserId(string userId) //TODO: ska det returneras orderobjekt eller DTO?
 		{
-			var orderToReturn = await _orderRepository.GetByEmail(email);
+			var orderToReturn = await _orderRepository.GetByUserIdentity(userId);
 			
 			return Ok(orderToReturn.Select(ConvertToOrderDto));
 		}
@@ -53,14 +53,9 @@ namespace TeamKville.Server.Controllers
 					{
 						ProductDto = new ProductDto()
 						{
+							Id = pq.Product.ProductId,
 							Age = pq.Product.Age,
-							Category = new CategoryDto()
-							{
-								Name = pq.Product.Category.Name,
-								CategoryId = pq.Product.CategoryId
-							},
 							Description = pq.Product.Description,
-							Comments = pq.Product.Comments.Select(ConvertCommentsToDto),
 							IsActive = pq.Product.IsActive,
 							Name = pq.Product.Name,
 							Price = pq.Product.Price
@@ -77,19 +72,7 @@ namespace TeamKville.Server.Controllers
 				Street = orderToConvert.Street
 			};
 		}
-
-		private CommentDto ConvertCommentsToDto(Comment arg)
-		{
-			return new CommentDto()
-			{
-				CommentId = arg.CommentId,
-				Date = arg.Date,
-				Name = arg.Name,
-				Text = arg.Text,
-				Rating = arg.Rating
-			};
-		}
-
+		
 		private async Task<Order> ConvertToOrder(OrderDto orderDtoToConvert)
 		{
 			var newOrder = new Order()

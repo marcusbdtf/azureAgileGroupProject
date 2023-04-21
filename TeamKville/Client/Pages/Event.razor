@@ -1,5 +1,6 @@
 ﻿@page "/event/{id:int}"
 @using TeamKville.Shared;
+@inject IToastService ToastService
 
 <div class="container d-flex w-100">
 	<div class="container mt-5 border border-2 d-flex justify-content-center w-75">
@@ -20,7 +21,12 @@
 				{
 					<AuthorizeView>
 					<div class="text-center">
-						<button class="btn btn-primary" @onclick="RegisterUserToEvent">Registrera</button>
+					<button class="btn btn-primary" @onclick="RegisterUserToEvent">Registrera</button>
+					
+						@if(SharedClass.activeUser.IsAdmin)
+						{						
+							<button class="btn btn-primary mt-2" @onclick="ViewRegisteredUsers">Registerade Användare</button>						
+						}
 					</div>
 					</AuthorizeView>
 				}
@@ -31,12 +37,14 @@
 
 <div class="container mt-3 mb-3 p-3">
 	<h2>@currentEvent.Name</h2>
-	<p>	@SharedClass.loremIpsum;</p>
+	<p>	@currentEvent.Description</p>
 	<h3>Datum: @currentEvent.Date</h3>
 </div>
 @code {
 	[Parameter]
 	public int Id { get; set; }
+
+	[CascadingParameter] IModalService Modal { get; set; } = default!;
 
 	EventDto currentEvent = new EventDto();
 
@@ -47,7 +55,24 @@
 	}
 
 	private async void RegisterUserToEvent()
-	{
+	{	
 		await HttpClient.PatchAsJsonAsync<UserDto>(HttpClient.BaseAddress + "event?eventId=" + currentEvent.Id, SharedClass.activeUser);
+		ToastService.ShowSuccess("Registrerad!");
+	}
+
+	private async void ViewRegisteredUsers()
+	{
+		var options = new ModalOptions
+			{
+				Size = ModalSize.Large,
+				AnimationType = ModalAnimationType.FadeInOut,
+				HideCloseButton = false,
+				DisableBackgroundCancel = true
+			};
+
+
+		var parameters = new ModalParameters().Add(nameof(EventRegisteredUsers.registeredUsers), currentEvent.RegisteredCustomersDtos);
+		var modal = Modal.Show<EventRegisteredUsers>("Registerade Användare", parameters, options);
+		var result = await modal.Result;
 	}
 }
