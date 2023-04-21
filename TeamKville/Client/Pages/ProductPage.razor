@@ -4,8 +4,9 @@
 @using TeamKville.Shared.Dto;
 @using TeamKville.Shared.Models;
 @using Blazored.LocalStorage;
-@inject ILocalStorageService LocalStorage;
-@inject NavigationManager NavigationManager;
+@inject ILocalStorageService LocalStorage
+@inject NavigationManager NavigationManager
+@inject IToastService ToastService
 
 <div class="container">
 	@if(currentProduct == null)
@@ -157,9 +158,9 @@
 		{
 			await HttpClient.PostAsJsonAsync<AddProductToShoppingCartModel>(HttpClient.BaseAddress + "api/user/shoppingcart/add", new AddProductToShoppingCartModel
 			{
-					ProductId = currentProduct.Id,
-					Quantity = 1,
-					UserId = SharedClass.activeUser.UserId
+				ProductId = currentProduct.Id,
+				Quantity = 1,
+				UserId = SharedClass.activeUser.UserId
 			});
 		}
 		else
@@ -173,6 +174,8 @@
 				TotalProductPrice = currentProduct.Price * 1
 			});
 		}
+
+		ToastService.ShowSuccess($"'{currentProduct.Name}' tillagd i varukorgen.");
 	}
 
 	private async Task ShowReviews()

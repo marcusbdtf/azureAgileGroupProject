@@ -2,6 +2,7 @@
 @using TeamKville.Shared;
 @using TeamKville.Shared.Models;
 @using Microsoft.AspNetCore.Components.Forms;
+@inject IToastService ToastService
 
 <h3 class="pt-3 pb-2">Lägg till produkt</h3>
 <hr />
@@ -52,7 +53,7 @@
 		<h5 class="m-1">Pris: </h5>
 		<input class="m-1" type="number" @bind="price" />	
 		<h5 class="m-1">Produktbild: </h5>
-		<InputFile OnChange="@LoadFiles"></InputFile>
+		<InputFile OnChange="@LoadFile"></InputFile>
 
 		
 	<button class="btn btn-primary m-1" @onclick="CreateProduct">Skapa</button>
@@ -69,7 +70,7 @@
 	GenreDto selectedGenre = new GenreDto();
 	int age;
 	decimal price;
-	Stream image;
+	Stream? image;
 
 	bool uploadSuccessful = false;
 
@@ -95,15 +96,18 @@
 
 		if(result.StatusCode == System.Net.HttpStatusCode.OK)
 		{
-
 			BlobContainerClient blobContainerClient = new BlobContainerClient(SharedClass.connectionStringBlob, "product");
 			await blobContainerClient.UploadBlobAsync($"{productName}.png", image);
-
+			ToastService.ShowSuccess("Produkt tillagd i sortimentet.");
+		}
+		else
+		{
+			ToastService.ShowError("Något gick fel, försök igen.");
 		}
 
 	}
 
-	private async Task LoadFiles(InputFileChangeEventArgs e)
+	private async Task LoadFile(InputFileChangeEventArgs e)
 	{
 		image = e.File.OpenReadStream(16777215);
 	}

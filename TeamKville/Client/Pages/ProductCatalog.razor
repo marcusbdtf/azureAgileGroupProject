@@ -9,6 +9,7 @@
 @inject ILocalStorageService LocalStorage;
 @inject IJSRuntime JsRuntime;
 @inject HttpClient HttpClient;
+@inject IToastService ToastService;
 
 @if(SharedClass.allProducts == null)
 {
@@ -18,7 +19,6 @@
 }
 else
 {
-    
     <h1 class="text-center p-2 pt-4">Produkter</h1>
 
     <!--FILTERKNAPP/SÖKFÄLT-->
@@ -365,6 +365,8 @@ else
                 TotalProductPrice = product.Price * 1
             });
         }
+
+        ToastService.ShowSuccess($"'{product.Name}' tillagd i varukorgen.");
     }
 
     async void PageNavigation(int page)
