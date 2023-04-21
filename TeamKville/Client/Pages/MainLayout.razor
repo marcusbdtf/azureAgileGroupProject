@@ -5,7 +5,10 @@
 <div class="side-background d-flex flex-column">
     <main role="main" class="container p-0 flex-grow-1">
         <div class="body shadow">
-        @Body
+            @if(handledLogin)
+            {
+                @Body 
+            }          
         </div>
     </main>
         
@@ -14,17 +17,30 @@
 
 @code{
 
+    bool handledLogin = false;
+
     protected override async Task OnInitializedAsync()
     {
-        var azureUser = await GraphServiceClient.Me.Request().GetAsync();
+        await InvokeAsync(LoadUser);
         TeamKville.Shared.SharedClass.allProducts = await HttpClient.GetFromJsonAsync<List<ProductDto>>(HttpClient.BaseAddress + "api/product");
+    }
+
+    async Task LoadUser()
+    {
+        var azureUser = await GraphServiceClient.Me.Request().GetAsync();
 
         if(azureUser.Id != null)
         {
             TeamKville.Shared.SharedClass.activeUser = await HttpClient.GetFromJsonAsync<UserDto>(HttpClient.BaseAddress + ("api/user/" + azureUser.Id));
+            handledLogin = true;
         }
-       
+        else
+        {
+            handledLogin = true;
+        }
+  
     }
+        
 }
 
 <style>

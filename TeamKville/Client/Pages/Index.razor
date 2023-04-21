@@ -125,23 +125,6 @@ else
 		var events = await HttpClient.GetFromJsonAsync<IEnumerable<EventDto>>(HttpClient.BaseAddress + "event/all");
 		GetEvent(events);
 
-		/*
-		List<ProductQuantityDto> productQuantityDtos = new List<ProductQuantityDto>();
-		ProductQuantityDto product = new ProductQuantityDto { ProductDto = SharedClass.allProducts[0], Quantity = 1 };
-		productQuantityDtos.Add(product);
-
-		await HttpClient.PostAsJsonAsync<OrderDto>(HttpClient.BaseAddress + "api/order", new OrderDto
-				{
-				Name = SharedClass.activeUser.FirstName + SharedClass.activeUser.LastName,
-				City = SharedClass.activeUser.Address.City,
-				Street = SharedClass.activeUser.Address.Street,
-				PostalCode = SharedClass.activeUser.Address.PostNumber,
-				OrderDate = DateTime.Now,
-				UserId = SharedClass.activeUser.UserId,
-				Status = true,
-				OrderedProductsDto = productQuantityDtos				
-	});*/
-
 		if(SharedClass.activeUser != null)
 		{
 			GetRecommendedProducts();
