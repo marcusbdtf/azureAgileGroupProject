@@ -21,41 +21,82 @@
 </div>
 	
 	
-	
-<h3 class="p-3 text-center">Nya produkter</h3>
-<div class="container p-3 text-center shadow-sm" style="height: 500px; max-width: 90vh;">
-	<SfCarousel>
-		<ChildContent>
-			@foreach (ProductDto product in SharedClass.allProducts.OrderByDescending(x => x.Id).Take(5))
-			{
-				<CarouselItem>
-					<div class="carousel-caption" style="color: black;">
-						<img class="card-img-top pt-2 pb-2" style="height: 250px; object-fit: contain;" src=@SharedClass.GetImage("product", product.Name) />
-						<div class="border-top" style="padding:1rem;">
-							<h5>@product.Name</h5>
-							<p>@product.Price kr</p>
-							<a href="/product/@product.Id" class="btn btn-primary ">Läs mer</a>
+@if(SharedClass.activeUser != null && recommendedProducts.Count() > 0)
+{
+	<h3 class="p-3 text-center">Rekommenderade Produkter</h3>
+	<div class="container p-3 text-center shadow-sm" style="height: 500px; max-width: 90vh;">
+		<SfCarousel>
+			<ChildContent>
+				@foreach (ProductDto product in recommendedProducts.OrderByDescending(x => x.Id).Take(5))
+				{
+					<CarouselItem>
+						<div class="carousel-caption" style="color: black;">
+							<img class="card-img-top pt-2 pb-2" style="height: 250px; object-fit: contain;" src=@SharedClass.GetImage("product", product.Name) />
+							<div class="border-top" style="padding:1rem;">
+								<h5>@product.Name</h5>
+								<p>@product.Price kr</p>
+								<a href="/product/@product.Id" class="btn btn-primary ">Läs mer</a>
+							</div>
 						</div>
-					</div>
-				</CarouselItem>
-			}
-		</ChildContent>
-		<PreviousButtonTemplate>
-			<SfButton CssClass="e-flat e-outline nav-btn" title="Previous">
-				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40">
-					<path d="m13.5 7.01 13 13m-13 13 13-13"></path>
-				</svg>
-			</SfButton>
-		</PreviousButtonTemplate>
-		<NextButtonTemplate>
-			<SfButton CssClass="e-flat e-outline nav-btn" title="Next">
-				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40">
-					<path d="m13.5 7.01 13 13m-13 13 13-13"></path>
-				</svg>
-			</SfButton>
-		</NextButtonTemplate>
-	</SfCarousel>
-</div>
+					</CarouselItem>
+				}
+			</ChildContent>
+			<PreviousButtonTemplate>
+				<SfButton CssClass="e-flat e-outline nav-btn" title="Previous">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40">
+						<path d="m13.5 7.01 13 13m-13 13 13-13"></path>
+					</svg>
+				</SfButton>
+			</PreviousButtonTemplate>
+			<NextButtonTemplate>
+				<SfButton CssClass="e-flat e-outline nav-btn" title="Next">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40">
+						<path d="m13.5 7.01 13 13m-13 13 13-13"></path>
+					</svg>
+				</SfButton>
+			</NextButtonTemplate>
+		</SfCarousel>
+	</div>
+}
+else
+{
+	<h3 class="p-3 text-center">Nya produkter</h3>
+	<div class="container p-3 text-center shadow-sm" style="height: 500px; max-width: 90vh;">
+		<SfCarousel>
+			<ChildContent>
+				@foreach (ProductDto product in SharedClass.allProducts.OrderByDescending(x => x.Id).Take(5))
+				{
+					<CarouselItem>
+						<div class="carousel-caption" style="color: black;">
+							<img class="card-img-top pt-2 pb-2" style="height: 250px; object-fit: contain;" src=@SharedClass.GetImage("product", product.Name) />
+							<div class="border-top" style="padding:1rem;">
+								<h5>@product.Name</h5>
+								<p>@product.Price kr</p>
+								<a href="/product/@product.Id" class="btn btn-primary ">Läs mer</a>
+							</div>
+						</div>
+					</CarouselItem>
+				}
+			</ChildContent>
+			<PreviousButtonTemplate>
+				<SfButton CssClass="e-flat e-outline nav-btn" title="Previous">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40">
+						<path d="m13.5 7.01 13 13m-13 13 13-13"></path>
+					</svg>
+				</SfButton>
+			</PreviousButtonTemplate>
+			<NextButtonTemplate>
+				<SfButton CssClass="e-flat e-outline nav-btn" title="Next">
+					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40">
+						<path d="m13.5 7.01 13 13m-13 13 13-13"></path>
+					</svg>
+				</SfButton>
+			</NextButtonTemplate>
+		</SfCarousel>
+	</div>
+}
+
+
 
 
 
@@ -75,8 +116,6 @@
 	//Product
 	List<ProductDto> recommendedProducts = new List<ProductDto>();
 
-	//Orderhistory
-	int topGenre;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -85,6 +124,11 @@
 
 		var events = await HttpClient.GetFromJsonAsync<IEnumerable<EventDto>>(HttpClient.BaseAddress + "event/all");
 		GetEvent(events);
+
+		if(SharedClass.activeUser != null)
+		{
+			GetRecommendedProducts();
+		}
 
 		await JSRuntime.InvokeVoidAsync("scrollToTop");
 	}
@@ -98,10 +142,25 @@
 		catch
 		{
 			currentEvent = new EventDto{Name = "Inga Event :(", Description = "", Date = DateTime.Now};
+		}	
+	}
+
+	async void GetRecommendedProducts()
+	{
+		var orders = await HttpClient.GetFromJsonAsync<IEnumerable<OrderDto>>(HttpClient.BaseAddress + "api/order/?userId=" + SharedClass.activeUser.UserId);
+
+		List<ProductDto> orderProducts = orders.SelectMany(o => o.OrderedProductsDto).Select(p => p.ProductDto).ToList();
+		List<ProductDto> fixedProducts = new List<ProductDto>();
+
+		foreach(var product in orderProducts)
+		{
+			fixedProducts.Add(SharedClass.allProducts.Where(p => p.Id == product.Id).First());			
 		}
 
+		var genres = fixedProducts.GroupBy(p => p.Genre).OrderByDescending(p => p.Count()).Take(5).Select(g => g.Key).ToList();
+		int topGenre = genres.First().GenreId;
 
-		
+		recommendedProducts = SharedClass.allProducts.Where(p => p.Genre.GenreId == topGenre).Take(5).ToList();
 	}
 }
 
