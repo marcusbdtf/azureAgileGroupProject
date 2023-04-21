@@ -1,32 +1,159 @@
-﻿@page "/ListCustomerAccounts"
-<h3>ListCustomerAccounts</h3>
+﻿@page "/listcustomeraccounts"
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Web.Virtualization
 
-<div class="container d-flex p-4">
-	<div class="accordion" id="UsersAccordian">
+<h1 class="text-center p-2 pt-4">List of Customer Accounts</h1>
 
-	@foreach (UserDto userToList in allUsers)
-	{
-		<div class="accordion-item" id="heading + @userCounter" >
-			<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="collape + @userCounter">@allUsers[userCounter].Email</button>
-		</div>
-	}
+<div class="container p-2 pt-4">
+	<div class="accordion" id="UsersAccordion">
+		
+		@if (AllUsers != null)
+		{
+			@foreach (var itemUser in AllUsers)
+			{
+				<div class="accordion-item">
+					<h2 class="accordion-header" id="heading_@itemUser.Email">
+						<button class="accordion-button collapsed" type="button" 
+						        data-bs-toggle="collapse" data-bs-target="#collapse_@itemUser.Email"
+								aria-expanded="True" aria-controls="collapse_@itemUser.Email"
+								@onclick="() => LoadOrders(itemUser)">
+								@itemUser.Email
+						</button>
+					</h2>
+					<div id="collapse_@itemUser.Email" 
+					     class="accordion-collapse collapse" 
+					     aria-labelledby="#heading_@itemUser.Email" 
+					     data-bs-parent="#UsersAccordion">
+						<div class="accordion-body">
+							<div class="container row mt-2">
+								<div class="col-md-6">
+									<h4>Customer info</h4>
+									<ul>
+										<li>
+											UserId: @itemUser.UserId
+										</li>
+										<li>
+											Email: @itemUser.Email
+										</li>
+										<li>
+											Name: @itemUser.FirstName @itemUser.LastName
+										</li>
+										<li>
+											Phone: @itemUser.PhoneNumber
+										</li>
+										<li>
+											Address: @itemUser.Address.Street
+										</li>
+										<li>
+											City: @itemUser.Address.City
+										</li>
+										<li>
+											PostalCode: @itemUser.Address.PostNumber
+										</li>
+									</ul>
+								</div>
+								<div class="col-md-6">
+									<EditForm Model="UserOrders" OnValidSubmit="SelectActiveOrder">
+										<InputSelect @bind-Value="SelectedOrderId">
+											<option value="">--Select Order--</option>
+											@foreach (var orderDto in UserOrders)
+											{
+												<option value="@orderDto.OrderId">OrderId: @orderDto.OrderId</option>
+											}
+										</InputSelect>
+										<button class="btn btn-secondary">klick!</button>
+									</EditForm>
+									
+									@if (ActiveOrderDto != null)
+									{
+										<div>
+											<h5>Shipping info:</h5>
+											Order date: @ActiveOrderDto.OrderDate
+											<br/>
+											Order id: @ActiveOrderDto.OrderId
+											<br/>
+											Street: @ActiveOrderDto.Street
+											<br/>
+											City: @ActiveOrderDto.City
+											<br/>
+											Postal code: @ActiveOrderDto.PostalCode
+											<br/>
+											<h5>Ordered Products</h5>
+											<Virtualize Items="ActiveOrderDto.OrderedProductsDto" Context="productQuantity">
+												<ol>
+													<li class="list-group">
+														<div align="justify">
+															Name: @productQuantity.ProductDto.Name Quantity: @productQuantity.Quantity
+															Sum: @CalculatePartialSum(@productQuantity.Quantity, @productQuantity.ProductDto.Price)
+														</div>
+													</li>
+												</ol>
+											</Virtualize>
+
+											<h6>
+												Total Order Sum: @TotalOrderSum
+											</h6>
+
+										</div>
+									}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			}
+		}
 	</div>
-
 </div>
 
 @code {
-	//Här hämta kunderna när sidan listan
-
-	UserDto[]? allUsers;
-	private int userCounter = 0;
+	public List<UserDto> AllUsers = new ();
+	public List<OrderDto> UserOrders = new();
+	public OrderDto? ActiveOrderDto = new ();
+	public int SelectedOrderId;
+	public decimal TotalOrderSum;
 
 	protected override async Task OnInitializedAsync()
 	{
+		var result = await HttpClient.GetFromJsonAsync<UserDto[]>(HttpClient.BaseAddress + "api/user");
+
+		AllUsers.AddRange(result);
+
+		await base.OnInitializedAsync();
+	}
+
+
+	private async Task LoadOrders(UserDto usertoFind)
+	{
+		UserOrders.Clear();
+		ActiveOrderDto = null;
+		SelectedOrderId = 0;
 		
-		var allUsers = await HttpClient.GetFromJsonAsync<UserDto[]>(HttpClient.BaseAddress + "api/user");
+		var result = await HttpClient.GetFromJsonAsync<OrderDto[]>(HttpClient.BaseAddress + $"api/order?userId={usertoFind.UserId}");
 
+		UserOrders.AddRange(result);
+	}
 
+	private void SelectActiveOrder()
+	{
+		Console.WriteLine($"Markerat orderid: {SelectedOrderId}");
+		ActiveOrderDto = UserOrders.FirstOrDefault(o => o.OrderId.Equals(SelectedOrderId));
+		CalculateTotalSum();
+	}
 
+	private void CalculateTotalSum()
+	{
+		TotalOrderSum = 0;
+
+		foreach (var orderDto in ActiveOrderDto.OrderedProductsDto)
+		{
+			TotalOrderSum += orderDto.Quantity * orderDto.ProductDto.Price;
+		}
+	}
+
+	private decimal CalculatePartialSum(int qty, decimal price)
+	{
+		return qty * price;
 	}
 
 }
