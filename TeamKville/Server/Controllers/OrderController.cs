@@ -55,13 +55,7 @@ namespace TeamKville.Server.Controllers
 						{
 							Id = pq.Product.ProductId,
 							Age = pq.Product.Age,
-							//Category = new CategoryDto()
-							//{
-							//	Name = pq.Product.Category.Name,
-							//	CategoryId = pq.Product.CategoryId
-							//},
 							Description = pq.Product.Description,
-							//Comments = pq.Product.Comments.Select(ConvertCommentsToDto),
 							IsActive = pq.Product.IsActive,
 							Name = pq.Product.Name,
 							Price = pq.Product.Price
@@ -78,19 +72,7 @@ namespace TeamKville.Server.Controllers
 				Street = orderToConvert.Street
 			};
 		}
-
-		private CommentDto ConvertCommentsToDto(Comment arg)
-		{
-			return new CommentDto()
-			{
-				CommentId = arg.CommentId,
-				Date = arg.Date,
-				Name = arg.Name,
-				Text = arg.Text,
-				Rating = arg.Rating
-			};
-		}
-
+		
 		private async Task<Order> ConvertToOrder(OrderDto orderDtoToConvert)
 		{
 			var newOrder = new Order()
