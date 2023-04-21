@@ -144,6 +144,12 @@
 	protected override async Task OnInitializedAsync()
 	{
 		currentProduct = await HttpClient.GetFromJsonAsync<ProductDto>(HttpClient.BaseAddress + "api/product/" + Id);
+
+		if(!currentProduct.IsActive)
+		{
+			NavigationManager.NavigateTo("/");
+		}
+
 		reviews = currentProduct.Comments.ToList();
 	}
 

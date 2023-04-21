@@ -80,7 +80,24 @@
 
 }
 
+<h3 class="pt-3 pb-2">Ändra Produktstatus</h3>
+<hr />
+<table class="overflow-auto table">
 
+	<tr class="border-bottom-2">
+		<th>Produkt</th>
+		<th>Aktiv</th>
+	</tr>
+
+	@foreach(var product in SharedClass.allProducts)
+	{
+		<tr>
+			<th>@product.Name</th>
+			<InputCheckbox @bind-Value="@product.IsActive" @oninput="((e) => UpdateProductStatus(e, product.Id))"/>
+		</tr>
+	}
+
+</table>
 
 @code {
 
@@ -118,4 +135,18 @@
 		image = e.File.OpenReadStream(16777215);
 	}
 
+	private async void UpdateProductStatus(Microsoft.AspNetCore.Components.ChangeEventArgs e, int productId)
+	{
+		var product = SharedClass.allProducts.Where(p => p.Id == productId).First();
+
+		await HttpClient.PutAsJsonAsync<UpdateProductModel>(HttpClient.BaseAddress + "api/product", new UpdateProductModel
+		{
+			Id = product.Id,
+			Name = product.Name,
+			Description = product.Description,
+			Age = product.Age,
+			Price = product.Price,
+			IsActive = (bool)e.Value
+		});
+	}
 }
