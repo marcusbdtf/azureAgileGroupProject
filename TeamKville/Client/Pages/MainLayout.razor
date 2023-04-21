@@ -1,19 +1,24 @@
 @inherits LayoutComponentBase
 @inject Microsoft.Graph.GraphServiceClient GraphServiceClient
-<Navbar/>
+@using Blazored.Toast.Configuration;
+@using Blazored.Toast;
 
-<div class="side-background d-flex flex-column">
-    <main role="main" class="container p-0 flex-grow-1">
-        <div class="body shadow">
-            @if(handledLogin)
-            {
-                @Body 
-            }          
-        </div>
-    </main>
+<BlazoredToasts />
+    <Navbar/>             
+    <div class="side-background d-flex flex-column">
+        <main role="main" class="container p-0 flex-grow-1">
+            
+            <div class="body shadow">
+                @if(handledLogin)
+                {
+                    @Body 
+                }          
+            </div>
+        </main>
         
-    <Footer />
-</div>
+        <Footer />
+    </div>
+
 
 @code{
 

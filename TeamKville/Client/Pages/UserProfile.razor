@@ -10,6 +10,7 @@
 @inject NavigationManager Navigation
 @inject SignOutSessionStateManager SignOutManager
 @inject HttpClient HttpClient
+@inject IToastService ToastService
 @attribute [Authorize]
 
 
@@ -231,7 +232,7 @@ else
             };
 
             await HttpClient.PutAsJsonAsync<UpdateUserModel>("api/user", updateUserModel);
-            Console.WriteLine("Successfully updated user");
+            ToastService.ShowSuccess("Information uppdaterad.");
             Navigation.NavigateTo("/profile");
         }
         catch (Exception ex)

@@ -1,0 +1,20 @@
+﻿
+<ul>
+	@foreach(var user in registeredUsers)
+	{
+	<li>
+		<b>@user.FirstName @user.LastName</b>
+		<p><b>E-Mail: </b>@user.Email</p>
+		<hr/>
+	</li>
+	}
+	
+</ul>
+
+
+
+@code {
+
+	[Parameter]
+	public List<UserDto> registeredUsers { get; set; }
+}
