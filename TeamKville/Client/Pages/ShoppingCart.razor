@@ -31,8 +31,12 @@
                     </div>
                     <div class="item-price align-self-center justify-content-center">@(item.Price * item.Quantity)kr</div>
                 </div>
-                <hr style="width: 75%; margin: 0 auto;"/>
-            }
+	            <hr style="width: 75%; margin: 0 auto;"/>
+	            <button class="btn-empty" @onclick="@(() => EmptyShoppingCart())">
+		            Töm kundvagn
+	            </button>
+            }       
+
             <div class="item-price w-75 container align-items-center pt-1">
                 Total (@cartItems.Count()): @cartItems.Sum(item => item.Price * item.Quantity)kr
             </div>
@@ -81,7 +85,21 @@
         }
     }
 
-    private async void DeleteItem(CartItemDto item)
+	private async Task EmptyShoppingCart()
+	{
+
+		if (SharedClass.activeUser != null)
+		{
+            await HttpClient.PostAsync(HttpClient.BaseAddress + "api/user/shoppingcart/empty/" + SharedClass.activeUser.UserId + "/", stringContent);
+		}
+		else
+		{
+			await LocalStorage.ClearAsync();
+		}
+		await RefreshCart();
+	}
+
+    private async Task DeleteItem(CartItemDto item)
     {
         cartItems.Remove(item);
         if(SharedClass.activeUser != null)
@@ -93,7 +111,6 @@
             await LocalStorage.RemoveItemAsync(item.ProductId.ToString());
         }
 
-        
     }
 
     private void Checkout()
@@ -165,8 +182,20 @@
         color: red;
         font-size: 12px;
     }
+    
 
-        .btn-delete:hover {
-            text-decoration: underline;
-        }
+	.btn-delete:hover {
+        text-decoration: underline;
+    }
+        
+    .btn-empty{
+        margin-left: 150px;
+        margin-top: 20px;
+        background: none;
+        border: none;
+        padding: 0px;
+        color: red;
+        font-size: 12px;
+    }
+    
 </style>
