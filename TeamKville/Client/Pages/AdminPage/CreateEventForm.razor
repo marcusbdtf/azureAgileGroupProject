@@ -60,7 +60,7 @@
 
 @code {
 
-	private EventDto newEvent = new EventDto();
+	private EventDto newEvent = new EventDto{Date = DateTime.Now};
 	Stream? image;
 	private bool success = false;
 	private bool fail = false;

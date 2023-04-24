@@ -310,9 +310,8 @@ else
         {
             SharedClass.allProducts = await HttpClient.GetFromJsonAsync<List<ProductDto>>(HttpClient.BaseAddress + "api/product");
         }
-        
-        
-        products = SharedClass.allProducts;
+            
+        products = SharedClass.allProducts.Where(p => p.IsActive == true).ToList();
 
         CalculateHighestPrice();
         GetCategories();
