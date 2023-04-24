@@ -237,7 +237,7 @@ namespace TeamKville.Server.Data.Repositories
 
 			if (user != null)
 			{
-				user.ShoppingCart.CartItems = new List<CartItem>(); // sätter cartItems till en tom lista av CartItem
+				user.ShoppingCart.CartItems = new List<CartItem>(); 
 
 
 				await _dbContext.SaveChangesAsync();
