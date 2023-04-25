@@ -1,0 +1,41 @@
+﻿@*@page "/proposenewevent"*@
+@using Microsoft.AspNetCore.Components.Forms
+@using TeamKville.Shared;
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<EditForm Model="NewEmail" OnValidSubmit="SendProposal">
+	<div class="mb-3">
+		<label for="name" class="form-label">Namn på event/lan</label>
+		<InputText class="form-control" id="name" @bind-Value="NewEmail.Header" />
+	</div>
+	
+	<div class="mb-3">
+		<label for="name" class="form-label">Beskriv tema på eventet.</label>
+		<InputText class="form-control" id="Body" @bind-Value="NewEmail.Body" />
+	</div>
+	
+	<div class="mb-3">
+		<label for="name" class="form-label">Skriv in email.</label>
+		<InputText class="form-control" id="Email" @bind-Value="NewEmail.Sender" />
+	</div>
+	
+	<button type="submit">Send</button>
+</EditForm>
+
+
+@code {
+
+	[Parameter] 
+	public EmailDto NewEmail { get; set; }
+
+	private async Task SendProposal()
+	{
+		NewEmail.TimeSent = DateTime.UtcNow;
+
+		var result = await HttpClient.PostAsJsonAsync<EmailDto>(HttpClient.BaseAddress + "api/email", NewEmail);
+
+		//lägga till felcheck.
+	}
+
+}

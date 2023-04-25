@@ -136,9 +136,9 @@
 
 	private void SelectActiveOrder()
 	{
-		Console.WriteLine($"Markerat orderid: {SelectedOrderId}");
 		ActiveOrderDto = UserOrders.FirstOrDefault(o => o.OrderId.Equals(SelectedOrderId));
-		CalculateTotalSum();
+		if (ActiveOrderDto != null)
+			CalculateTotalSum();
 	}
 
 	private void CalculateTotalSum()

@@ -72,12 +72,18 @@
 	</div>
 </div>
 
-@code {
+<a @onclick="ProposeNewEvent" class="btn btn-primary" role="button">
+	Propose new event
+</a>
 
+
+@code {
 	IEnumerable<EventDto> allEvents;
 	EventDto nextEvent = new EventDto();
 	List<EventDto> upcomingEvents = new List<EventDto>();
 	List<EventDto> pastEvents = new List<EventDto>();
+
+	[CascadingParameter] IModalService Modal { get; set; } = default!;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -87,6 +93,26 @@
 		upcomingEvents = allEvents.Where(e => e.Date > DateTime.Now).OrderBy(e => e.Date).ToList();
 		pastEvents = allEvents.Where(e => e.Date < DateTime.Now).OrderBy(e => e.Date).ToList();
 	}
+
+
+	private async void ProposeNewEvent()
+	{
+		var options = new ModalOptions
+		{
+			Size = ModalSize.Large,
+			AnimationType = ModalAnimationType.FadeInOut,
+			HideCloseButton = false,
+			DisableBackgroundCancel = true
+		};
+
+		var newEmail = new EmailDto();
+
+		var parameters = new ModalParameters().Add(nameof(newEmail), new EmailDto()); //nameof(EventRegisteredUsers.registeredUsers), currentEvent.RegisteredCustomersDtos);
+		var modal = Modal.Show<ProposeNewEvent>("Propose new Event", parameters, options);
+		var result = await modal.Result;
+	}
+
+
 }
 
 <style>
