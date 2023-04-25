@@ -234,6 +234,18 @@
 		var parameters = new ModalParameters().Add(nameof(CreateReview.productId), Id);
 		var modal = Modal.Show<CreateReview>("Ny Recension", parameters,options);
 		var result = await modal.Result;
+
+		await LoadData();
+		StateHasChanged();
+
+
+	}
+
+	private async Task LoadData()
+	{
+		currentProduct = await HttpClient.GetFromJsonAsync<ProductDto>(HttpClient.BaseAddress + "api/product/" + Id);
+		reviews = currentProduct.Comments.ToList();
+
 	}
 
 }
