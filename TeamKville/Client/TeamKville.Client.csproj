@@ -29,6 +29,7 @@
     <PackageReference Include="Microsoft.Extensions.Azure" Version="1.0.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="7.0.0" />
     <PackageReference Include="Microsoft.Graph" Version="4.29.0" />
+    <PackageReference Include="Stripe.net" Version="41.13.0" />
     <PackageReference Include="Syncfusion.Blazor.Navigations" Version="21.1.38" />
     <PackageReference Include="Syncfusion.Xamarin.SfRangeSlider" Version="21.1.38" />
   </ItemGroup>
