@@ -22,7 +22,7 @@ namespace TeamKville.Server.Data
 
 		public DbSet<Event> Events { get; set; }
 
-
+        public DbSet<Message> Messages { get; set; }
 
 
 	}
