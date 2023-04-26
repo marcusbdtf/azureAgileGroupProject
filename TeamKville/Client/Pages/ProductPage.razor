@@ -76,52 +76,49 @@
 
 		<div class="container d-flex pb-4 h-auto">
 			<div class="container card mt-3 w-75 h-auto border border-0 rounded-0" style="background-color: #c2d1d9; margin-left: 0px;">
-	
 			<div class="card-body pb-4">		
-				<h3 class="card-title">Recensioner</h3>
-				<div class="container mb-3 d-flex me-auto" style="margin-left: 0px;">				
-					<AuthorizeView>
-						<button type="button" class="btn btn-primary text-center m-1 fa-solid fa-pen-to-square" @onclick="NewReview"></button>
-					</AuthorizeView>
-					<button type="button" class="btn btn-primary text-center m-1 fa fa-list" @onclick="ShowReviews"></button>
-				</div>	
-				
-					@if (currentProduct.Comments.Count() > 0)
+				<h3 class="card-title">Recensioner</h3>			
+				<AuthorizeView>
+					<button type="button" class="btn btn-primary text-center m-1 mb-3 fa-solid fa-pen-to-square" @onclick="NewReview"></button>
+				</AuthorizeView>
+				<button type="button" class="btn btn-primary text-center m-1 mb-3 fa fa-list" @onclick="ShowReviews"></button>
+								
+				@if (currentProduct.Comments.Count() > 0)
+				{
+					@foreach (var review in reviews)
 					{
-						@foreach (var review in reviews)
-						{
-							<div class="card d-flex">
-								<div class="card-body">
-									<div class="card-title m-0">
-										<h5>@review.Name</h5>
-										<div class="stars ms-auto">
-											@for (int r = 1; r <= review.Rating; r++)
+						<div class="card d-flex">
+							<div class="card-body">
+								<div class="card-title m-0">
+									<h5>@review.Name</h5>
+									<div class="stars ms-auto mb-1">
+										@for (int r = 1; r <= 5; r++)
+										{
+											if (r <= review.Rating)
 											{
-												if (r <= review.Rating)
-												{
-													<i class="fa fa-star" style="color: #ffa500;"></i>
-												}
-												else
-												{
-													<i class="fa fa-star" style="color: #6c757d;"></i>
-												}
+												<i class="fa fa-star" style="color: #ffa500;"></i>
 											}
+											else
+											{
+												<i class="fa fa-star" style="color: #6c757d;"></i>
+											}
+										}
 
-										</div>
 									</div>
-									<div class="card-text" style="text-overflow: ellipsis; white-space: nowrap; overflow:hidden;">
-										@review.Text
-									</div>
-									<em>@review.Date.ToString("yyyy-MM-dd")</em>
 								</div>
+								<div class="card-text" style="text-overflow: ellipsis; white-space: nowrap; overflow:hidden;">
+									@review.Text
+								</div>
+								<em>@review.Date.ToString("yyyy-MM-dd")</em>
 							</div>
-						}
+						</div>
+					}
 
-					}
-					else
-					{
-						<p>Inga recensioner ännu.</p>
-					}
+				}
+				else
+				{
+					<p>Inga recensioner ännu.</p>
+				}
 			</div>
 		</div>
 		</div>
