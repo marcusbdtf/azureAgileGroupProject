@@ -11,10 +11,9 @@
 			<div class="card-body" style="height: 404px; ">
 				<h5 class="text-center">Detaljer</h5>
 				<div class="card-text h-50 mt-5">					
-
-					<p class="p-0 m-0"><b>Deltagare:</b> @currentEvent.RegisteredCustomersDtos.Count()</p> 
-						
-										
+					<p class="p-0 m-0"><b>Deltagare:</b> @currentEvent.RegisteredCustomersDtos.Count()</p>
+					<p class="p-0 m-0"><b>Datum: </b>@currentEvent.Date.ToShortDateString()</p>
+					<p class="p-0 m-0"><b>Tid: </b>@currentEvent.Date.ToShortTimeString()</p>								
 				</div>
 
 				@if(currentEvent.Date > DateTime.Now)
@@ -38,7 +37,7 @@
 <div class="container mt-3 mb-3 p-3">
 	<h2>@currentEvent.Name</h2>
 	<p>	@currentEvent.Description</p>
-	<h3>Datum: @currentEvent.Date</h3>
+	<h3></h3>
 </div>
 @code {
 	[Parameter]
@@ -58,6 +57,7 @@
 	{	
 		await HttpClient.PatchAsJsonAsync<UserDto>(HttpClient.BaseAddress + "event?eventId=" + currentEvent.Id, SharedClass.activeUser);
 		ToastService.ShowSuccess("Registrerad!");
+		StateHasChanged();
 	}
 
 	private async void ViewRegisteredUsers()
@@ -72,7 +72,7 @@
 
 
 		var parameters = new ModalParameters().Add(nameof(EventRegisteredUsers.registeredUsers), currentEvent.RegisteredCustomersDtos);
-		var modal = Modal.Show<EventRegisteredUsers>("Registerade Användare", parameters, options);
+		var modal = Modal.Show<EventRegisteredUsers>("Registrerade Användare", parameters, options);
 		var result = await modal.Result;
 	}
 }

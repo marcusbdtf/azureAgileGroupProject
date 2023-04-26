@@ -20,7 +20,7 @@
 			
 				<img src="@imagesrc" style="height: 400px; width: auto; object-fit: contain;" />
 			</div>
-			<div class="card mt-5 mx-3 w-25 h-75 border border-0 rounded-0" style="background-color:#c2d1d9; ">
+			<div class="card mt-5 w-25 h-75 border border-0 rounded-0" style="background-color:#c2d1d9; ">
 				<div class="card-body" style="height: 404px; ">
 					<h5 class="text-center">Detaljer</h5>
 					<div class="card-text h-50 mt-5">					
@@ -67,65 +67,60 @@
 			</div>
 		</div>
 
-		<div class="container d-flex h-100">
-			<div class="container mt-3">
-				<h2>@currentProduct.Name</h2>
-				<p>
-					@currentProduct.Description
-				</p>
-		
-			</div>
-			<div class="container card mt-3 mx-3 w-50 h-75 border border-0 rounded-0" style="background-color: #c2d1d9;">
-				<div class="card-body" style="height: 400px;">
-					<h3 class="card-title mb-3">
-						Recensioner
-					</h3>
-					<div class="container">
-						@if(currentProduct.Comments.Count() > 0)
-						{
-							@foreach (var review in currentProduct.Comments.Take(2).ToList())
-							{
-								<div class="card m-1 d-flex">
-									<div class="card-body">
-										<div class="card-title m-0">
-											<h5>@review.Name</h5>
-											<div class="stars ms-auto">
-												@for (int r = 1; r <= review.Rating; r++)
-												{
-													if (r <= review.Rating)
-													{
-														<i class="fa fa-star" style="color: #ffa500;"></i>
-													}
-													else
-													{
-														<i class="fa fa-star" style="color: #6c757d;"></i>
-													}
-												}
+		<div class="container h-100 w-75 mt-3" style="margin-left: 0">		
+			<h2>@currentProduct.Name</h2>
+			<p>
+				@currentProduct.Description
+			</p>		
+		</div>
 
-											</div>
-										</div>
-										<em>@review.Date.ToString("yyyy-MM-dd")</em>
+		<div class="container d-flex pb-4 h-auto">
+			<div class="container card mt-3 w-75 h-auto border border-0 rounded-0" style="background-color: #c2d1d9; margin-left: 0px;">
+			<div class="card-body pb-4">		
+				<h3 class="card-title">Recensioner</h3>			
+				<AuthorizeView>
+					<button type="button" class="btn btn-primary text-center m-1 mb-3 fa-solid fa-pen-to-square" @onclick="NewReview"></button>
+				</AuthorizeView>
+				<button type="button" class="btn btn-primary text-center m-1 mb-3 fa fa-list" @onclick="ShowReviews"></button>
+								
+				@if (currentProduct.Comments.Count() > 0)
+				{
+					@foreach (var review in reviews)
+					{
+						<div class="card d-flex">
+							<div class="card-body">
+								<div class="card-title m-0">
+									<h5>@review.Name</h5>
+									<div class="stars ms-auto mb-1">
+										@for (int r = 1; r <= 5; r++)
+										{
+											if (r <= review.Rating)
+											{
+												<i class="fa fa-star" style="color: #ffa500;"></i>
+											}
+											else
+											{
+												<i class="fa fa-star" style="color: #6c757d;"></i>
+											}
+										}
+
 									</div>
 								</div>
-							}
-							
-						}
-						else
-						{
-							<p>Inga recensioner ännu.</p>
-						}
-
-						<div class="d-flex align-items-center justify-content-center text-center mt-2 mb-0">
-							<AuthorizeView>
-								<button type="button" class="btn btn-primary text-center m-1 fa-solid fa-pen-to-square" @onclick="NewReview"></button>
-							</AuthorizeView>
-							<button type="button" class="btn btn-primary text-center m-1 fa fa-list" @onclick="ShowReviews"></button>
+								<div class="card-text" style="text-overflow: ellipsis; white-space: nowrap; overflow:hidden;">
+									@review.Text
+								</div>
+								<em>@review.Date.ToString("yyyy-MM-dd")</em>
+							</div>
 						</div>
-					
-					</div>
-			
-				</div>
+					}
+
+				}
+				else
+				{
+					<p>Inga recensioner ännu.</p>
+				}
 			</div>
+		</div>
 		</div>
 
 	}
