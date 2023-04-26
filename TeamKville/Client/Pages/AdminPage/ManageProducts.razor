@@ -25,7 +25,7 @@
 				</div>
 
 				<div class="mb-3">
-					<label for="category" class="form-label">Kategori</label>
+					<label for="category" class="form-label">Kategori <em>(Lämna genre och ålder blankt om du valt något annat än spel)</em></label>
 					<InputSelect class="form-control" @bind-Value="newProduct.CategoryId" id="category">
 						<option value=""></option>
 						@if (categories != null)
