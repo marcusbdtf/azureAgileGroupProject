@@ -57,6 +57,7 @@
 	{	
 		await HttpClient.PatchAsJsonAsync<UserDto>(HttpClient.BaseAddress + "event?eventId=" + currentEvent.Id, SharedClass.activeUser);
 		ToastService.ShowSuccess("Registrerad!");
+		StateHasChanged();
 	}
 
 	private async void ViewRegisteredUsers()
