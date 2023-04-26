@@ -35,8 +35,8 @@ else
                             </button>
                         </li>
                         <li>
-                            <button @onclick="@(() => SetPage("orders"))" class="nav-link px-0 align-middle">
-                                <i class="fa-regular fa-file-lines"></i> <span class="ms-3 d-none d-sm-inline">Ordrar</span>
+                            <button @onclick="@(() => SetPage("inbox"))" class="nav-link px-0 align-middle">
+	                            <i class="fa-solid fa-envelope"></i> <span class="ms-3 d-none d-sm-inline">Inkorg</span>
                             </button>
                         </li>
                         <li>
@@ -84,8 +84,8 @@ else
             case "reserved":
                 selectedType = typeof(ListCustomerShoppingCart);
                 break;
-            case "orders":
-                //selectedType = typeof();
+            case "inbox":
+                selectedType = typeof(Inbox);
                 break;
             case "customers":
                 selectedType = typeof(ListCustomerAccounts);

@@ -1,0 +1,40 @@
+﻿
+@if (Messages != null)
+{
+
+	<div class="container">
+		<h3>Inkorg</h3>
+		<div class="accordion" id="MessageAccordion">
+
+			@foreach (var message in Messages)
+			{
+
+				<div class="accordion-item">
+					<h2 class="accordion-header" id="heading_@message.Header">
+						<button class="accordion-button" type="button" data-bs-toggle="collapse" aria-expanded="true" aria-controls="collapse_@message.Header" >
+							@message.Header
+						</button>
+					</h2>
+					<div id="collapse_@message.Header" class="accordion-collapse collapse" aria-labelledby="heading_@message.Header" data-bs-parent="#MessageAccordion">
+						<div class="accordion-body">
+							<p>@message.Body</p>
+							<h4>@message.Name</h4>
+						</div>
+					</div>
+				</div>
+			}
+		</div>
+	</div>
+}
+
+@code {
+
+	List<EmailDto> Messages = new();
+
+
+	protected override async Task OnInitializedAsync()
+		{
+		Messages = await HttpClient.GetFromJsonAsync<List<EmailDto>>(HttpClient.BaseAddress + "api/Email");
+		}
+
+}
