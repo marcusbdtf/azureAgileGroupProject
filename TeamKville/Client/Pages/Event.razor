@@ -71,7 +71,7 @@
 
 
 		var parameters = new ModalParameters().Add(nameof(EventRegisteredUsers.registeredUsers), currentEvent.RegisteredCustomersDtos);
-		var modal = Modal.Show<EventRegisteredUsers>("Registerade Användare", parameters, options);
+		var modal = Modal.Show<EventRegisteredUsers>("Registrerade Användare", parameters, options);
 		var result = await modal.Result;
 	}
 }
