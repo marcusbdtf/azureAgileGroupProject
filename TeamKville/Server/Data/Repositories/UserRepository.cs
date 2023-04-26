@@ -318,7 +318,7 @@ namespace TeamKville.Server.Data.Repositories
 
 		}
 
-		public User GetUserByEmail(string email)
+		public User? GetUserByEmail(string email)
 		{
 			var user = _dbContext.Users.FirstOrDefault(u => u.Email == email);
 

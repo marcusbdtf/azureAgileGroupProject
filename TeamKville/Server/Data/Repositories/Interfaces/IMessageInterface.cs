@@ -3,6 +3,7 @@
 public interface IMessageInterface<T>
 {
 	Task<string> AddItem(T item);
-	Task<string> DeleteItem(T item);
-	Task<IEnumerable<T>> GetItems(T item);
+	Task<string> DeleteItem(int id);
+	Task<IEnumerable<T>> GetItems();
+	Task<T?> UpdateItem(int id);
 }
