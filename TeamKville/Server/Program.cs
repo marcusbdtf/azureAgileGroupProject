@@ -6,7 +6,12 @@ using TeamKville.Server.Data;
 using TeamKville.Server.Data.DataModels;
 using TeamKville.Server.Data.Repositories;
 using TeamKville.Server.Data.Repositories.Interfaces;
+
 using Event = TeamKville.Server.Data.DataModels.Event;
+
+using TeamKville.Server;
+using TeamKville.Shared;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,10 +19,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<DataContext>(option =>
 {
-	option.UseSqlServer("Server=tcp:teamkville.database.windows.net,1433;Initial Catalog=teamkville-db;Persist Security Info=False;User ID=teamkville;Password=morotärgott123!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
-	//option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-
+	option.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionString"));
 });
+
 StripeConfiguration.ApiKey = "sk_test_51N0iM9Fb1LbkT4wodWSbNxMQoTyQjMQEUHafqk54LM2JsE5ROTWILrBwZin4z2VnhnVQiFmJMWxqdWKOPKYZLeZI00hFoMXjZm";
 builder.Services.AddControllers();
 builder.Services.AddCors(options =>
@@ -28,6 +32,16 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod()
             .AllowAnyHeader());
 });
+
+SharedClass.connectionStringBlob = builder.Configuration.GetConnectionString("connectionStringBlob");
+
+
+builder.Services.AddControllers(options =>
+	options.Filters.Add<ApiKeyAttribute>());
+
+//Kommentera ovan och kommentera ut den nedanför för att testa i swagger. 
+//builder.Services.AddControllers();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
