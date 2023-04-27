@@ -33,7 +33,6 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader());
 });
 
-SharedClass.connectionStringBlob = builder.Configuration.GetConnectionString("connectionStringBlob");
 
 
 builder.Services.AddControllers(options =>
@@ -54,6 +53,7 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IOrderRepository<Order>, OrderRepository>();
 builder.Services.AddScoped<IEventRepository<Event>, EventRepository>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<IMessageInterface<Message>, MessageRepository>();
 
 
 var app = builder.Build();
