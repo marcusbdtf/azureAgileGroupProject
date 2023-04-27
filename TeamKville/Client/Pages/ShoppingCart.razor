@@ -35,10 +35,12 @@
                     <div class="item-price align-self-center justify-content-center">@(item.Price * item.Quantity)kr</div>
                 </div>
 	            <hr style="width: 75%; margin: 0 auto;"/>
-	            <button class="btn-empty" @onclick="@(() => EmptyShoppingCart())">
-		            Töm kundvagn
-	            </button>
+	          
             }       
+            <button class="btn-empty" @onclick="@(() => EmptyShoppingCart())">
+	            Töm kundvagn
+            </button>
+            
 
             <div class="item-price w-75 container align-items-center pt-1">
                 Total (@cartItems.Count()): @cartItems.Sum(item => item.Price * item.Quantity)kr
@@ -94,12 +96,15 @@
 		if (SharedClass.activeUser != null)
 		{
             await HttpClient.PostAsync(HttpClient.BaseAddress + "api/user/shoppingcart/empty/" + SharedClass.activeUser.UserId + "/", stringContent);
+			await RefreshCartUser();
+			StateHasChanged();
+
 		}
 		else
 		{
 			await LocalStorage.ClearAsync();
+			await RefreshCart();
 		}
-		await RefreshCart();
 	}
 
     private async Task DeleteItem(CartItemDto item)
