@@ -11,9 +11,10 @@ namespace TeamKville.Shared
 
         public static string apiKey = new Guid().ToString();
 
-        public static string connectionStringBlob;
+        public static string connectionStringBlob = "DefaultEndpointsProtocol=https;AccountName=teamkvillestorage;AccountKey=1pN/KGxPtg3MjmQ/kslmQVuuczGvuOVbHCumUlMkyevlgTkNKNYRVntSTj3PeC2brCmxWZRIENcb+ASt557mkg==;BlobEndpoint=https://teamkvillestorage.blob.core.windows.net/;TableEndpoint=https://teamkvillestorage.table.core.windows.net/;";
 
-        public static string GetImage(string type, string name)
+
+		public static string GetImage(string type, string name)
         {
             //Ändra till environment variable
             return ($"https://teamkvillestorage.blob.core.windows.net/{type}/{name}.png");
