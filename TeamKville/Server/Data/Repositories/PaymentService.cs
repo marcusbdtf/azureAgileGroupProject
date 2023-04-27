@@ -53,8 +53,8 @@ namespace TeamKville.Server.Data.Repositories
                 },
                 LineItems = lineItems,
                 Mode = "payment",
-                SuccessUrl = "https://localhost:7276/success", //TODO Ändra för live
-                CancelUrl = "https://localhost:7276/Cart",   //TODO Ändra för live
+                SuccessUrl = "https://finishit.azurewebsites.net/success", //TODO Ändra för live
+                CancelUrl = "https://finishit.azurewebsites.net/Cart",   //TODO Ändra för live
             };
 
 
