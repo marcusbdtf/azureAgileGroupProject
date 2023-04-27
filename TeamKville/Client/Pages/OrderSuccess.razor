@@ -1,6 +1,21 @@
 ﻿@page "/success"
-<h3>Thank you for your order!</h3>
+@using System.Threading.Tasks
+@inject NavigationManager NavigationManager
+
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; text-align: center;">
+    <div style="width: 100px; height: 100px;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 54 54">
+            <circle cx="27" cy="27" r="25" fill="none" stroke="#4caf50" stroke-width="4" />
+            <path d="M15 27.4l8.7 8.7 16-16" fill="none" stroke="#4caf50" stroke-width="4" />
+        </svg>
+    </div>
+    <h3 style="margin-top: 20px;">Tack för din beställning!</h3>
+</div>
 
 @code {
-
+    protected override async Task OnInitializedAsync()
+    {
+        await Task.Delay(10000); // 10 sekunder innan redirecting
+        NavigationManager.NavigateTo("/");
+    }
 }
