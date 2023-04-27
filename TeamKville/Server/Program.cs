@@ -20,6 +20,14 @@ builder.Services.AddDbContext<DataContext>(option =>
 });
 StripeConfiguration.ApiKey = "sk_test_51N0iM9Fb1LbkT4wodWSbNxMQoTyQjMQEUHafqk54LM2JsE5ROTWILrBwZin4z2VnhnVQiFmJMWxqdWKOPKYZLeZI00hFoMXjZm";
 builder.Services.AddControllers();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAnyOrigin",
+        builder => builder
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader());
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -43,7 +51,7 @@ if (app.Environment.IsDevelopment())
 	app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseCors("AllowAnyOrigin");
 app.UseAuthorization();
 app.UseHttpsRedirection();
 

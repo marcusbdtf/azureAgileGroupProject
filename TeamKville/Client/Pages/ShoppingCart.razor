@@ -131,6 +131,7 @@
     private async Task Checkout()
     {
         string checkoutUrl = await PlaceOrder();
+        await EmptyShoppingCart();
         NavigationManager.NavigateTo(checkoutUrl);
     }
 
