@@ -46,26 +46,16 @@ namespace TeamKville.Server.Controllers
                 }
                 Response.Cookies.Append("CookieName", "CookieValue", new CookieOptions()
                 {
-                    Secure = true, // Only send the cookie over HTTPS
-                    SameSite = SameSiteMode.None // Allow cross-site cookies
+                    Secure = true, 
+                    SameSite = SameSiteMode.None 
                 });
                 return Ok(session.Url);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error creating checkout session: {ex.Message}"); // Log the error message
+                Console.WriteLine($"Error creating checkout session: {ex.Message}");
                 return BadRequest(new { message = $"Error creating checkout session: {ex.Message}" });
             }
-        }
-
-        [HttpGet("success")]
-        [AllowAnonymous]
-        public IActionResult Success()
-        {
-            // You can perform any post-payment processing here, e.g., updating the order status in your database.
-
-            // Redirect the user to the appropriate success page in your application.
-            return Redirect("/"); // Replace "/YourSuccessPage" with the actual path to your success page.
         }
 
     }
