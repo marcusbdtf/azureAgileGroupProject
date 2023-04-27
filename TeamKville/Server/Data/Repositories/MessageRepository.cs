@@ -52,7 +52,7 @@ public class MessageRepository : IMessageInterface<Message>
 			return null;
 		}
 
-		itemToUpdate.IsRead = !itemToUpdate.IsRead;
+		itemToUpdate.IsRead = true;
 
 		var result = await _dataContext.SaveChangesAsync();
 

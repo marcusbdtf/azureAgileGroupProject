@@ -32,36 +32,6 @@ namespace TeamKville.Server.Controllers
 
 	        return Ok(result);
 
-	        //Flytta detta till externfil o gör en service av det att injecta?:
-	        //var key = new AzureKeyCredential("key From Azure vault?");
-	        //var endpoint = new Uri("The endpoint");
-
-	        //var emailClient = new EmailClient(endpoint, key);
-
-
-	        //var subject = $"Proposal of new Event:{emailToSend.Header}";
-	        //var htmlContent = $"<html><body><h1>Proposal of new event</h1></br>{emailToSend.Body}</body></html>";
-	        //var sender = emailToSend.Sender;
-	        //var recipient = "amdin@kville.se";
-
-	        //try
-	        //{
-	        //    var emailSendOperation = await emailClient.SendAsync(
-	        //    Azure.WaitUntil.Completed,
-	        //    sender,
-	        //    recipient,
-	        //    subject,
-	        //    htmlContent);
-
-	        //    var status = emailSendOperation.Value.Status;
-	        //    var operationId = emailSendOperation.Id;
-
-	        //    return status.ToString();
-	        //}
-	        //catch (RequestFailedException ex)
-	        //{
-	        //    return $"Email send operation failed. {ex.ErrorCode} {ex.Status}";
-	        //}
         }
 
 
@@ -75,12 +45,12 @@ namespace TeamKville.Server.Controllers
 		}
 
 		[HttpPatch]
-		public async Task<IActionResult> UpdateIsRead(int id)
+		public async Task<IActionResult> UpdateIsRead(EmailDto update)
 		{
-			var result = await _messageInterface.UpdateItem(id);
+			var result = await _messageInterface.UpdateItem(update.Id);
 
 			if (result == null)
-				return BadRequest($"Message with id {id} not found.");
+				return BadRequest($"Message with id {update.Id} not found.");
 
 			return Ok(result);
 		}
