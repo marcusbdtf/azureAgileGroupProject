@@ -4,6 +4,9 @@
 @using Blazored.LocalStorage;
 @inject ILocalStorageService LocalStorage;
 @inject NavigationManager NavigationManager
+@inject HttpClient Http
+@using System.Net.Http.Json
+@using System.Text.Json
 
 <h3 class="pt-3 text-center">Kundvagn</h3>
  <hr style="width: 75%; margin: 0 auto;"/>
@@ -112,11 +115,44 @@
         }
 
     }
-
-    private void Checkout()
+    private async Task<List<CartItemDto>> GetCartItems()
     {
-        //Navigera till checkout sida
+        if (SharedClass.activeUser != null)
+        {
+            await RefreshCartUser();
+        }
+        else if (SharedClass.activeUser == null)
+        {
+            await RefreshCart();
+        }
+        return cartItems;
     }
+
+    private async Task Checkout()
+    {
+        string checkoutUrl = await PlaceOrder();
+        await EmptyShoppingCart();
+        NavigationManager.NavigateTo(checkoutUrl);
+    }
+
+    //hämtar url till checkout
+    private async Task<string> PlaceOrder()
+    {
+        var result = await Http.PostAsJsonAsync("/checkout", await GetCartItems());
+        if (result.IsSuccessStatusCode)
+        {
+            var url = await result.Content.ReadAsStringAsync();
+            return url;
+        }
+        else
+        {
+            var error = await result.Content.ReadAsStringAsync();
+            Console.WriteLine("Error: " + error);
+            throw new InvalidOperationException("Checkout failed");
+        }
+    }
+
+
 
     private async Task DecreaseQuantity(CartItemDto item)
     {
