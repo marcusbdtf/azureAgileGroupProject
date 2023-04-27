@@ -18,6 +18,6 @@ namespace TeamKville.Server.Data.Repositories.Interfaces
 		Task<string> DecreaseShoppingCartProduct(string userId, int productId);
 
 		Task<string> DeleteCartItemFromShoppingCart(string userId, int productId);
-		User GetUserByEmail(string email);
+		User? GetUserByEmail(string email);
 	}
 }

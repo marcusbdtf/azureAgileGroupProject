@@ -73,7 +73,7 @@
 </div>
 
 <a @onclick="ProposeNewEvent" class="btn btn-primary" role="button">
-	Propose new event
+	Förslag på event
 </a>
 
 
@@ -108,7 +108,7 @@
 		var newEmail = new EmailDto();
 
 		var parameters = new ModalParameters().Add(nameof(newEmail), new EmailDto()); //nameof(EventRegisteredUsers.registeredUsers), currentEvent.RegisteredCustomersDtos);
-		var modal = Modal.Show<ProposeNewEvent>("Propose new Event", parameters, options);
+		var modal = Modal.Show<ProposeNewEvent>("Förslag på event", parameters, options);
 		var result = await modal.Result;
 	}
 

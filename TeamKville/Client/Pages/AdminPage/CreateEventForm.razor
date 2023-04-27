@@ -15,7 +15,7 @@
 		<DataAnnotationsValidator />
 		<div class="mb-3">
 			<label for="name" class="form-label">Namn på event/lan</label>
-			<InputText class="form-control " id="name" @bind-Value="newEvent.Name"/>
+			<InputText required class="form-control " id="name" @bind-Value="newEvent.Name"/>
 			<ValidationMessage For="() => newEvent.Name" />
 		</div>
 

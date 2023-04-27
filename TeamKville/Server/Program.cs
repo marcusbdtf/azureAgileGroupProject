@@ -54,6 +54,7 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IOrderRepository<Order>, OrderRepository>();
 builder.Services.AddScoped<IEventRepository<Event>, EventRepository>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<IMessageInterface<Message>, MessageRepository>();
 
 
 var app = builder.Build();
