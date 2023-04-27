@@ -18,7 +18,6 @@ builder.Services.AddDbContext<DataContext>(option =>
 
 });
 
-SharedClass.connectionStringBlob = builder.Configuration.GetConnectionString("connectionStringBlob");
 
 
 builder.Services.AddControllers(options =>
